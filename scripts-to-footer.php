@@ -8,7 +8,7 @@ Author: Joshua David Nelson
 Author URI: http://joshuadnelson.com
 License: GPL2
 
-Copyright 2013  Joshua David Nelson  (email : joshuadavidnelson@gmail.com)
+Copyright 2013  Joshua David Nelson  (email : josh@joshuadnelson.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as 
