@@ -1,9 +1,10 @@
 === Scripts To Footer ===
 Contributors: joshuadnelson
-Tags: javascript, footer
+Tags: javascript, footer, speed, head
+Donate link: http://joshuadnelson.com/donate
 Requires at least: 3.0.1
-Tested up to: 3.4
-Stable tag: 4.3
+Tested up to: 3.8
+Stable tag: 0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,14 +23,6 @@ e.g.
 1. Upload `scripts-to-footer.php` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Once activated, it should work.
-
-== Frequently Asked Questions ==
-
-
-
-== Screenshots ==
-
-
 
 == Changelog ==
 
