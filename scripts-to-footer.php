@@ -85,8 +85,6 @@ class JDN_Scripts_To_Footer {
 		add_filter( 'cmb_meta_boxes', array( $this, 'create_metaboxes' ) );
 		
 		// Add Links to Plugin Bar
-		if( function_exists( 'stf_settings_links' ) )
-			add_filter( 'plugin_action_links', 'stf_settings_links', 10, 2 );
 		if( function_exists( 'stf_plugin_links' ) )
 			add_filter( 'plugin_row_meta', 'stf_plugin_links', 10, 2 );
 	}
