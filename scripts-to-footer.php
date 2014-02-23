@@ -44,18 +44,6 @@ if( !defined( 'STF_DOMAIN' ) )
 // Plugin Verison
 if( !defined( 'STF_VERSION' ) )
 	define( 'STF_VERSION', '0.2' );
-	
-// Release Date
-if( !defined( 'STF_RELEASE_DATE' ) )
-	define( 'STF_RELEASE_DATE', 'February 23, 2014' );
-
-// Plugin URL
-if( !defined( 'STF_URL' ) )
-	define( 'STF_URL', 'http://wordpress.org/plugins/scripts-to-footerphp/' );
-
-// Plugin Support URL
-if( !defined( 'STF_SUPPORT_URL' ) )
-	define( 'STF_SUPPORT_URL', 'http://wordpress.org/support/plugin/scripts-to-footerphp' );
 
 /**
  * Scripts to Footer Class.
@@ -192,7 +180,7 @@ function stf_plugin_links( $links, $file ) {
 	}
 
 	if( $file == $this_plugin ) {
-		$links[] = '<a href="' . STF_SUPPORT_URL . '" title="' . __( 'Support', STF_DOMAIN ) . '">' . __( 'Support', STF_DOMAIN ) . '</a>';
+		$links[] = '<a href="http://wordpress.org/support/plugin/scripts-to-footerphp" title="' . __( 'Support', STF_DOMAIN ) . '">' . __( 'Support', STF_DOMAIN ) . '</a>';
 
 		$links[] = '<a href="http://joshuadnelson.com/donate" title="' . __( 'Donate', STF_DOMAIN ) . '">' . __( 'Donate', STF_DOMAIN ) . '</a>';
 	}
