@@ -1,7 +1,7 @@
 === Scripts To Footer ===
 Contributors: joshuadnelson
 Tags: javascript, footer, speed, head, performance
-Donate link: http://joshuadnelson.com/donate
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FGQXZEW8S9UPC
 Requires at least: 3.0.1
 Tested up to: 3.8.1
 Stable tag: 0.2
