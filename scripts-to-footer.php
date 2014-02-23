@@ -1,35 +1,203 @@
 <?php
-/*
-Plugin Name: Scripts-To-Footer
-Plugin URI: http://joshuadnelson.com/
-Description: This small plugin moves scripts to the footer to help speed up page load times, while keep stylesheets in the header. Note that this only works if you have plugins and a theme that utilizes wp_enqueue_scripts correctly.
-Version: 0.1
-Author: Joshua David Nelson
-Author URI: http://joshuadnelson.com
-License: GPL2
+/**
+ * Main Plugin File
+ *
+ * @package    Scripts_To_Footer
+ * @subpackage Admin
+ * @author     Joshua David Nelson <josh@joshuadnelson.com>
+ * @copyright  Copyright (c) 2014, Joshua David Nelson
+ * @license    http://www.opensource.org/licenses/gpl-license.php GPL-2.0+
+ * @link       http://joshuadnelson.com/scripts-to-footer-plugin
+ *
+ * Plugin Name: Scripts-To-Footer
+ * Plugin URI: http://wordpress.org/plugins/scripts-to-footerphp/
+ * Description: Moves scripts to the footer to decrease page load times, while keeping stylesheets in the header. Requires that plugins and theme correctly utilizes wp_enqueue_scripts hook. Can be disabled via a checkbox on specific pages and posts.
+ * Version: 0.2
+ * Author: Joshua David Nelson
+ * Author URI: http://joshuadnelson.com
+ * License: GPL2
+ *
+ **/
 
-Copyright 2013  Joshua David Nelson  (email : josh@joshuadnelson.com)
+/**
+ * Prevent direct access to this file.
+ *
+ * @since 0.2
+ **/
+if( !defined( 'ABSPATH' ) ) {
+        exit( 'You are not allowed to access this file directly.' );
+}
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as 
-    published by the Free Software Foundation.
+/**
+ * Define our plugin variables
+ *
+ * @since 0.2
+ **/
+// Plugin Settings Field
+if( !defined( 'STF_SETTINGS_FIELD' ) )
+	define( 'STF_SETTINGS_FIELD', 'scripts-to-footer' );
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE, aka AS-IS.  See the
-    GNU General Public License for more details.
+// Plugin Domain
+if( !defined( 'STF_DOMAIN' ) )
+	define( 'STF_DOMAIN', 'stf' );
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+// Plugin Verison
+if( !defined( 'STF_VERSION' ) )
+	define( 'STF_VERSION', '0.2' );
+	
+// Release Date
+if( !defined( 'STF_RELEASE_DATE' ) )
+	define( 'STF_RELEASE_DATE', 'February 23, 2014' );
 
-function custom_clean_head() { 
-	remove_action('wp_head', 'wp_print_scripts'); 
-	remove_action('wp_head', 'wp_print_head_scripts', 9); 
-	remove_action('wp_head', 'wp_enqueue_scripts', 1); 
-} 
-add_action( 'wp_enqueue_scripts', 'custom_clean_head' );
+// Plugin URL
+if( !defined( 'STF_URL' ) )
+	define( 'STF_URL', 'http://wordpress.org/plugins/scripts-to-footerphp/' );
 
+// Plugin Support URL
+if( !defined( 'STF_SUPPORT_URL' ) )
+	define( 'STF_SUPPORT_URL', 'http://wordpress.org/support/plugin/scripts-to-footerphp' );
+
+/**
+ * Scripts to Footer Class.
+ *
+ * Forces scripts to the footer, unless excluded in the settings page.
+ *
+ * @since 0.2
+ */
+
+class JDN_Scripts_To_Footer {
+
+	/**
+	 * Construct.
+	 *
+	 * Registers our activation hook and init hook.
+	 *
+	 * @since 0.2
+	 * @author Joshua David Nelson
+	 */
+	function __construct() {
+		add_action( 'init', array( $this, 'init' ) );
+		add_action( 'init', array( $this, 'initialize_cmb_meta_boxes' ), 50 );
+	}
+
+	/**
+	 * Plugin Init.
+	 *
+	 * Makes some checks and runs the filter, sets up the admin settings page
+	 * and plugin links.
+	 *
+	 * @since 0.2
+	 * @author Joshua David Nelson
+	 */
+	function init() {
+		// Run the plugin
+		add_action( 'wp_enqueue_scripts', array( $this, 'clean_head' ) );
+		
+		// Metabox on Edit screen, for Page Override
+		add_filter( 'cmb_meta_boxes', array( $this, 'create_metaboxes' ) );
+		
+		// Add Links to Plugin Bar
+		if( function_exists( 'stf_settings_links' ) )
+			add_filter( 'plugin_action_links', 'stf_settings_links', 10, 2 );
+		if( function_exists( 'stf_plugin_links' ) )
+			add_filter( 'plugin_row_meta', 'stf_plugin_links', 10, 2 );
+	}
+	
+	/**
+	 * Remove scripts from header, forces them to the footer.
+	 *
+	 * First checks to see if the current post type is excluded via the custom meta box, if so then it doesn't run.
+	 *
+	 * @since 0.1
+	 **/
+	function clean_head() {
+		$excluded_pages = get_post_meta( get_queried_object_id(), 'stf_exclude', true );
+		
+		if( 'on' != $excluded_pages ) {
+			remove_action( 'wp_head', 'wp_print_scripts' ); 
+			remove_action( 'wp_head', 'wp_print_head_scripts', 9 ); 
+			remove_action( 'wp_head', 'wp_enqueue_scripts', 1 ); 
+		}
+	}
+	
+	/**
+	 * Create Page-Specific Metaboxes.
+	 * @link http://www.billerickson.net/wordpress-metaboxes/
+	 *
+	 * @param array $meta_boxes, current metaboxes
+	 * @return array $meta_boxes, current + new metaboxes
+	 *
+	 * @since 0.2
+	 */
+	function create_metaboxes( $meta_boxes ) {
+		$post_types = apply_filters( 'scripts_to_footer_post_types', array( 'page', 'post' ) );
+		if( !empty( $post_types ) ) {
+			$meta_boxes[] = array(
+				'id' => 'scripts-to-footer',
+				'title' => __( 'Scripts to Footer Plugin Settings', STF_DOMAIN ),
+				'pages' => $post_types,
+				'context' => 'normal',
+				'priority' => 'high',
+				'show_names' => true,
+				'fields' => array(
+					array(
+						'name' => __( 'Disable Plugin', STF_DOMAIN ),
+						'desc' => __( 'By default, the scripts to footer plugin is set to run. This checkbox disables the plugin on this page', STF_DOMAIN ),
+						'id' => 'stf_exclude',
+						'type' => 'checkbox'
+					)
+				)
+			);
+		} 
+		
+		return $meta_boxes;
+	}
+	
+	/**
+	 * Initializing Custom Metaboxes
+	 *
+	 * @author Bill Erickson, billerickson.net
+	 * @since 0.2
+	 **/
+	function initialize_cmb_meta_boxes() {
+		$post_types = apply_filters( 'scripts_to_footer_post_types', array( 'page', 'post' ) );
+	    if( !class_exists( 'cmb_Meta_Box' ) && !empty( $post_types ) ) {
+	        require_once( dirname( __FILE__) . '/lib/metabox/init.php' );
+	    }
+	}
+
+}
+global $stf_scripts_to_footer;
+$stf_scripts_to_footer = new JDN_Scripts_To_Footer();
+
+/**
+ * Add various links to plugin page
+ *
+ * @since  0.2
+ *
+ * @param  $links
+ * @param  $file
+ *
+ * @return strings plugin links
+ */
+function stf_plugin_links( $links, $file ) {
+    static $this_plugin;
+
+	/** Capability Check */
+	if( ! current_user_can( 'install_plugins' ) ) 
+		return $links;
+
+	if( !$this_plugin ) {
+		$this_plugin = plugin_basename(__FILE__);
+	}
+
+	if( $file == $this_plugin ) {
+		$links[] = '<a href="' . STF_SUPPORT_URL . '" title="' . __( 'Support', STF_DOMAIN ) . '">' . __( 'Support', STF_DOMAIN ) . '</a>';
+
+		$links[] = '<a href="http://joshuadnelson.com/donate" title="' . __( 'Donate', STF_DOMAIN ) . '">' . __( 'Donate', STF_DOMAIN ) . '</a>';
+	}
+	
+	return $links;
+}
 
 ?>
