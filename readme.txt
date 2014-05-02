@@ -3,8 +3,8 @@ Contributors: joshuadnelson
 Tags: javascript, footer, speed, head, performance
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FGQXZEW8S9UPC
 Requires at least: 3.0.1
-Tested up to: 3.8.1
-Stable tag: 0.2
+Tested up to: 3.9
+Stable tag: 0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,6 +36,9 @@ e.g.
 
 == Changelog ==
 
+= 0.3 = 
+Added conditional to disable on plugin on admin dashboard, version bump. 
+ 	
 = 0.2 =
 Updating code to be object-oriented and added page metabox to disable plugin on specific pages.
 
@@ -43,6 +46,9 @@ Updating code to be object-oriented and added page metabox to disable plugin on 
 Initial release
 
 == Upgrade Notice ==
+
+= 0.3 =
+Adds safeguard to avoid conflicts on admin dashboard. 
 
 = 0.2 =
 This upgrade adds options to disable plugin on specific pages.
