@@ -3,7 +3,7 @@ Scripts To Footer
 
 Sleek, light-weight WordPress plugin for moving javascript to the footer, while retaining styles in the header.
 
-#####Note: this is the "bleeding edge" version and may not necessarily be stable, use at your own risk. View the most recent release on the WordPress repo linked below
+#####Note: this is the "bleeding edge" version and may not necessarily be stable, use at your own risk. Let me know in the [issues](https://github.com/joshuadavidnelson/scripts-to-footer/issues) section if you run into problems or have suggestions for making the plugin better. You can also view the most recent official, stable release on the WordPress repo linked below.
 
 ## WordPress Plugin
 
