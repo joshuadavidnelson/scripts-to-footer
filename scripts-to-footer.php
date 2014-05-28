@@ -65,7 +65,6 @@ class JDN_Scripts_To_Footer {
 	 */
 	function __construct() {
 		add_action( 'init', array( $this, 'init' ) );
-		add_action( 'init', array( $this, 'initialize_cmb_meta_boxes' ), 50 );
 	}
 
 	/**
@@ -83,6 +82,7 @@ class JDN_Scripts_To_Footer {
 		
 		// Metabox on Edit screen, for Page Override
 		add_filter( 'cmb_meta_boxes', array( $this, 'create_metaboxes' ) );
+		add_action( 'init', array( $this, 'initialize_cmb_meta_boxes' ), 50 );
 		
 		// Add Links to Plugin Bar
 		if( function_exists( 'stf_plugin_links' ) )
@@ -97,13 +97,16 @@ class JDN_Scripts_To_Footer {
 	 * @since 0.1
 	 **/
 	function clean_head() {
-		$excluded_pages = get_post_meta( get_queried_object_id(), 'stf_exclude', true );
-		$excluded_pages = apply_filters( 'scripts_to_footer_excluded_pages', $excluded_pages, get_queried_object_id() );
-		
-		if( 'on' !== $excluded_pages && !is_admin() ) {
-			remove_action( 'wp_head', 'wp_print_scripts' ); 
-			remove_action( 'wp_head', 'wp_print_head_scripts', 9 ); 
-			remove_action( 'wp_head', 'wp_enqueue_scripts', 1 ); 
+		if( get_queried_object_id() ) {
+			$queried_object_id = get_queried_object_id();
+			$excluded_pages = get_post_meta( $queried_object_id, 'stf_exclude', true );
+			$excluded_pages = apply_filters( 'scripts_to_footer_excluded_pages', $excluded_pages, $queried_object_id );
+			
+			if( 'on' !== $excluded_pages && !is_admin() ) {
+				remove_action( 'wp_head', 'wp_print_scripts' ); 
+				remove_action( 'wp_head', 'wp_print_head_scripts', 9 ); 
+				remove_action( 'wp_head', 'wp_enqueue_scripts', 1 ); 
+			}
 		}
 	}
 	
@@ -148,9 +151,9 @@ class JDN_Scripts_To_Footer {
 	 **/
 	function initialize_cmb_meta_boxes() {
 		$post_types = apply_filters( 'scripts_to_footer_post_types', array( 'page', 'post' ) );
-	    if( !class_exists( 'cmb_Meta_Box' ) && !empty( $post_types ) ) {
-	        require_once( dirname( __FILE__) . '/lib/metabox/init.php' );
-	    }
+		if( !class_exists( 'cmb_Meta_Box' ) && !empty( $post_types ) ) {
+	        	require_once( dirname( __FILE__) . '/lib/metabox/init.php' );
+	    	}
 	}
 
 }
@@ -167,24 +170,24 @@ $stf_scripts_to_footer = new JDN_Scripts_To_Footer();
  *
  * @return strings plugin links
  */
-function stf_plugin_links( $links, $file ) {
-    static $this_plugin;
-
-	/** Capability Check */
-	if( ! current_user_can( 'install_plugins' ) ) 
-		return $links;
-
-	if( !$this_plugin ) {
-		$this_plugin = plugin_basename(__FILE__);
-	}
-
-	if( $file == $this_plugin ) {
-		$links[] = '<a href="http://wordpress.org/support/plugin/scripts-to-footerphp" title="' . __( 'Support', STF_DOMAIN ) . '">' . __( 'Support', STF_DOMAIN ) . '</a>';
-
-		$links[] = '<a href="http://joshuadnelson.com/go/donate" title="' . __( 'Donate', STF_DOMAIN ) . '">' . __( 'Donate', STF_DOMAIN ) . '</a>';
-	}
+if( !function_exists( 'stf_plugin_links' ) ) {
+	function stf_plugin_links( $links, $file ) {
+	    static $this_plugin;
 	
-	return $links;
+		/** Capability Check */
+		if( ! current_user_can( 'install_plugins' ) ) 
+			return $links;
+	
+		if( !$this_plugin ) {
+			$this_plugin = plugin_basename(__FILE__);
+		}
+	
+		if( $file == $this_plugin ) {
+			$links[] = '<a href="http://wordpress.org/support/plugin/scripts-to-footerphp" title="' . __( 'Support', STF_DOMAIN ) . '">' . __( 'Support', STF_DOMAIN ) . '</a>';
+	
+			$links[] = '<a href="http://joshuadnelson.com/go/donate" title="' . __( 'Donate', STF_DOMAIN ) . '">' . __( 'Donate', STF_DOMAIN ) . '</a>';
+		}
+		
+		return $links;
+	}
 }
-
-?>
