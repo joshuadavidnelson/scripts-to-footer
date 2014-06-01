@@ -99,10 +99,10 @@ class JDN_Scripts_To_Footer {
 	function clean_head() {
 		if( get_queried_object_id() ) {
 			$queried_object_id = get_queried_object_id();
-			$excluded_pages = get_post_meta( $queried_object_id, 'stf_exclude', true );
-			$excluded_pages = apply_filters( 'scripts_to_footer_excluded_pages', $excluded_pages, $queried_object_id );
+			$exclude_page = get_post_meta( $queried_object_id, 'stf_exclude', true );
+			$exclude_page = apply_filters( 'scripts_to_footer_exclude_page', $exclude_page, $queried_object_id );
 			
-			if( 'on' !== $excluded_pages && !is_admin() ) {
+			if( 'on' !== $exclude_page && !is_admin() ) {
 				remove_action( 'wp_head', 'wp_print_scripts' ); 
 				remove_action( 'wp_head', 'wp_print_head_scripts', 9 ); 
 				remove_action( 'wp_head', 'wp_enqueue_scripts', 1 ); 
