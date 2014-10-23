@@ -87,6 +87,8 @@ if ( is_multisite() ) {
 			// Repeat for every Site ID 
 			switch_to_blog( $blog[ 'blog_id' ] );
 			delete_option( STF_SETTINGS_FIELD );
+			delete_post_meta_by_key( 'stf_exclude' );
+			
 		} 
 		
 		restore_current_blog();
@@ -96,5 +98,6 @@ if ( is_multisite() ) {
 } else { // Otherwise, delete options from main options table
 
 	delete_option( STF_SETTINGS_FIELD );
+	delete_post_meta_by_key( 'stf_exclude' );
 	
 }
