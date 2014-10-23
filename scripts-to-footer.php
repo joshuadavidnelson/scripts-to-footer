@@ -99,8 +99,8 @@ class Scripts_To_Footer {
 	 * @since 0.1
 	 **/
 	function clean_head() {
-		if( get_queried_object_id() ) {
-			$queried_object_id = get_queried_object_id();
+		$queried_object_id = get_queried_object_id();
+		if( $queried_object_id ) {
 			$exclude_page = get_post_meta( $queried_object_id, 'stf_exclude', true );
 			$exclude_page = apply_filters( 'scripts_to_footer_exclude_page', $exclude_page, $queried_object_id );
 			
