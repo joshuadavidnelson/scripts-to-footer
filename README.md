@@ -36,7 +36,7 @@ As of version 0.4 you can either use the checkbox option to disable the plugin's
 function stf_exclude_my_post( $excluded_pages, $post_id ) {
 	
 	if( $post_id = '1234' ) { // change to your post id, or use a different conditional to get crazy
-		$excluded_pages = 'off'; // set to 'on' to enable the plugin
+		$excluded_pages = 'on'; // set to 'on' will disable the plugin
 	}
 
 	return $excluded_pages;
