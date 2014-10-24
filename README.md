@@ -30,7 +30,7 @@ add_filter( 'scripts_to_footer_post_types', 'stf_add_project_support' );
 ```
 
 ### Excluding Pages/Posts Via Filter
-As of version 0.4 you can either use the checkbox option to disable the plugin's action on a specific page/post, or you can utilize a filter. The filter also passes the post/page id, which might be useful for more advanced development. For example:
+As of version 0.5 you can either use the checkbox option to disable the plugin's action on a specific page/post, or you can utilize a filter. The filter also passes the post/page id, which might be useful for more advanced development. For example:
 
 ```php
 function stf_exclude_my_page( $exclude_page, $post_id ) {
