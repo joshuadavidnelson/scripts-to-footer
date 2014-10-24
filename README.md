@@ -33,15 +33,13 @@ add_filter( 'scripts_to_footer_post_types', 'stf_add_project_support' );
 As of version 0.4 you can either use the checkbox option to disable the plugin's action on a specific page/post, or you can utilize a filter. The filter also passes the post/page id, which might be useful for more advanced development. For example:
 
 ```php
-function stf_exclude_my_post( $excluded_pages, $post_id ) {
-	
-	if( $post_id = '1234' ) { // change to your post id, or use a different conditional to get crazy
-		$excluded_pages = 'on'; // set to 'on' will disable the plugin
-	}
-
-	return $excluded_pages;
+function stf_exclude_my_page( $exclude_page, $post_id ) {
+    if( is_front_page() ) {
+        $exclude_page = 'on'; // this turns on the "exclude" option
+    }
+    return $exclude_page;
 }
-add_filter( '', 'stf_exclude_my_post' );
+add_filter( 'scripts_to_footer_exclude_page', 'stf_exclude_my_page' );
 ```
 
 ### Changelog
