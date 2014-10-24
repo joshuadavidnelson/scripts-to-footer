@@ -1,10 +1,10 @@
 === Scripts To Footer ===
 Contributors: joshuadnelson
 Tags: javascript, footer, speed, head, performance
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=FGQXZEW8S9UPC
+Donate link: http://jdn.im/donate
 Requires at least: 3.6
-Tested up to: 3.9.1
-Stable tag: 0.4
+Tested up to: 4.0
+Stable tag: 0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -14,33 +14,31 @@ This small plugin moves scripts to the footer to help speed up page load times, 
 
 This small plugin moves scripts to the footer to help speed up page load times, while keeping stylesheets in the header. Note that this only works if you have plugins and a theme that utilizes `wp_enqueue_scripts` correctly.
 
-Now includes an option to disable the plugin on a specific page.
+Now includes an option to disable the plugin on a specific page or post.
 
 = Custom Post Type Support =
 If you're comfortable with code you can use the `scripts_to_footer_post_types` filter to change the post types this applies to (it only applies to pages and posts by default). For example, if you have a custom post type called "project" you could add support for this metabox via the post type filter like this:
 
 `
-function stf_add_project_support( $post_types ) {
+function stf_add_cpt_support( $post_types ) {
 	$post_types[] = 'project';
 	
 	return $post_types;
 }
-add_filter( 'scripts_to_footer_post_types', 'stf_add_project_support' );
+add_filter( 'scripts_to_footer_post_types', 'stf_add_cpt_support' );
 `
 
 = Excluding Pages/Posts Via Filter =
-As of version 0.4 you can either use the checkbox option to disable the plugin's action on a specific page/post, or you can utilize a filter. The filter also passes the post/page id, which might be useful for more advanced development. For example:
+As of version 0.5 you can either use the checkbox option to disable the plugin's action on a specific page/post, or you can utilize a filter. The filter also passes the post/page id, which might be useful for more advanced development. For example:
 
 `
-function stf_exclude_my_post( $excluded_pages, $post_id ) {
-	
-	if( $post_id = '1234' ) { // change to your post id, or use a different conditional to get crazy
-		$excluded_pages = 'off'; // set to 'on' to enable the plugin
+function stf_exclude_my_page( $exclude_page, $post_id ) {
+	if( is_front_page() ) {
+		$exclude_page = 'on'; // this turns on the "exclude" option
 	}
-
-	return $excluded_pages;
+	return $exclude_page;
 }
-add_filter( '', 'stf_exclude_my_post' );
+add_filter( 'scripts_to_footer_exclude_page', 'stf_exclude_my_page' );
 `
 
 = View on GitHub =
@@ -62,8 +60,11 @@ e.g.
 
 == Changelog ==
 
+= 0.5 =
+Reverted metabox version to previous - invalid error was sneaking through.
+
 = 0.4 =
-Added filter for excluded page ids, version bump and updated readme.txt file.
+Added filter to exclude pages, updated metabox version, plugin version bump and updated readme.txt file.
 
 = 0.3 = 
 Added conditional to disable on plugin on admin dashboard, version bump. 
@@ -76,8 +77,11 @@ Initial release
 
 == Upgrade Notice ==
 
+= 0.5 =
+Please update to avoid an error on 0.4 version. If you're updating from version 0.3 or earlier, you'll get a new filter.
+
 = 0.4 =
-Adds filter for excluded page ids.
+Adds filter for excluded page ids and updated to most current metabox system.
 
 = 0.3 =
 Adds safeguard to avoid conflicts on admin dashboard. 
