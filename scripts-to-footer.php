@@ -103,8 +103,9 @@ class Scripts_To_Footer {
 		if( $queried_object_id ) {
 			$exclude_page = get_post_meta( $queried_object_id, 'stf_exclude', true );
 			$exclude_page = apply_filters( 'scripts_to_footer_exclude_page', $exclude_page, $queried_object_id );
+			$post_type = get_post_type( $queried_object_id );
 			
-			if( 'on' !== $exclude_page && !is_admin() ) {
+			if( 'on' !== $exclude_page && !is_admin() && $this->check_post_type( $post_type ) ) {
 				remove_action( 'wp_head', 'wp_print_scripts' ); 
 				remove_action( 'wp_head', 'wp_print_head_scripts', 9 ); 
 				remove_action( 'wp_head', 'wp_enqueue_scripts', 1 ); 
@@ -122,7 +123,7 @@ class Scripts_To_Footer {
 	 * @since 0.2
 	 */
 	function create_metaboxes( $meta_boxes ) {
-		$post_types = apply_filters( 'scripts_to_footer_post_types', array( 'page', 'post' ) );
+		$post_types = $this->supported_post_types();
 		if( !empty( $post_types ) ) {
 			$meta_boxes[] = array(
 				'id' => 'scripts-to-footer',
@@ -152,12 +153,46 @@ class Scripts_To_Footer {
 	 * @since 0.2
 	 **/
 	function initialize_cmb_meta_boxes() {
-		$post_types = apply_filters( 'scripts_to_footer_post_types', array( 'page', 'post' ) );
+		$post_types = $this->supported_post_types();
 		if( !class_exists( 'cmb_Meta_Box' ) && !empty( $post_types ) ) {
 	        	require_once( dirname( __FILE__) . '/lib/metabox/init.php' );
 	    	}
 	}
-
+	
+	/**
+	 * Check post type is supported
+	 *
+	 * @since 0.6
+	 * 
+	 * @return boolean
+	 **/
+	function check_post_type( $post_type ) {
+		$post_types = $this->supported_post_types();
+		if( empty( $post_types ) ) {
+			return false;
+		}
+		
+		$post_type_check = false;
+		// Verify post type is supported
+		if( is_array( $post_types) && in_array( $post_type, $post_types ) ) {
+			$post_type_check = true;	
+		} elseif( is_string( $post_types ) && $post_types == $post_type ) {
+			$post_type_check = true;
+		} 
+		
+		return $post_type_check;
+	}
+	
+	/**
+	 * Return supported post types
+	 *
+	 * @since 0.6
+	 * 
+	 * @return array $post_types The supported post type
+	 **/
+	 function supported_post_types() {
+	 	return apply_filters( 'scripts_to_footer_post_types', array( 'page', 'post' ) );
+	 }
 }
 
 /**
