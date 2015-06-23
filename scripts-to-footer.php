@@ -98,11 +98,11 @@ class Scripts_To_Footer {
 	 *
 	 * @since 0.6
 	 */
-    static function activation_check() {
-        if ( ! self::compatible_version() ) {
-            deactivate_plugins( plugin_basename( __FILE__ ) );
-            wp_die( __( 'My Plugin requires WordPress 3.7 or higher!', 'my-plugin' ) );
-        } else {
+	static function activation_check() {
+		if ( ! self::compatible_version() ) {
+			deactivate_plugins( plugin_basename( __FILE__ ) );
+			wp_die( __( 'My Plugin requires WordPress 3.7 or higher!', 'my-plugin' ) );
+		} else {
 			// Save the previous version we're upgrading from
 			$current_version = get_option( 'stf_version', false );
 			if ( $current_version )
@@ -110,15 +110,13 @@ class Scripts_To_Footer {
 		
 			// See if it's a previous version, which may not have set the version option
 			if ( false === $current_version || $current_version != STF_VERSION ) {
-				// replace old meta values with correct ones?
-				// and log it:
-				// $this->log_me( 'updated post meta: ' );
+				// do things on update
 			}
 		
 			// Save current version
 			update_option( 'stf_version', STF_VERSION );
 		}
-    }
+	}
 	
 	/**
 	 * The backup sanity check.
@@ -128,17 +126,17 @@ class Scripts_To_Footer {
 	 *
 	 * @since 0.6
 	 */
-    function check_version() {
-        if ( ! self::compatible_version() ) {
-            if ( is_plugin_active( plugin_basename( __FILE__ ) ) ) {
-                deactivate_plugins( plugin_basename( __FILE__ ) );
-                add_action( 'admin_notices', array( $this, 'disabled_notice' ) );
-                if ( isset( $_GET['activate'] ) ) {
-                    unset( $_GET['activate'] );
-                }
-            }
-        }
-    }
+	function check_version() {
+		if ( ! self::compatible_version() ) {
+			if ( is_plugin_active( plugin_basename( __FILE__ ) ) ) {
+				deactivate_plugins( plugin_basename( __FILE__ ) );
+				add_action( 'admin_notices', array( $this, 'disabled_notice' ) );
+				if ( isset( $_GET['activate'] ) ) {
+					unset( $_GET['activate'] );
+				}
+			}
+		}
+	}
 	
 	/**
 	 * Display notice on deactivation.
@@ -147,9 +145,9 @@ class Scripts_To_Footer {
 	 *
 	 * @return void
 	 */
-    function disabled_notice() {
-       echo '<strong>' . esc_html__( 'Scripts-to-Footer requires WordPress 3.7 or higher, and PHP version 5.4.3 or higher', STF_DOMAIN ) . '</strong>';
-    } 
+	function disabled_notice() {
+		echo '<strong>' . esc_html__( 'Scripts-to-Footer requires WordPress 3.1.0 or higher.', STF_DOMAIN ) . '</strong>';
+	} 
 	
 	/**
 	 * Check everything is compatible.
@@ -158,15 +156,15 @@ class Scripts_To_Footer {
 	 *
 	 * @return boolean
 	 */
-    static function compatible_version() {
-        if ( version_compare( $GLOBALS['wp_version'], '3.7', '<' ) ) {
-             return false;
-         }
+	static function compatible_version() {
+		if ( version_compare( $GLOBALS['wp_version'], '3.1.0', '<' ) ) {
+			return false;
+		}
 
-        // Add sanity checks for other version requirements here
+		// Add sanity checks for other version requirements here
 
-        return true;
-    }
+		return true;
+	}
 
 	/**
 	 * Plugin Init.
