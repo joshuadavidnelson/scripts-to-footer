@@ -78,12 +78,12 @@ class Scripts_To_Footer {
 	 * @since 0.2
 	 */
 	function __construct() {
-        add_action( 'admin_init', array( $this, 'check_version' ) );
+		add_action( 'admin_init', array( $this, 'check_version' ) );
 
-        // Don't run anything else in the plugin, if we're on an incompatible
-        if ( ! self::compatible_version() ) {
-            return;
-        }
+		// Don't run anything else in the plugin, if we're on an incompatible
+		if ( ! self::compatible_version() ) {
+			return;
+		}
 		
 		include_once( STF_DIR . '/admin/admin-settings.php' );
 		add_action( 'init', array( $this, 'init' ) );
@@ -147,7 +147,7 @@ class Scripts_To_Footer {
 	 */
 	function disabled_notice() {
 		echo '<strong>' . esc_html__( 'Scripts-to-Footer requires WordPress 3.1.0 or higher.', STF_DOMAIN ) . '</strong>';
-	} 
+	}
 	
 	/**
 	 * Check everything is compatible.
