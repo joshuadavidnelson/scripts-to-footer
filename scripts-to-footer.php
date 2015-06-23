@@ -82,9 +82,6 @@ class Scripts_To_Footer {
 		// Run the plugin
 		add_action( 'wp_enqueue_scripts', array( $this, 'clean_head' ) );
 		
-		// Metabox on Edit screen, for Page Override
-		add_filter( 'cmb_meta_boxes', array( $this, 'create_metaboxes' ) );
-		add_action( 'init', array( $this, 'initialize_cmb_meta_boxes' ), 50 );
 		
 		// Add Links to Plugin Bar
 		if( function_exists( 'stf_plugin_links' ) )
@@ -122,41 +119,10 @@ class Scripts_To_Footer {
 	 *
 	 * @since 0.2
 	 */
-	function create_metaboxes( $meta_boxes ) {
-		$post_types = $this->supported_post_types();
-		if( !empty( $post_types ) ) {
-			$meta_boxes[] = array(
-				'id' => 'scripts-to-footer',
-				'title' => __( 'Scripts to Footer Plugin Settings', STF_DOMAIN ),
-				'pages' => $post_types,
-				'context' => 'normal',
-				'priority' => 'high',
-				'show_names' => true,
-				'fields' => array(
-					array(
-						'name' => __( 'Disable Plugin', STF_DOMAIN ),
-						'desc' => __( 'By default, the scripts to footer plugin is set to run. This checkbox disables the plugin on this page', STF_DOMAIN ),
-						'id' => 'stf_exclude',
-						'type' => 'checkbox'
-					)
-				)
-			);
-		} 
-		
-		return $meta_boxes;
 	}
 	
 	/**
-	 * Initializing Custom Metaboxes
 	 *
-	 * @author Bill Erickson, billerickson.net
-	 * @since 0.2
-	 **/
-	function initialize_cmb_meta_boxes() {
-		$post_types = $this->supported_post_types();
-		if( !class_exists( 'cmb_Meta_Box' ) && !empty( $post_types ) ) {
-	        	require_once( dirname( __FILE__) . '/lib/metabox/init.php' );
-	    	}
 	}
 	
 	/**
