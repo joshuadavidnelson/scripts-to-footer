@@ -317,21 +317,6 @@ class Scripts_To_Footer {
 	}
 	
 	/**
-	 * This function removes the scripts from the WordPress via a filter.
-	 *
-	 * @since 0.6
-	 */
-	function stf_deregister_scripts() {
-		$scripts = $this->get_excluded_scripts();
-		if( is_array( $scripts ) ) {
-			foreach( $scripts as $script => $url ) {
-				if( is_string( $script ) )
-					wp_deregister_script( $script );
-			}
-		}
-	}
-	
-	/**
 	 * Check for post type support, via the filter. Default support for page and post.
 	 *
 	 * @since 0.6
