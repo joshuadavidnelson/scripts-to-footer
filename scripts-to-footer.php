@@ -179,12 +179,6 @@ class Scripts_To_Footer {
 		add_action( 'wp_enqueue_scripts', array( $this, 'clean_head' ) );
 		add_filter( 'stf_include', array( $this, 'stf_includes' ) );
 		
-		// Excluded scripts filter
-		if( false !== $this->get_excluded_scripts() ) {
-			add_action( 'wp_print_styles', array( $this, 'stf_deregister_scripts' ), 100 );
-			add_action( 'wp_head', array( $this, 'stf_head_scripts' ) );
-		}
-		
 		// Add Links to Plugin Bar
 		if( function_exists( 'stf_plugin_links' ) )
 			add_filter( 'plugin_row_meta', 'stf_plugin_links', 10, 2 );
@@ -334,37 +328,6 @@ class Scripts_To_Footer {
 				if( is_string( $script ) )
 					wp_deregister_script( $script );
 			}
-		}
-	}
-
-	/**
-	 * This function places the actual script output html directly into the header.
-	 *
-	 * @since 0.6
-	 */
-	function stf_head_scripts() {
-		$scripts = $this->get_excluded_scripts();
-		if( is_array( $scripts ) ) {
-			foreach( $scripts as $script => $url ) {
-				if( is_string( $script ) && esc_url( $url ) )
-					echo '<script type="text/javascript" src="' . esc_url( $url ) . '"></script>';
-			}
-		}
-	}
-	
-	/**
-	 * Return the excluded scripts value for 
-	 *
-	 * @since 1.0.0
-	 *
-	 * @return array|boolean The array of excluded scripts or false on failure.
-	 */
-	function get_excluded_scripts() {
-		$scripts = apply_filters( 'stf_exclude_scripts', null );
-		if( is_array( $scripts ) ) {
-			return $scripts;
-		} else {
-			return false;
 		}
 	}
 	
