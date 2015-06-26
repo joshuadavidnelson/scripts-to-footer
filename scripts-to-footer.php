@@ -69,6 +69,15 @@ global $stf_scripts_to_footer;
 $stf_scripts_to_footer = new Scripts_To_Footer();
 
 class Scripts_To_Footer {
+	
+	/**
+	 * An array of script slugs that should remain in the header.
+	 *
+	 * @since 0.6
+	 *
+	 * @var array
+	 */
+	protected $header_scripts;
 
 	/**
 	 * Construct.
@@ -85,7 +94,10 @@ class Scripts_To_Footer {
 			return;
 		}
 		
+		// Admin settings
 		include_once( STF_DIR . '/admin/admin-settings.php' );
+		
+		// Make it so
 		add_action( 'init', array( $this, 'init' ) );
 	}
 	
@@ -179,6 +191,12 @@ class Scripts_To_Footer {
 		add_action( 'wp_enqueue_scripts', array( $this, 'clean_head' ) );
 		add_filter( 'stf_include', array( $this, 'stf_includes' ) );
 		
+		// Set the header scripts to be forced into the header
+		$this->header_scripts = apply_filters( 'stf_exclude_scripts', array() );
+		
+		// Add select scripts into the header
+		add_action( 'wp_head', array( $this, 'print_head_scripts' ) );
+		
 		// Add Links to Plugin Bar
 		if( function_exists( 'stf_plugin_links' ) )
 			add_filter( 'plugin_row_meta', 'stf_plugin_links', 10, 2 );
@@ -187,6 +205,24 @@ class Scripts_To_Footer {
 		if( function_exists( 'stf_plugin_settings_link' ) ) {
 			$plugin = plugin_basename(__FILE__); 
 			add_filter( "plugin_action_links_$plugin", 'stf_plugin_settings_link' );
+		}
+	}
+	
+	/**
+	 * The holy grail: print select scripts in the header!
+	 *
+	 * @since 0.6
+	 */
+	function print_head_scripts() {
+		if( !isset( $this->header_scripts ) || empty( $this->header_scripts ) || !is_array( $this->header_scripts ) )
+			return;
+		
+		foreach( $this->header_scripts as $script ) {
+			if( !is_string( $script ) )
+				continue;
+			
+			if( wp_script_is( $script ) )
+				wp_print_scripts( $script );
 		}
 	}
 	
@@ -220,7 +256,7 @@ class Scripts_To_Footer {
 			remove_action( 'wp_head', 'wp_enqueue_scripts', 1 ); 
 		} elseif( false !== $include ) {
 			$this->log_me( 'Invalid stf_include filter value' );
-		}	
+		}
 	}
 	
 	/**
@@ -315,6 +351,9 @@ class Scripts_To_Footer {
 				$include = true;
 			}
 			return apply_filters( "stf_{$type}", $include );
+		} else {
+			$this->log_me( 'invalid $type element' );
+			return false;
 		}
 	}
 	
