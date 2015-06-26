@@ -16,71 +16,71 @@
  * @since 0.2
  **/
 if( !defined( 'ABSPATH' ) ) {
-				exit( 'You are not allowed to access this file directly.' );
+	exit( 'You are not allowed to access this file directly.' );
 }
 
 if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {	
 	class Scripts_To_Footer_Settings {
-	    /**
-	     * Holds the values to be used in the fields callbacks
-	     */
-	    private $options;
+		/**
+		 * Holds the values to be used in the fields callbacks
+		 */
+		private $options;
 
-	    /**
-	     * Start up
+		/**
+		 * Start up
 		 *
 		 * @since 0.6
-	     */
-	    public function __construct() {
-	        add_action( 'admin_menu', array( $this, 'add_plugin_page' ) );
-	        add_action( 'admin_init', array( $this, 'page_init' ) );
-	    }
+		 */
+		public function __construct() {
+			add_action( 'admin_menu', array( $this, 'add_plugin_page' ) );
+			add_action( 'admin_init', array( $this, 'page_init' ) );
+		}
 		
-	    /**
-	     * Add options page
+		/**
+		 * Add options page
 		 *
 		 * @since 0.6
-	     */
-	    public function add_plugin_page() {
-	        // This page will be under "Settings"
-	        add_options_page(
-	            'Scripts to Footer Settings', 
-	            'Scripts to Footer', 
-	            'manage_options', 
-	            STF_SETTINGS_FIELD, 
-	            array( $this, 'create_admin_page' )
-	        );
-	    }
-
-	    /**
-	     * Options page callback
+		 */
+		public function add_plugin_page() {
+			// This page will be under "Settings"
+			add_options_page(
+				'Scripts to Footer Settings', 
+				'Scripts to Footer', 
+				'manage_options', 
+				STF_SETTINGS_FIELD, 
+				array( $this, 'create_admin_page' )
+			);
+		}
+		
+		/**
+		 * Options page callback
 		 *
 		 * @since 0.6
-	     */
-	    public function create_admin_page()  {
-	        // Set class property
-	        $this->options = get_option( STF_SETTINGS_FIELD );
-	        ?>
-	        <div class="wrap">
-	            <h2>Scripts to Footer Settings</h2>           
-	            <form method="post" action="options.php">
-	            <?php
-	                // This prints out all hidden setting fields
-	                settings_fields( STF_SETTINGS_FIELD );   
-	                do_settings_sections( 'stf-settings' );
-	                submit_button(); 
-	            ?>
-	            </form>
-	        </div>
-	        <?php
-	    }
-
-	    /**
-	     * Register and add settings
+		 */
+		public function create_admin_page()  {
+			// Set class property
+			$this->options = get_option( STF_SETTINGS_FIELD );
+			?>
+			<div class="wrap">
+				<h2>Scripts to Footer Settings</h2>           
+				<form method="post" action="options.php">
+					<?php
+					// This prints out all hidden setting fields
+					settings_fields( STF_SETTINGS_FIELD );   
+					do_settings_sections( 'stf-settings' );
+					submit_button(); 
+					?>
+				</form>
+			</div>
+			<?php
+		}
+		
+		/**
+		 * Register and add settings
 		 *
 		 * @since 0.6
-	     */
-	    public function page_init() {
+		 */
+		public function page_init() {
 			
 			// Metabox on Edit screen, for Page/Post Override
 			add_action( 'add_meta_boxes', array( $this, 'metabox_register' ) );
@@ -119,22 +119,22 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 			);
 			
 			// Post Type Archives options
-	        add_settings_field(
-	            'stf_post_type_archives', // ID
-	            'Post Type Archives', // Title 
-	            array( $this, 'stf_post_type_archives' ), // Callback
-	            'stf-settings', // Page
-	            'exclude_options' // Section           
-	        );
+			add_settings_field(
+				'stf_post_type_archives', // ID
+				'Post Type Archives', // Title 
+				array( $this, 'stf_post_type_archives' ), // Callback
+				'stf-settings', // Page
+				'exclude_options' // Section           
+			);
 			
 			// Taxonomy Archives options
-	        add_settings_field(
-	            'stf_taxonomy_archives', // ID
-	            'Taxonomy Archives', // Title 
-	            array( $this, 'stf_taxonomy_archives' ), // Callback
-	            'stf-settings', // Page
-	            'exclude_options' // Section           
-	        );
+			add_settings_field(
+				'stf_taxonomy_archives', // ID
+				'Taxonomy Archives', // Title 
+				array( $this, 'stf_taxonomy_archives' ), // Callback
+				'stf-settings', // Page
+				'exclude_options' // Section           
+			);
 			
 			// Archive option
 			add_settings_field(
@@ -144,46 +144,46 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 				'stf-settings', // Page
 				'exclude_options' // Section           
 			);
-	    }
-
-	    /**
-	     * Sanitize each setting field as needed
+		}
+		
+		/**
+		 * Sanitize each setting field as needed
 		 *
 		 * @since 0.6
-	     *
-	     * @param array $input Contains all settings fields as array keys
-	     */
-	    public function sanitize( $input ) {
-	        $new_input = array();
-	        if( isset( $input['stf_exclude_home'] ) )
-	            $new_input['stf_exclude_home'] = absint( $input['stf_exclude_home'] );
-
-	        if( isset( $input['stf_exclude_search'] ) )
-	            $new_input['stf_exclude_search'] = absint( $input['stf_exclude_search'] );
+		 *
+		 * @param array $input Contains all settings fields as array keys
+		 */
+		public function sanitize( $input ) {
+			$new_input = array();
+			if( isset( $input['stf_exclude_home'] ) )
+				$new_input['stf_exclude_home'] = absint( $input['stf_exclude_home'] );
 			
-	        if( isset( $input['stf_exclude_archive'] ) )
-	            $new_input['stf_exclude_archive'] = absint( $input['stf_exclude_archive'] );
-			
-			// Post Type options
-			$post_types = $this->post_type_options();
-			if( is_array( $post_types ) ) {
-				foreach( $post_types as $option ) {
-			        if( isset( $input[ $option ] ) )
-			            $new_input[ $option ] = absint( $input[ $option ] );
+			if( isset( $input['stf_exclude_search'] ) )
+				$new_input['stf_exclude_search'] = absint( $input['stf_exclude_search'] );
+				
+			if( isset( $input['stf_exclude_archive'] ) )
+				$new_input['stf_exclude_archive'] = absint( $input['stf_exclude_archive'] );
+				
+				// Post Type options
+				$post_types = $this->post_type_options();
+				if( is_array( $post_types ) ) {
+					foreach( $post_types as $option ) {
+						if( isset( $input[ $option ] ) )
+							$new_input[ $option ] = absint( $input[ $option ] );
+					}
 				}
-			}
-			
-			// Taxonomy options
-			$taxes = $this->taxonomy_options();
-			if( is_array( $taxes ) ) {
-				foreach( $taxes as $option ) {
-			        if( isset( $input[ $option ] ) )
-			            $new_input[ $option ] = absint( $input[ $option ] );
+				
+				// Taxonomy options
+				$taxes = $this->taxonomy_options();
+				if( is_array( $taxes ) ) {
+					foreach( $taxes as $option ) {
+						if( isset( $input[ $option ] ) )
+							$new_input[ $option ] = absint( $input[ $option ] );
+					}
 				}
-			}
-			
-	        return $new_input;
-	    }
+				
+			return $new_input;
+		}
 		
 		/**
 		 * Return the post type settings field names.
@@ -226,15 +226,15 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 			
 			return $options;
 		}
-
-	    /** 
-	     * Print the Section text.
+		
+		/** 
+		 * Print the Section text.
 		 *
 		 * @since 0.6
-	     */
-	    public function print_section_info() {
-	        echo _x( 'Select which templates should <em>not</em> have scripts moved to the footer (to exclude from this plugin):', STF_DOMAIN );
-	    }
+		 */
+		public function print_section_info() {
+			echo _x( 'Select which templates should <em>not</em> have scripts moved to the footer (to exclude from this plugin):', STF_DOMAIN );
+		}
 
 		/** 
 		 * Get the settings option array and print one of its values.
@@ -246,7 +246,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 				$this->options['stf_exclude_home'] = 0;
 				
 			echo '<input type="checkbox" name="' . STF_SETTINGS_FIELD . '[stf_exclude_home]" ' . checked( $this->options['stf_exclude_home'], 1, false ) . ' value="1">';
-    
+	
 		}
 		
 		/** 
@@ -259,7 +259,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 				$this->options['stf_exclude_search'] = 0;
 			
 			echo '<input type="checkbox" name="' . STF_SETTINGS_FIELD . '[stf_exclude_search]" ' . checked( $this->options['stf_exclude_search'], 1, false ) . ' value="1">';
-    
+		
 		}
 		
 		/**
@@ -316,7 +316,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 				$this->options['stf_exclude_archive'] = 0;
 			
 			echo '<input type="checkbox" name="' . STF_SETTINGS_FIELD . '[stf_exclude_archive]" ' . checked( $this->options['stf_exclude_archive'], 1, false ) . ' value="1">';
-    
+
 		}
 		
 		/**
