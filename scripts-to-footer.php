@@ -298,6 +298,11 @@ class Scripts_To_Footer {
 		// Generic archives (date, author, etc)
 		} elseif( is_archive() ) {
 			$type = 'archive';
+		
+		// if all else fails, log an error, return false
+		} else {
+			$this->log_me( 'Unspecified error in includes check' );
+			return false;
 		}
 		
 		// Get the option and return the result with a filter to override
@@ -311,10 +316,6 @@ class Scripts_To_Footer {
 			}
 			return apply_filters( "stf_{$type}", $include );
 		}
-		
-		// if all else fails, log an error, return false
-		$this->log_me( 'Unspecified error in includes check' );
-		return false;
 	}
 	
 	/**
