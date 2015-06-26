@@ -251,7 +251,7 @@ class Scripts_To_Footer {
 				
 				// Older override check, depreciated
 				$excluded_override = apply_filters( 'scripts_to_footer_exclude_page', null, $queried_object_id );
-				if( 'on' == $excluded_override || true === $excluded_override ) {
+				if( 'on' == $excluded_override || true == $excluded_override ) {
 					$this->log_me( 'The scripts_to_footer_exclude_page is depreciated, please use stf_{$post_type} returning false to exclude');
 					return false;
 				}
