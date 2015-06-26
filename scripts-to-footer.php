@@ -273,14 +273,14 @@ class Scripts_To_Footer {
 		} elseif( is_search() ) {
 			$type = 'search';
 			
-		// Custom Post Type Archive
-		} elseif( is_post_type_archive() && !is_post_type_archive( 'post' ) && !is_post_type_archive( 'page' ) ) {
+		// Post Type Archive
+		} elseif( is_post_type_archive() ) {
 			
 			$post_type = get_post_type();
 			if( $this->post_type_supported( $post_type ) ) {
 				$type = "{$post_type}_archive";
 			} elseif( false === $post_type ) {
-				$this->log_me( 'Unable to get post type in post type archive' );
+				$this->log_me( 'Unable to get post type in post type archive check' );
 				return false;
 			} 
 		
@@ -291,7 +291,7 @@ class Scripts_To_Footer {
 			if( isset( $tax->name ) && $this->tax_supported( $tax->name ) ) {
 				$type = "{$tax->name}_archive";
 			} elseif( false === $tax ) {
-				$this->log_me( 'Unable to get taxonomy in custom taxonomy archive' );
+				$this->log_me( 'Unable to get taxonomy in taxonomy archive check' );
 				return false;
 			} 
 			
@@ -312,7 +312,8 @@ class Scripts_To_Footer {
 			return apply_filters( "stf_{$type}", $include );
 		}
 		
-		// if all else fails, return false
+		// if all else fails, log an error, return false
+		$this->log_me( 'Unspecified error in includes check' );
 		return false;
 	}
 	
