@@ -1,15 +1,15 @@
 ### Changelog
 
 ##### 0.6
-- Add settings page with global disable options for home page, post type archives, search pages, and other archives.
-- Update uninstall.php to remove things correctly (previously only removed the unused settings field).
+- Add settings page with global disable options for home page, search pages, post type archives, taxonomy archives, and other archives.
+- Update uninstall.php to remove things correctly.
 - Add FAQ to readme.txt and readme.md.
 - Add this changelog as a separate file.
-- Change the custom post type filter.
-- Change the exclude filter, to be more relavent to the new options.
+- Change the custom post type filter. Refer to update FAQ and Github wiki.
+- Add support for custom taxonomy archives.
+- Change the exclude filter, to be more relavent to the new options. Older filter is depreciated, but still supported (for now).
 - Update the post meta for disabling the plugin on specific posts/pages.
 - Add Github Updater support.
-- Add exclude script filter.
 - Removed CMB and built metaboxes the old fashion way.
 - Added debug logging to better track any potential errors moving forward.
 
