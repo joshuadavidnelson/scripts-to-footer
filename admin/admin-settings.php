@@ -95,72 +95,81 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 			
 			// Template Options Section
 			add_settings_section(
-				'exclude_options', // ID
-				'Exclude Options', // Title
-				array( $this, 'print_exclude_options_section_info' ), // Callback
-				'stf-settings' // Page
+				'exclude_options',
+				'Exclude Options',
+				array( $this, 'print_exclude_options_section_info' ),
+				'stf-settings'
 			);
 			
 			// Home page option
 			add_settings_field(
-				'stf_home', // ID
-				'Blog Page', // Title 
-				array( $this, 'stf_home' ), // Callback
-				'stf-settings', // Page
-				'exclude_options' // Section           
+				'stf_home',
+				'Blog Page', 
+				array( $this, 'stf_home' ),
+				'stf-settings',
+				'exclude_options'          
 			);
 			
 			// Search Results option
 			add_settings_field(
-				'stf_search', // ID
-				'Search Results', // Title 
-				array( $this, 'stf_search' ), // Callback
-				'stf-settings', // Page
-				'exclude_options' // Section           
+				'stf_search',
+				'Search Results', 
+				array( $this, 'stf_search' ),
+				'stf-settings',
+				'exclude_options'          
 			);
 			
 			// Post Type Archives options
 			add_settings_field(
-				'stf_post_type_archives', // ID
-				'Post Type Archives', // Title 
-				array( $this, 'stf_post_type_archives' ), // Callback
-				'stf-settings', // Page
-				'exclude_options' // Section           
+				'stf_post_type_archives',
+				'Post Type Archives', 
+				array( $this, 'stf_post_type_archives' ),
+				'stf-settings',
+				'exclude_options'          
 			);
 			
 			// Taxonomy Archives options
 			add_settings_field(
-				'stf_taxonomy_archives', // ID
-				'Taxonomy Archives', // Title 
-				array( $this, 'stf_taxonomy_archives' ), // Callback
-				'stf-settings', // Page
-				'exclude_options' // Section           
+				'stf_taxonomy_archives',
+				'Taxonomy Archives', 
+				array( $this, 'stf_taxonomy_archives' ),
+				'stf-settings',
+				'exclude_options'          
+			);
+			
+			// Author Archives options
+			add_settings_field(
+				'stf_author_archive',
+				'Author Archives', 
+				array( $this, 'stf_author_archive' ),
+				'stf-settings',
+				'exclude_options'          
 			);
 			
 			// Archive option
 			add_settings_field(
-				'stf_archive', // ID
-				'Other Archive Pages', // Title 
-				array( $this, 'stf_archive' ), // Callback
-				'stf-settings', // Page
-				'exclude_options' // Section           
+				'stf_archive',
+				'Other Archive Pages', 
+				array( $this, 'stf_archive' ),
+				'stf-settings',
+				'exclude_options'          
 			);
 			
 			// Header Scripts Section
 			add_settings_section(
-				'header_script_options', // ID
-				'Header Scripts', // Title
-				array( $this, 'print_header_script_section_info' ), // Callback
-				'stf-settings' // Page
+				'header_script_options',
+				'Header Scripts',
+				array( $this, 'print_header_script_section_info' ),
+				'stf-settings'
 			);
 			
 			// Archive option
 			add_settings_field(
-				'stf_jquery_header', // ID
-				'Keep jQuery in the Header', // Title 
-				array( $this, 'stf_jquery_header' ), // Callback
-				'stf-settings', // Page
-				'header_script_options' // Section           
+				'stf_jquery_header',
+				'Keep jQuery in the Header', 
+				array( $this, 'stf_jquery_header' ),
+				'stf-settings',
+				'header_script_options'          
 			);
 		}
 		
@@ -181,23 +190,24 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 				
 			if( isset( $input['stf_exclude_archive'] ) )
 				$new_input['stf_exclude_archive'] = absint( $input['stf_exclude_archive'] );
-				
-				// Post Type options
-				$post_types = $this->post_type_options();
-				if( is_array( $post_types ) ) {
-					foreach( $post_types as $option ) {
-						if( isset( $input[ $option ] ) )
-							$new_input[ $option ] = absint( $input[ $option ] );
-					}
+			if( isset( $input['stf_exclude_author_archive'] ) )
+				$new_input['stf_exclude_author_archive'] = absint( $input['stf_exclude_author_archive'] );
+			
+			// Post Type options
+			$post_types = $this->post_type_options();
+			if( is_array( $post_types ) ) {
+				foreach( $post_types as $option ) {
+					if( isset( $input[ $option ] ) )
+						$new_input[ $option ] = absint( $input[ $option ] );
 				}
-				
-				// Taxonomy options
-				$taxes = $this->taxonomy_options();
-				if( is_array( $taxes ) ) {
-					foreach( $taxes as $option ) {
-						if( isset( $input[ $option ] ) )
-							$new_input[ $option ] = absint( $input[ $option ] );
-					}
+			}
+			
+			// Taxonomy options
+			$taxes = $this->taxonomy_options();
+			if( is_array( $taxes ) ) {
+				foreach( $taxes as $option ) {
+					if( isset( $input[ $option ] ) )
+						$new_input[ $option ] = absint( $input[ $option ] );
 				}
 			}
 			
@@ -333,6 +343,13 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		 *
 		 * @since 0.6
 		 */
+		public function stf_author_archive() {
+			if( !isset( $this->options['stf_exclude_author_archive'] ) )
+				$this->options['stf_exclude_author_archive'] = 0;
+			
+			echo '<input type="checkbox" name="' . STF_SETTINGS_FIELD . '[stf_exclude_author_archive]" ' . checked( $this->options['stf_exclude_author_archive'], 1, false ) . ' value="1">';
+
+		}
 		
 		/** 
 		 * Get the settings option array and print one of its values.
