@@ -92,13 +92,14 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 				STF_SETTINGS_FIELD, // Option name
 				array( $this, 'sanitize' ) // Sanitize
 			);
-
+			
+			// Template Options Section
 			add_settings_section(
 				'exclude_options', // ID
 				'Exclude Options', // Title
-				array( $this, 'print_section_info' ), // Callback
+				array( $this, 'print_exclude_options_section_info' ), // Callback
 				'stf-settings' // Page
-			);  
+			);
 			
 			// Home page option
 			add_settings_field(
@@ -144,6 +145,23 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 				'stf-settings', // Page
 				'exclude_options' // Section           
 			);
+			
+			// Header Scripts Section
+			add_settings_section(
+				'header_script_options', // ID
+				'Header Scripts', // Title
+				array( $this, 'print_header_script_section_info' ), // Callback
+				'stf-settings' // Page
+			);
+			
+			// Archive option
+			add_settings_field(
+				'stf_jquery_header', // ID
+				'Keep jQuery in the Header', // Title 
+				array( $this, 'stf_jquery_header' ), // Callback
+				'stf-settings', // Page
+				'header_script_options' // Section           
+			);
 		}
 		
 		/**
@@ -181,6 +199,10 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 							$new_input[ $option ] = absint( $input[ $option ] );
 					}
 				}
+			}
+			
+			if( isset( $input['stf_jquery_header'] ) )
+				$new_input['stf_jquery_header'] = absint( $input['stf_jquery_header'] );
 				
 			return $new_input;
 		}
@@ -232,8 +254,8 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		 *
 		 * @since 0.6
 		 */
-		public function print_section_info() {
-			echo _x( 'Select which templates should <em>not</em> have scripts moved to the footer (to exclude from this plugin):', STF_DOMAIN );
+		public function print_exclude_options_section_info() {
+			echo _x( 'Select which templates should <em><strong>not</strong></em> have scripts moved to the footer:', STF_DOMAIN );
 		}
 
 		/** 
@@ -311,6 +333,12 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		 *
 		 * @since 0.6
 		 */
+		
+		/** 
+		 * Get the settings option array and print one of its values.
+		 *
+		 * @since 0.6
+		 */
 		public function stf_archive() {
 			if( !isset( $this->options['stf_exclude_archive'] ) )
 				$this->options['stf_exclude_archive'] = 0;
@@ -318,6 +346,31 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 			echo '<input type="checkbox" name="' . STF_SETTINGS_FIELD . '[stf_exclude_archive]" ' . checked( $this->options['stf_exclude_archive'], 1, false ) . ' value="1">';
 
 		}
+		
+		/** 
+		 * Print the Section text.
+		 *
+		 * @since 0.6
+		 */
+		public function print_header_script_section_info() {
+			echo _x( 'Options for keeping specific scripts in the header, if they occur. Want to exclude a different script? Check out the <a href="%s" title="On Github">documentation</a> for more information.', STF_DOMAIN );
+		}
+		
+		/** 
+		 * Get the settings option array and print one of its values.
+		 *
+		 * @since 0.6
+		 */
+		public function stf_jquery_header() {
+			if( !isset( $this->options['stf_jquery_header'] ) )
+				$this->options['stf_jquery_header'] = 0;
+			
+			echo '<input type="checkbox" name="' . STF_SETTINGS_FIELD . '[stf_jquery_header]" ' . checked( $this->options['stf_jquery_header'], 1, false ) . ' value="1">';
+
+		}
+		
+		///////////// Post Metabox /////////////
+		
 		
 		/**
 		 * Initialize the single post metabox.

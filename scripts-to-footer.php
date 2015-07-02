@@ -187,12 +187,13 @@ class Scripts_To_Footer {
 	 * @since 0.2
 	 */
 	function init() {
+		
 		// Run the plugin
 		add_action( 'wp_enqueue_scripts', array( $this, 'clean_head' ) );
 		add_filter( 'stf_include', array( $this, 'stf_includes' ) );
 		
 		// Set the header scripts to be forced into the header
-		$this->header_scripts = apply_filters( 'stf_exclude_scripts', array() );
+		$this->set_header_scripts();
 		
 		// Add select scripts into the header
 		add_action( 'wp_head', array( $this, 'print_head_scripts' ) );
@@ -209,6 +210,21 @@ class Scripts_To_Footer {
 	}
 	
 	/**
+	 * Set the scripts to be printed in the header, based on options and filter.
+	 *
+	 * @since 0.6
+	 */
+	public function set_header_scripts() {
+		if( $exclude = stf_get_option( 'stf_jquery_header', false ) ) {
+			$head_scripts = array( 'jquery' );
+		} else {
+			$head_scripts = array();
+		}
+		
+		$this->header_scripts = apply_filters( 'stf_exclude_scripts', $head_scripts );
+	}
+	
+	/**
 	 * The holy grail: print select scripts in the header!
 	 *
 	 * @since 0.6
@@ -221,6 +237,7 @@ class Scripts_To_Footer {
 			if( !is_string( $script ) )
 				continue;
 			
+			// If the script is enqueued for the page, print it
 			if( wp_script_is( $script ) )
 				wp_print_scripts( $script );
 		}
