@@ -308,15 +308,28 @@ class Scripts_To_Footer {
 		// Search Result Page
 		} elseif( is_search() ) {
 			$type = 'search';
+		
+		// Author Archive
+		} elseif( is_author() ) {
+			$type = 'author_archive';
+		
+		// Category Archive
+		} elseif( is_category() ) {
 			
-		// Post Type Archive
-		} elseif( is_post_type_archive() ) {
+			if( $this->tax_supported( 'category' ) ) {
+				$type = "category_archive";
+			} else {
+				$this->log_me( 'Error in category check' );
+				return false;
+			} 
+	
+		// Tag Archive
+		} elseif( is_tag() ) {
 			
-			$post_type = get_post_type();
-			if( $this->post_type_supported( $post_type ) ) {
-				$type = "{$post_type}_archive";
-			} elseif( false === $post_type ) {
-				$this->log_me( 'Unable to get post type in post type archive check' );
+			if( $this->tax_supported( 'post_tag' ) ) {
+				$type = "post_tag_archive";
+			} elseif( false === $tax ) {
+				$this->log_me( 'Error in tag check' );
 				return false;
 			} 
 		
@@ -327,10 +340,21 @@ class Scripts_To_Footer {
 			if( isset( $tax->name ) && $this->tax_supported( $tax->name ) ) {
 				$type = "{$tax->name}_archive";
 			} elseif( false === $tax ) {
-				$this->log_me( 'Unable to get taxonomy in taxonomy archive check' );
+				$this->log_me( 'Error in taxonomy check' );
 				return false;
 			} 
 			
+		// Post Type Archive
+		} elseif( is_post_type_archive() ) {
+		
+			$post_type = get_post_type();
+			if( $this->post_type_supported( $post_type ) ) {
+				$type = "{$post_type}_archive";
+			} elseif( false === $post_type ) {
+				$this->log_me( 'Error in post type check check' );
+				return false;
+			}
+
 		// Generic archives (date, author, etc)
 		} elseif( is_archive() ) {
 			$type = 'archive';
@@ -351,6 +375,7 @@ class Scripts_To_Footer {
 				$include = true;
 			}
 			return apply_filters( "stf_{$type}", $include );
+			
 		} else {
 			$this->log_me( 'invalid $type element' );
 			return false;
