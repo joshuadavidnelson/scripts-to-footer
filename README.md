@@ -18,10 +18,14 @@ Download for your WordPress site here: [http://wordpress.org/plugins/scripts-to-
  - This is likely due to one of three things:
     1. The theme you're using is not enqueuing scripts per WordPress standards.
     2. You have a plugin that is not enqueing scripts per standards.
-    3. (Less common) There is a conflict with this plugin and another one. Deactivate all plugins and revert to a built-in theme (like TwentyTwelve or TwentyFifteen). Then activate Scripts-to-Footer. Check your HTML source to confirm it's working. If so, proceed to activate each of your other plugins one at a time, checking your HTML source each time to see if the scripts behavior changes. Eventually you'll find a conflict, if not with the plugins then activate your theme and check. Please feel free to report conflicts on the Support Forum. If there is something wrong with Scripts-to-Footer, we'll update it. However, if it's a another plugin or theme we can only contact the developer with the issue to attempt to resolve it.
+    3. (Less common) There is a conflict with this plugin and another one. Deactivate all plugins and revert to a built-in theme (like TwentyTwelve or TwentyFifteen). Then activate Scripts-to-Footer. Check your HTML source to confirm it's working. 
+	   
+	   If so, proceed to activate each of your other plugins one at a time, checking your HTML source each time to see if the scripts behavior changes. Eventually you'll find a conflict, if not with the plugins then activate your theme and check.
+	   
+	   Please feel free to open a [Github Issue](https://github.com/joshuadavidnelson/scripts-to-footer/issues) to report conflicts or goto [the  WP.org support forum](https://wordpress.org/support/plugin/scripts-to-footerphp). If there is something wrong with Scripts-to-Footer, we'll update it. However, if it's a another plugin or theme we can only contact the developer with the issue to attempt to resolve it.
 
 2. Everything Breaks!!
- - There are lots of scripts that require things like jQuery in the header. In those cases, perhaps Scripts-to-Footer isn't the best fit. I'd recommend trying a minifying plugin instead. If you'd like to proceed with using Scripts-to-Footer you'll have to do some custom coding in your functions.php file, or via a custom plugin file. Follow [this walkthrough](http://joshuadnelson.com/scripts-to-footer-plugin/) to exclude specific scripts from Scripts-to-Footer and keep them in the header. I would not recommend this method for a large number of scripts, though. 
+ - There are lots of scripts that require things like jQuery in the header. Try checking the "Keep jQuery in the header" option in Settings > Scripts to Footer or using the `stf_exclude_scripts` filter noted in the [documnetation](https://github.com/joshuadavidnelson/scripts-to-footer/wiki)
 
 3. My Slider stopped working.
  - See number 2.
