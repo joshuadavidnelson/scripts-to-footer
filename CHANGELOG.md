@@ -7,7 +7,7 @@
 - Add this changelog as a separate file.
 - Change the custom post type filter. Refer to update FAQ and Github wiki.
 - Add support for custom taxonomy archives.
-- Change the exclude filter, to be more relavent to the new options. Older filter is depreciated, but still supported (for now).
+- Change the exclude filter, to be more relevant to the new options. Older filter is depreciated, but still supported (for now).
 - Update the post meta for disabling the plugin on specific posts/pages.
 - Add Github Updater support.
 - Removed CMB and built metaboxes the old fashion way.
