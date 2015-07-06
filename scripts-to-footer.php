@@ -16,7 +16,7 @@
  * Author URI: http://joshuadnelson.com
  * License: GPL2
  * GitHub Plugin URI: https://github.com/joshuadavidnelson/scripts-to-footer 
- * GitHub Branch: develop
+ * GitHub Branch: master
  *
  **/
 
