@@ -370,7 +370,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		 * @since 0.6
 		 */
 		public function print_header_script_section_info() {
-			echo _x( 'Options for keeping specific scripts in the header, if they occur. Want to exclude a different script? Check out the <a href="%s" title="On Github">documentation</a> for more information.', STF_DOMAIN );
+			echo sprintf( __( 'Options for keeping specific scripts in the header, if they occur. Want to exclude a different script? Check out the <a href="%s" title="On Github">documentation</a> for more information.', STF_DOMAIN ), 'https://github.com/joshuadavidnelson/scripts-to-footer/wiki#header-scripts' );
 		}
 		
 		/** 
@@ -387,7 +387,6 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		}
 		
 		///////////// Post Metabox /////////////
-		
 		
 		/**
 		 * Initialize the single post metabox.
