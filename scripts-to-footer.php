@@ -113,7 +113,7 @@ class Scripts_To_Footer {
 	static function activation_check() {
 		if ( ! self::compatible_version() ) {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
-			wp_die( __( 'My Plugin requires WordPress 3.7 or higher!', 'my-plugin' ) );
+			wp_die( __( 'Scripts-to-Footer requires WordPress 3.1.0 or higher', 'stf' ) );
 		} else {
 			// Save the previous version we're upgrading from
 			$current_version = get_option( 'stf_version', false );
@@ -233,13 +233,17 @@ class Scripts_To_Footer {
 		if( !isset( $this->header_scripts ) || empty( $this->header_scripts ) || !is_array( $this->header_scripts ) )
 			return;
 		
-		foreach( $this->header_scripts as $script ) {
-			if( !is_string( $script ) )
-				continue;
+		// The main filter, true inacts the plugin, false does not (excludes the page)
+		$include = $this->is_included();
+		if( $this->is_included() ) {
+			foreach( $this->header_scripts as $script ) {
+				if( !is_string( $script ) )
+					continue;
 			
-			// If the script is enqueued for the page, print it
-			if( wp_script_is( $script ) )
-				wp_print_scripts( $script );
+				// If the script is enqueued for the page, print it
+				if( wp_script_is( $script ) )
+					wp_print_scripts( $script );
+			}
 		}
 	}
 	
@@ -258,7 +262,7 @@ class Scripts_To_Footer {
 			return;
 		
 		// The main filter, true inacts the plugin, false does not (excludes the page)
-		$include = apply_filters( 'stf_include', true );
+		$include = $this->is_included();
 		
 		// If this isn't set, then we're missing something
 		if( !isset( $include ) ) {
@@ -271,8 +275,26 @@ class Scripts_To_Footer {
 			remove_action( 'wp_head', 'wp_print_scripts' ); 
 			remove_action( 'wp_head', 'wp_print_head_scripts', 9 ); 
 			remove_action( 'wp_head', 'wp_enqueue_scripts', 1 ); 
-		} elseif( false !== $include ) {
-			$this->log_me( 'Invalid stf_include filter value' );
+		}
+	}
+
+	/**
+	 * Determing if the current page is included, via a filter.
+	 *
+	 * @since 0.6
+	 *
+	 * @return boolean Default is true.
+	 */
+	public function is_included() {
+		$include = apply_filters( 'stf_include', true );
+		
+		if( true === $include ) {
+			return true;
+		} elseif( false === $include ) {
+			return false;
+		} else {
+			$this->log_me( 'Non-boolean value in the stf_include filter' );
+			return true;
 		}
 	}
 	
@@ -378,7 +400,6 @@ class Scripts_To_Footer {
 		
 		// if all else fails, log an error, return false
 		} else {
-			$this->log_me( 'Unspecified error in includes check' );
 			return false;
 		}
 		
