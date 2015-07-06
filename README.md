@@ -14,11 +14,10 @@ Please utilize the [issues](https://github.com/joshuadavidnelson/scripts-to-foot
 Download for your WordPress site here: [http://wordpress.org/plugins/scripts-to-footerphp/](http://wordpress.org/plugins/scripts-to-footerphp/)
 
 ### FAQ
-1. My scripts are not moving to the footer.
- - This is likely due to one of three things:
-    1. The theme you're using is not enqueuing scripts per WordPress standards.
-    2. You have a plugin that is not enqueing scripts per standards.
-    3. (Less common) There is a conflict with this plugin and another one. Deactivate all plugins and revert to a built-in theme (like TwentyTwelve or TwentyFifteen). Then activate Scripts-to-Footer. Check your HTML source to confirm it's working. 
+1. My scripts are not moving to the footer. This is likely due to one of three things:
+   1. The theme you're using is not enqueuing scripts per WordPress standards.
+   2. You have a plugin that is not enqueing scripts per standards.
+   3. (Less common) There is a conflict with this plugin and another one. Deactivate all plugins and revert to a built-in theme (like TwentyTwelve or TwentyFifteen). Then activate Scripts-to-Footer. Check your HTML source to confirm it's working. 
 	   
 	   If so, proceed to activate each of your other plugins one at a time, checking your HTML source each time to see if the scripts behavior changes. Eventually you'll find a conflict, if not with the plugins then activate your theme and check.
 	   
