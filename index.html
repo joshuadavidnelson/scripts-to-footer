@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>Scripts-to-footer by joshuadavidnelson</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>Scripts-to-footer</h1>
+          <h2>Move your scripts to the footer to speed up perceived page load times and improve user experience.</h2>
+        </header>
+
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/joshuadavidnelson/scripts-to-footer/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/joshuadavidnelson/scripts-to-footer/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/joshuadavidnelson/scripts-to-footer" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
+<a id="scripts-to-footer" class="anchor" href="#scripts-to-footer" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scripts To Footer</h1>
+
+<p>Sleek, light-weight WordPress plugin for moving javascript to the footer, while retaining styles in the header.</p>
+
+<p>Please utilize the <a href="https://github.com/joshuadavidnelson/scripts-to-footer/issues">issues</a> section if you run into problems or have suggestions for making the plugin better. You can also view the most recent official, stable release on the WordPress repo linked below.</p>
+
+<p><em>See the <a href="https://github.com/joshuadavidnelson/scripts-to-footer/wiki">wiki</a> for specifics on usage, like filters and work-arounds for specific scripts</em></p>
+
+<h3>
+<a id="wordpress-plugin" class="anchor" href="#wordpress-plugin" aria-hidden="true"><span class="octicon octicon-link"></span></a>WordPress Plugin</h3>
+
+<p>Download for your WordPress site here: <a href="http://wordpress.org/plugins/scripts-to-footerphp/">http://wordpress.org/plugins/scripts-to-footerphp/</a></p>
+
+<h3>
+<a id="faq" class="anchor" href="#faq" aria-hidden="true"><span class="octicon octicon-link"></span></a>FAQ</h3>
+
+<ol>
+<li>
+<p>My scripts are not moving to the footer.</p>
+
+<ul>
+<li>This is likely due to one of three things:
+
+<ol>
+<li>The theme you're using is not enqueuing scripts per WordPress standards.</li>
+<li>You have a plugin that is not enqueing scripts per standards.</li>
+<li>(Less common) There is a conflict with this plugin and another one. Deactivate all plugins and revert to a built-in theme (like TwentyTwelve or TwentyFifteen). Then activate Scripts-to-Footer. Check your HTML source to confirm it's working. If so, proceed to activate each of your other plugins one at a time, checking your HTML source each time to see if the scripts behavior changes. Eventually you'll find a conflict, if not with the plugins then activate your theme and check. Please feel free to report conflicts on the Support Forum. If there is something wrong with Scripts-to-Footer, we'll update it. However, if it's a another plugin or theme we can only contact the developer with the issue to attempt to resolve it.</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>
+<p>Everything Breaks!!</p>
+
+<ul>
+<li>There are lots of scripts that require things like jQuery in the header. In those cases, perhaps Scripts-to-Footer isn't the best fit. I'd recommend trying a minifying plugin instead. If you'd like to proceed with using Scripts-to-Footer you'll have to do some custom coding in your functions.php file, or via a custom plugin file. Follow <a href="http://joshuadnelson.com/scripts-to-footer-plugin/">this walkthrough</a> to exclude specific scripts from Scripts-to-Footer and keep them in the header. I would not recommend this method for a large number of scripts, though. </li>
+</ul>
+</li>
+<li>
+<p>My Slider stopped working.</p>
+
+<ul>
+<li>See number 2.</li>
+</ul>
+</li>
+<li>
+<p>My Page Speed hasn't improved (or it's worse)</p>
+
+<ul>
+<li>Actually, this plugin should not change your actual page speed - the same scripts are being loaded, that takes the same amount of time. However, by placing scripts in the footer you can change the <em>precieved</em> load times. Your page will likely load the visual content first, then the scripts - instead of loading scripts and slowing the visual portions of your site. That's the whole point. Outside of that, this plugin is not intended to increase page load speed or minify scripts in anyway.</li>
+</ul>
+</li>
+</ol>
+
+<h3>
+<a id="donate" class="anchor" href="#donate" aria-hidden="true"><span class="octicon octicon-link"></span></a>Donate</h3>
+
+<p>Like this plugin and feeling generous? Please consdier <a href="http://joshuadnelson.com/donate">donating</a> to support freelance development.</p>
+
+<h3>
+<a id="todo" class="anchor" href="#todo" aria-hidden="true"><span class="octicon octicon-link"></span></a>TODO</h3>
+
+<ul>
+<li>Add universal "deactivate/activate by default," similar to <a href="https://github.com/billerickson/genesis-title-toggle">Genesis Title Toggle</a>
+</li>
+<li>Updated <code>uninstall.php</code> to remove post meta data (currently only removes the unused settings field, see <a href="https://github.com/joshuadavidnelson/scripts-to-footer/issues/1">Issue #1</a>)</li>
+</ul>
+        </section>
+
+        <footer>
+          Scripts-to-footer is maintained by <a href="https://github.com/joshuadavidnelson">joshuadavidnelson</a><br>
+          This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+                  <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-53272204-2");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+      </div>
+    </div>
+  </body>
+</html>
