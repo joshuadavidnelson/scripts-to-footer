@@ -30,7 +30,7 @@ Download for your WordPress site here: [http://wordpress.org/plugins/scripts-to-
  - See number 2.
 
 4. My Page Speed hasn't improved (or it's worse)
- - Actually, this plugin should not change your actual page speed - the same scripts are being loaded, that takes the same amount of time. However, by placing scripts in the footer you can change the _precieved_ load times. Your page will likely load the visual content first, then the scripts - instead of loading scripts and slowing the visual portions of your site. That's the whole point. Outside of that, this plugin is not intended to increase page load speed or minify scripts in anyway.
+ - Actually, this plugin should not change your actual page speed - the same scripts are being loaded, that takes the same amount of time. However, by placing scripts in the footer you can change the _precieved_ load times. Your page will likely load the visual content first, then the scripts - instead of loading scripts and slowing the visual portions of your site. That's the whole point. Outside of that, this plugin is not intended to decrease actual page load times or minify scripts in anyway.
 
 ### Donate
 
