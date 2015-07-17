@@ -30,8 +30,3 @@ Download for your WordPress site here: [http://wordpress.org/plugins/scripts-to-
 ### Donate
 
 Like this plugin and feeling generous? Please consdier [donating](http://joshuadnelson.com/donate) to support freelance development.
-
-### TODO
-
-- Add universal "deactivate/activate by default," similar to [Genesis Title Toggle](https://github.com/billerickson/genesis-title-toggle)
-- Updated `uninstall.php` to remove post meta data (currently only removes the unused settings field, see [Issue #1](https://github.com/joshuadavidnelson/scripts-to-footer/issues/1))
