@@ -10,10 +10,9 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Move your scripts to the footer to help speed up perceived page load times and improve user experience.
 
-
 == Description ==
 
-This small plugin moves scripts to the footer to help speed up page load times, while keeping stylesheets in the header. Note that this only works if you have plugins and a theme that utilizes `wp_enqueue_scripts` correctly.
+This small plugin moves scripts to the footer. Note that this only works if you have plugins and a theme that utilizes `wp_enqueue_scripts` correctly.
 
 You can disable the plugin on specific pages and posts directly via the post/page edit screen metabox.
 
@@ -68,6 +67,9 @@ add_filter( 'stf_page', 'stf_exclude_my_page' );
 
 Replace `stf_page` with `stf_post` for posts, or the slug of your custom post type. For instance, a post type called "project" can be filtered with `stf_project`. 
 
+= More Documentation =
+[View this plugin on GitHub](https://github.com/joshuadavidnelson/scripts-to-footer/wiki).
+
 = View on GitHub =
 [View this plugin on GitHub](https://github.com/joshuadavidnelson/scripts-to-footer).
 
@@ -90,9 +92,9 @@ e.g.
    2. You have a plugin that is not enqueing scripts [per standards](https://codex.wordpress.org/Function_Reference/wp_enqueue_script#Using_a_Hook).
    3. (Less common) There is a conflict with this plugin and another one. Deactivate all plugins and revert to a built-in theme (like TwentyTwelve or TwentyFifteen). Then activate Scripts-to-Footer. Check your HTML source to confirm it's working. 
 	   
-	   If so, proceed to activate each of your other plugins one at a time, checking your HTML source each time to see if the scripts behavior changes. Eventually you'll find a conflict, if not with the plugins then activate your theme and check.
+	If so, proceed to activate each of your other plugins one at a time, checking your HTML source each time to see if the scripts behavior changes. Eventually you'll find a conflict, if not with the plugins then activate your theme and check.
 	   
-	   Please feel free to open a [Github Issue](https://github.com/joshuadavidnelson/scripts-to-footer/issues) to report conflicts or goto [the  WP.org support forum](https://wordpress.org/support/plugin/scripts-to-footerphp). If there is something wrong with Scripts-to-Footer, we'll update it. However, if it's a another plugin or theme we can only contact the developer with the issue to attempt to resolve it.
+	Please feel free to open a [Github Issue](https://github.com/joshuadavidnelson/scripts-to-footer/issues) to report conflicts or goto [the  WP.org support forum](https://wordpress.org/support/plugin/scripts-to-footerphp). If there is something wrong with Scripts-to-Footer, we'll update it. However, if it's a another plugin or theme we can only contact the developer with the issue to attempt to resolve it.
 
 2. Everything Breaks!!
  - There are lots of scripts that require things like jQuery in the header. Try checking the "Keep jQuery in the header" option in Settings > Scripts to Footer or using the `stf_exclude_scripts` filter noted in the [documnetation](https://github.com/joshuadavidnelson/scripts-to-footer/wiki) (Note: only for version 0.6 and higher).
@@ -101,7 +103,7 @@ e.g.
  - See number 2.
 
 4. My Page Speed hasn't improved (or it's worse)
- - Actually, this plugin should not change your actual page speed - the same scripts are being loaded, that takes the same amount of time. However, by placing scripts in the footer you can change the _precieved_ load times. Your page will likely load the visual content first, then the scripts - instead of loading scripts and slowing the visual portions of your site. That's the whole point. Outside of that, this plugin is not intended to increase page load speed or minify scripts in anyway.
+ - Actually, this plugin should not change your actual page speed - the same scripts are being loaded, that takes the same amount of time. However, by placing scripts in the footer you can change the _precieved_ load times, moving [render-blocking scripts](https://developers.google.com/speed/docs/insights/BlockingJS) below the fold, allowing your content to load first - instead of loading scripts and slowing the visual portions of your site. That's the whole point. Outside of that, this plugin is not intended to increase page load speed or minify scripts in anyway.
 
 
 == Screenshots ==

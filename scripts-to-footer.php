@@ -228,6 +228,8 @@ class Scripts_To_Footer {
 	 * The holy grail: print select scripts in the header!
 	 *
 	 * @since 0.6
+	 *
+	 * @return void
 	 */
 	function print_head_scripts() {
 		if( !isset( $this->header_scripts ) || empty( $this->header_scripts ) || !is_array( $this->header_scripts ) )
@@ -398,7 +400,7 @@ class Scripts_To_Footer {
 		} elseif( is_archive() ) {
 			$type = 'archive';
 		
-		// if all else fails, log an error, return false
+		// if all else fails return false
 		} else {
 			return false;
 		}
