@@ -11,7 +11,7 @@
  * Plugin Name: Scripts-To-Footer
  * Plugin URI: http://wordpress.org/plugins/scripts-to-footerphp/
  * Description: Moves scripts to the footer to decrease page load times, while keeping stylesheets in the header. Requires that plugins and theme correctly utilizes wp_enqueue_scripts hook. Can be disabled via a checkbox on specific pages and posts.
- * Version: 0.6
+ * Version: 0.6.0
  * Author: Joshua David Nelson
  * Author URI: http://joshuadnelson.com
  * License: GPL2
@@ -44,7 +44,7 @@ if( !defined( 'STF_DOMAIN' ) )
 
 // Plugin Verison
 if( !defined( 'STF_VERSION' ) )
-	define( 'STF_VERSION', '0.6' );
+	define( 'STF_VERSION', '0.6.0' );
 
 // Plugin name
 if( !defined( 'STF_NAME' ) )
@@ -73,7 +73,7 @@ class Scripts_To_Footer {
 	/**
 	 * An array of script slugs that should remain in the header.
 	 *
-	 * @since 0.6
+	 * @since 0.6.0
 	 *
 	 * @var array
 	 */
@@ -108,7 +108,7 @@ class Scripts_To_Footer {
 	 * if it doesn't meet minimum requirements. If it does, then it does some version
 	 * checks and updates the site version option.
 	 *
-	 * @since 0.6
+	 * @since 0.6.0
 	 */
 	static function activation_check() {
 		if ( ! self::compatible_version() ) {
@@ -136,7 +136,7 @@ class Scripts_To_Footer {
 	 * This is just in case the plugin is activated in a weird way,
 	 * or the versions change after activation.
 	 *
-	 * @since 0.6
+	 * @since 0.6.0
 	 */
 	function check_version() {
 		if ( ! self::compatible_version() ) {
@@ -153,7 +153,7 @@ class Scripts_To_Footer {
 	/**
 	 * Display notice on deactivation.
 	 *
-	 * @since 0.6
+	 * @since 0.6.0
 	 *
 	 * @return void
 	 */
@@ -164,7 +164,7 @@ class Scripts_To_Footer {
 	/**
 	 * Check everything is compatible.
 	 *
-	 * @since 0.6
+	 * @since 0.6.0
 	 *
 	 * @return boolean
 	 */
@@ -212,7 +212,7 @@ class Scripts_To_Footer {
 	/**
 	 * Set the scripts to be printed in the header, based on options and filter.
 	 *
-	 * @since 0.6
+	 * @since 0.6.0
 	 */
 	public function set_header_scripts() {
 		if( $exclude = stf_get_option( 'stf_jquery_header', false ) ) {
@@ -227,7 +227,7 @@ class Scripts_To_Footer {
 	/**
 	 * The holy grail: print select scripts in the header!
 	 *
-	 * @since 0.6
+	 * @since 0.6.0
 	 *
 	 * @return void
 	 */
@@ -283,7 +283,7 @@ class Scripts_To_Footer {
 	/**
 	 * Determing if the current page is included, via a filter.
 	 *
-	 * @since 0.6
+	 * @since 0.6.0
 	 *
 	 * @return boolean Default is true.
 	 */
@@ -303,7 +303,7 @@ class Scripts_To_Footer {
 	/**
 	 * Runs the various template checks and returns true/false.
 	 *
-	 * @since 0.6
+	 * @since 0.6.0
 	 *
 	 * @return boolean
 	 */
@@ -425,7 +425,7 @@ class Scripts_To_Footer {
 	/**
 	 * Check for post type support, via the filter. Default support for page and post.
 	 *
-	 * @since 0.6
+	 * @since 0.6.0
 	 *
 	 * @return array Supported posts
 	 */
@@ -442,7 +442,7 @@ class Scripts_To_Footer {
 	/**
 	 * Check if a post type is supported.
 	 *
-	 * @since 0.6
+	 * @since 0.6.0
 	 *
 	 * @return array Supported posts
 	 */
@@ -458,7 +458,7 @@ class Scripts_To_Footer {
 	/**
 	 * Check for custom taxonomy support, via the filter.
 	 *
-	 * @since 0.6
+	 * @since 0.6.0
 	 *
 	 * @return array Supported posts
 	 */
@@ -475,7 +475,7 @@ class Scripts_To_Footer {
 	/**
 	 * Check if a post type is supported.
 	 *
-	 * @since 0.6
+	 * @since 0.6.0
 	 *
 	 * @return array Supported posts
 	 */
@@ -491,7 +491,7 @@ class Scripts_To_Footer {
 	/**
 	 * Log any errors, if debug mode is on.
 	 *
-	 * @since 0.6
+	 * @since 0.6.0
 	 *
 	 * @param string $message
 	 */
@@ -543,7 +543,7 @@ if( !function_exists( 'stf_plugin_links' ) ) {
 /**
  * Add link to options page in plguin screen.
  *
- * @since 0.6
+ * @since 0.6.0
  *
  * @param string $links Links.
  * @return $links Amended links.

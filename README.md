@@ -5,8 +5,6 @@ Move your scripts to the footer to speed up perceived page load times and improv
 
 Please utilize the [issues](https://github.com/joshuadavidnelson/scripts-to-footer/issues) section if you run into problems or have suggestions for making the plugin better. You can also view the most recent official, stable release on the WordPress repo linked below.
 
-**Please note that the development branch is a "bleeding edge" version and is not fully tested. Use at your own risk**
-
 *See the [wiki](https://github.com/joshuadavidnelson/scripts-to-footer/wiki) for specifics on usage, like filters and work-arounds for specific scripts*
 
 ### WordPress Plugin
