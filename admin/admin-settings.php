@@ -34,7 +34,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/**
 		 * Start up
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 */
 		public function __construct() {
 			add_action( 'admin_menu', array( $this, 'add_plugin_page' ) );
@@ -44,7 +44,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/**
 		 * Add options page
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 */
 		public function add_plugin_page() {
 			// This page will be under "Settings"
@@ -60,7 +60,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/**
 		 * Options page callback
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 */
 		public function create_admin_page()  {
 			// Set class property
@@ -83,7 +83,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/**
 		 * Register and add settings
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 */
 		public function page_init() {
 			
@@ -181,7 +181,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/**
 		 * Sanitize each setting field as needed
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 *
 		 * @param array $input Contains all settings fields as array keys
 		 */
@@ -225,7 +225,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/**
 		 * Return the post type settings field names.
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 *
 		 * @return array
 		 */
@@ -246,7 +246,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/**
 		 * Return the post type settings field names.
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 *
 		 * @return array
 		 */
@@ -267,7 +267,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/** 
 		 * Print the Section text.
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 */
 		public function print_exclude_options_section_info() {
 			echo _x( 'Select which templates should <em><strong>not</strong></em> have scripts moved to the footer:', STF_DOMAIN );
@@ -289,7 +289,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/** 
 		 * Get the settings option array and print one of its values.
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 */
 		public function stf_search() {
 			if( !isset( $this->options['stf_exclude_search'] ) )
@@ -302,7 +302,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/**
 		 * Get the settings option array and print one of its values.
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 */
 		public function stf_post_type_archives() {
 			global $stf_scripts_to_footer;
@@ -324,7 +324,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/**
 		 * Get the settings option array and print one of its values.
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 */
 		public function stf_taxonomy_archives() {
 			global $stf_scripts_to_footer;
@@ -346,7 +346,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/** 
 		 * Get the settings option array and print one of its values.
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 */
 		public function stf_author_archive() {
 			if( !isset( $this->options['stf_exclude_author_archive'] ) )
@@ -359,7 +359,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/** 
 		 * Get the settings option array and print one of its values.
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 */
 		public function stf_archive() {
 			if( !isset( $this->options['stf_exclude_archive'] ) )
@@ -372,7 +372,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/** 
 		 * Print the Section text.
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 */
 		public function print_header_script_section_info() {
 			echo sprintf( __( 'Options for keeping specific scripts in the header, if they occur. Want to exclude a different script? Check out the <a href="%s" title="On Github">documentation</a> for more information.', STF_DOMAIN ), 'https://github.com/joshuadavidnelson/scripts-to-footer/wiki' );
@@ -381,7 +381,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/** 
 		 * Get the settings option array and print one of its values.
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 */
 		public function stf_jquery_header() {
 			if( !isset( $this->options['stf_jquery_header'] ) )
@@ -396,7 +396,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/**
 		 * Initialize the single post metabox.
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 */
 		function metabox_register() {
 			global $stf_scripts_to_footer;
@@ -412,7 +412,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/**
 		 * Output the single post metabox.
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 */
 		function metabox_render() {
 
@@ -441,7 +441,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		/**
 		 * Handle metabox saves
 		 *
-		 * @since 0.6
+		 * @since 0.6.0
 		 */
 		function metabox_save( $post_id, $post ) {
 
@@ -483,7 +483,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 /**
  * Get custom settings.
  *
- * @since 0.6
+ * @since 0.6.0
  *
  * @param string $key The key
  * @param string $setting The settings field

@@ -4,7 +4,7 @@ Tags: javascript, footer, speed, head, performance
 Donate link: http://jdn.im/donate
 Requires at least: 3.1.0
 Tested up to: 4.3.0
-Stable tag: 0.6
+Stable tag: 0.6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,7 +29,7 @@ Specifically for jQuery, see the settings page option, as it is a common request
 
 For any other scripts, use this filter:
 `
-//add_filter( 'stf_exclude_scripts', 'jdn_header_scripts', 10, 1 );
+add_filter( 'stf_exclude_scripts', 'jdn_header_scripts', 10, 1 );
 function jdn_header_scripts( $scripts ) {
 	$scripts[] = 'backbone'; // Replace 'backbone' with the script slug
 	return $scripts;
@@ -83,16 +83,18 @@ e.g.
 2. Activate the plugin through the 'Plugins' menu in WordPress
 3. You can disable the plugin on specific pages or posts via a checkbox.
 
-== FAQ ==
+== Screenshots ==
+
+1. The metabox that shows up on the Edit screen.
+2. The settings page.
+
+== Frequently Asked Questions ==
 
 1. My scripts are not moving to the footer. This is likely due to one of three things:
-   1. The theme you're using is not enqueuing scripts per [WordPress standards](https://codex.wordpress.org/Function_Reference/wp_enqueue_script#Using_a_Hook).
-   2. You have a plugin that is not enqueing scripts [per standards](https://codex.wordpress.org/Function_Reference/wp_enqueue_script#Using_a_Hook).
-   3. (Less common) There is a conflict with this plugin and another one. Deactivate all plugins and revert to a built-in theme (like TwentyTwelve or TwentyFifteen). Then activate Scripts-to-Footer. Check your HTML source to confirm it's working. 
-	   
-	If so, proceed to activate each of your other plugins one at a time, checking your HTML source each time to see if the scripts behavior changes. Eventually you'll find a conflict, if not with the plugins then activate your theme and check.
-	   
-	Please feel free to open a [Github Issue](https://github.com/joshuadavidnelson/scripts-to-footer/issues) to report conflicts or goto [the  WP.org support forum](https://wordpress.org/support/plugin/scripts-to-footerphp). If there is something wrong with Scripts-to-Footer, we'll update it. However, if it's a another plugin or theme we can only contact the developer with the issue to attempt to resolve it.
+ - The theme you're using is not enqueuing scripts per [WordPress standards](https://codex.wordpress.org/Function_Reference/wp_enqueue_script#Using_a_Hook).
+ - You have a plugin that is not enqueing scripts [per standards](https://codex.wordpress.org/Function_Reference/wp_enqueue_script#Using_a_Hook).
+ - (Less common) There is a conflict with this plugin and another one. Deactivate all plugins and revert to a built-in theme (like TwentyTwelve or TwentyFifteen). Then activate Scripts-to-Footer. Check your HTML source to confirm it's working. 
+ - If so, proceed to activate each of your other plugins one at a time, checking your HTML source each time to see if the scripts behavior changes. Eventually you'll find a conflict, if not with the plugins then activate your theme and check.
 
 2. Everything Breaks!!
  - There are lots of scripts that require things like jQuery in the header. Try checking the "Keep jQuery in the header" option in Settings > Scripts to Footer or using the `stf_exclude_scripts` filter noted in the [documnetation](https://github.com/joshuadavidnelson/scripts-to-footer/wiki) (Note: only for version 0.6 and higher).
@@ -103,28 +105,23 @@ e.g.
 4. My Page Speed hasn't improved (or it's worse)
  - Actually, this plugin should not change your actual page speed - the same scripts are being loaded, that takes the same amount of time. However, by placing scripts in the footer you can change the _precieved_ load times, moving [render-blocking scripts](https://developers.google.com/speed/docs/insights/BlockingJS) below the fold, allowing your content to load first - instead of loading scripts and slowing the visual portions of your site. That's the whole point. Outside of that, this plugin is not intended to increase page load speed or minify scripts in anyway.
 
-== Screenshots ==
-
-1. The metabox that shows up on the Edit screen.
-2. The settings page.
-
+Please feel free to open a [Github Issue](https://github.com/joshuadavidnelson/scripts-to-footer/issues) to report conflicts or goto [the  WP.org support forum](https://wordpress.org/support/plugin/scripts-to-footerphp). If there is something wrong with Scripts-to-Footer, we'll update it. However, if it's a another plugin or theme we can only contact the developer with the issue to attempt to resolve it.
 
 == Changelog ==
 
-=======
-= 0.6 =
+= 0.6.0 =
 Large number of improvements:
-- Add settings page with global disable options for home page, search pages, post type archives, taxonomy archives, and other archives.
-- Update uninstall.php to remove things correctly.
-- Add FAQ to readme.txt and readme.md.
-- Add a changelog as a separate file.
-- Change the custom post type filter. Refer to updated [FAQ](https://github.com/joshuadavidnelson/scripts-to-footer/#faq) and [documentation](https://github.com/joshuadavidnelson/scripts-to-footer/wiki).
-- Add support for custom taxonomy archives.
-- Change the exclude filter, to be more relevant to the new options. Older filter is depreciated, but still supported (for now).
-- Update the post meta for disabling the plugin on specific posts/pages.
-- Add Github Updater support.
-- Removed CMB and built metaboxes the old fashion way.
-- Added debug logging to better track any potential errors moving forward.
+ - Add settings page with global disable options for home page, search pages, post type archives, taxonomy archives, and other archives.
+ - Update uninstall.php to remove things correctly.
+ - Add FAQ to readme.txt and readme.md.
+ - Add a changelog as a separate file.
+ - Change the custom post type filter. Refer to updated [FAQ](https://github.com/joshuadavidnelson/scripts-to-footer/#faq) and [documentation](https://github.com/joshuadavidnelson/scripts-to-footer/wiki).
+ - Add support for custom taxonomy archives.
+ - Change the exclude filter, to be more relevant to the new options. Older filter is depreciated, but still supported (for now).
+ - Update the post meta for disabling the plugin on specific posts/pages.
+ - Add Github Updater support.
+ - Removed CMB and built metaboxes the old fashion way.
+ - Added debug logging to better track any potential errors moving forward.
 
 = 0.5 =
 Reverted metabox version to previous - invalid error was sneaking through.
@@ -141,10 +138,8 @@ Updating code to be object-oriented and added page metabox to disable plugin on 
 = 0.1 =
 Initial release
 
-
 == Upgrade Notice ==
 
-=======
 = 0.6 =
 Large improvements, including: a settings page to resolve issues on archives and blog roll pages, setting to keep jQuery in the header, and updated filters. Refer to the documentation if you are using a filter currently, as they have changed, prior to updating.
 

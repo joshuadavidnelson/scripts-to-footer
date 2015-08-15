@@ -1,6 +1,6 @@
 ### Changelog
 
-##### 0.6
+##### 0.6.0
 - Add settings page with global disable options for home page, search pages, post type archives, taxonomy archives, and other archives.
 - Update uninstall.php to remove things correctly.
 - Add FAQ to readme.txt and readme.md.
