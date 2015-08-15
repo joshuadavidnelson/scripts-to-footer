@@ -81,20 +81,24 @@ if ( is_multisite() ) {
 	$blogs = $wpdb->get_results( "SELECT blog_id FROM {$wpdb->blogs}", ARRAY_A );
 	
 	if ( $blogs ) {
-
 		foreach ( $blogs as $blog ) {
-		
 			// Repeat for every Site ID 
 			switch_to_blog( $blog[ 'blog_id' ] );
+			// Delete plugin options
 			delete_option( STF_SETTINGS_FIELD );
-		} 
-		
-		restore_current_blog();
+			delete_option( 'stf_version' );
 	
+			// Delete all post meta
+			delete_post_meta_by_key( 'stf_exclude' );
+		} 
+		restore_current_blog();
 	}
 	
 } else { // Otherwise, delete options from main options table
-
+	// Delete plugin options
 	delete_option( STF_SETTINGS_FIELD );
-	
+	delete_option( 'stf_version' );
+
+	// Delete all post meta
+	delete_post_meta_by_key( 'stf_exclude' );
 }
