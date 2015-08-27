@@ -11,7 +11,7 @@
  * Plugin Name: Scripts-To-Footer
  * Plugin URI: http://wordpress.org/plugins/scripts-to-footerphp/
  * Description: Moves scripts to the footer to decrease page load times, while keeping stylesheets in the header. Requires that plugins and theme correctly utilizes wp_enqueue_scripts hook. Can be disabled via a checkbox on specific pages and posts.
- * Version: 0.6.0
+ * Version: 0.6.1
  * Author: Joshua David Nelson
  * Author URI: http://joshuadnelson.com
  * License: GPL2
@@ -44,7 +44,7 @@ if( !defined( 'STF_DOMAIN' ) )
 
 // Plugin Verison
 if( !defined( 'STF_VERSION' ) )
-	define( 'STF_VERSION', '0.6.0' );
+	define( 'STF_VERSION', '0.6.1' );
 
 // Plugin name
 if( !defined( 'STF_NAME' ) )
@@ -360,7 +360,7 @@ class Scripts_To_Footer {
 			if( $this->tax_supported( 'category' ) ) {
 				$type = "category_archive";
 			} else {
-				$this->log_me( 'Error in category check' );
+			//	$this->log_me( 'Error in category check' );
 				return false;
 			} 
 	
@@ -369,8 +369,8 @@ class Scripts_To_Footer {
 			
 			if( $this->tax_supported( 'post_tag' ) ) {
 				$type = "post_tag_archive";
-			} elseif( false === $tax ) {
-				$this->log_me( 'Error in tag check' );
+			} else {
+			//	$this->log_me( 'Error in tag check' );
 				return false;
 			} 
 		
@@ -380,8 +380,8 @@ class Scripts_To_Footer {
 			$tax = get_taxonomy();
 			if( isset( $tax->name ) && $this->tax_supported( $tax->name ) ) {
 				$type = "{$tax->name}_archive";
-			} elseif( false === $tax ) {
-				$this->log_me( 'Error in taxonomy check' );
+			} else {
+			//	$this->log_me( 'Error in taxonomy check' );
 				return false;
 			} 
 			
@@ -391,8 +391,8 @@ class Scripts_To_Footer {
 			$post_type = get_post_type();
 			if( $this->post_type_supported( $post_type ) ) {
 				$type = "{$post_type}_archive";
-			} elseif( false === $post_type ) {
-				$this->log_me( 'Error in post type check check' );
+			} else {
+			//	$this->log_me( 'Error in post type check check' );
 				return false;
 			}
 
