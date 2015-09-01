@@ -360,7 +360,7 @@ class Scripts_To_Footer {
 			if( $this->tax_supported( 'category' ) ) {
 				$type = "category_archive";
 			} else {
-			//	$this->log_me( 'Error in category check' );
+				$this->log_me( 'Error in category check' );
 				return false;
 			} 
 	
@@ -370,7 +370,7 @@ class Scripts_To_Footer {
 			if( $this->tax_supported( 'post_tag' ) ) {
 				$type = "post_tag_archive";
 			} else {
-			//	$this->log_me( 'Error in tag check' );
+				$this->log_me( 'Error in tag check' );
 				return false;
 			} 
 		
