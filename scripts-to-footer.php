@@ -377,11 +377,15 @@ class Scripts_To_Footer {
 		// Taxonomy Archive
 		} elseif( is_tax() ) {
 			
-			$tax = get_taxonomy();
+			$taxonomy = get_query_var( 'taxonomy' );
+			if( !$taxonomy ) {
+				return false;
+			}
+			$tax = get_taxonomy( $taxonomy );
 			if( isset( $tax->name ) && $this->tax_supported( $tax->name ) ) {
 				$type = "{$tax->name}_archive";
 			} else {
-			//	$this->log_me( 'Error in taxonomy check' );
+				$this->log_me( 'Error in taxonomy check' );
 				return false;
 			} 
 			
@@ -392,7 +396,7 @@ class Scripts_To_Footer {
 			if( $this->post_type_supported( $post_type ) ) {
 				$type = "{$post_type}_archive";
 			} else {
-			//	$this->log_me( 'Error in post type check check' );
+				$this->log_me( 'Error in post type check check' );
 				return false;
 			}
 
