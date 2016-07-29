@@ -28,7 +28,7 @@ Download for your WordPress site here: [http://wordpress.org/plugins/scripts-to-
  - See number 2.
 
 4. My Page Speed hasn't improved (or it's worse)
- - Actually, this plugin should not change your actual page speed - the same scripts are being loaded, that takes the same amount of time. However, by placing scripts in the footer you can change the _precieved_ load times, moving [render-blocking scripts](https://developers.google.com/speed/docs/insights/BlockingJS) below the fold, allowing your content to load first - instead of loading scripts and slowing the visual portions of your site. That's the whole point. Outside of that, this plugin is not intended to decrease page load speed or minify scripts in anyway.
+ - This plugin should not change your actual page speed - the same scripts are being loaded, that takes the same amount of time. However, by placing scripts in the footer you can change the _precieved_ load times, moving [render-blocking scripts](https://developers.google.com/speed/docs/insights/BlockingJS) below the fold, allowing your content to load first - instead of loading scripts and slowing the visual portions of your site. That's the whole point. Outside of that, this plugin is not intended to decrease page load speed or minify scripts in anyway. **Ultimately, your page speed score is based on more than where you load your scripts and can be altered by moving them, but depending on what these scripts do it can go either way**. As with most things, it entirely depends on the unique configuration of your site.
 
 ### Donate
 
