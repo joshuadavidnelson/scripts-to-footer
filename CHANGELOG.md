@@ -1,5 +1,8 @@
 ### Changelog
 
+##### 0.6.1
+Updates custom taxonomy check for custom taxonomy archives and some error logging functions. 
+
 ##### 0.6.0
 - Add settings page with global disable options for home page, search pages, post type archives, taxonomy archives, and other archives.
 - Update uninstall.php to remove things correctly.
