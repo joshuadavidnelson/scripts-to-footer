@@ -45,16 +45,16 @@ if( !defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  */
 if( !is_user_logged_in() ) {
 	wp_die(
-		__( 'You must be logged in to run this script.', STF_DOMAIN ),
-		__( 'Scripts To Footer', STF_DOMAIN ),
+		__( 'You must be logged in to run this script.', 'scripts-to-footer' ),
+		__( 'Scripts To Footer', 'scripts-to-footer' ),
 		array( 'back_link' => true )
 	);
 } 
 
 if( !current_user_can( 'install_plugins' ) ) {
 	wp_die(
-		__( 'You do not have permission to run this script.', STF_DOMAIN ),
-		__( 'Scripts To Footer', STF_DOMAIN ),
+		__( 'You do not have permission to run this script.', 'scripts-to-footer' ),
+		__( 'Scripts To Footer', 'scripts-to-footer' ),
 		array( 'back_link' => true )
 	);	
 }
@@ -85,7 +85,7 @@ if ( is_multisite() ) {
 			// Repeat for every Site ID 
 			switch_to_blog( $blog[ 'blog_id' ] );
 			// Delete plugin options
-			delete_option( STF_SETTINGS_FIELD );
+			delete_option( 'scripts-to-footer' );
 			delete_option( 'stf_version' );
 	
 			// Delete all post meta
@@ -96,7 +96,7 @@ if ( is_multisite() ) {
 	
 } else { // Otherwise, delete options from main options table
 	// Delete plugin options
-	delete_option( STF_SETTINGS_FIELD );
+	delete_option( 'scripts-to-footer' );
 	delete_option( 'stf_version' );
 
 	// Delete all post meta
