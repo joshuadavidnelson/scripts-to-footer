@@ -349,7 +349,11 @@ class Scripts_To_Footer {
 		// Search Result Page
 		} elseif( is_search() ) {
 			$type = 'search';
-		
+
+		// 404 Pages
+		} elseif( is_404() ) {
+			$type = '404';
+
 		// Author Archive
 		} elseif( is_author() ) {
 			$type = 'author_archive';
