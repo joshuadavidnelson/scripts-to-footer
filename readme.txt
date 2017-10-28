@@ -3,8 +3,8 @@ Contributors: joshuadnelson
 Tags: javascript, footer, speed, head, performance
 Donate link: http://jdn.im/donate
 Requires at least: 3.1.0
-Tested up to: 4.6.1
-Stable tag: 0.6.1
+Tested up to: 4.8.2
+Stable tag: 0.6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -109,6 +109,12 @@ Please feel free to open a [Github Issue](https://github.com/joshuadavidnelson/s
 
 == Changelog ==
 
+= 0.6.2 =
+Added support for disabling plugin on 404 pages, thanks to Alex (@piscis on GitHub)
+
+= 0.6.1 =
+Updates custom taxonomy check for custom taxonomy archives and some error logging functions.
+
 = 0.6.0 =
 Large number of improvements:
  - Add settings page with global disable options for home page, search pages, post type archives, taxonomy archives, and other archives.
@@ -139,6 +145,12 @@ Updating code to be object-oriented and added page metabox to disable plugin on 
 Initial release
 
 == Upgrade Notice ==
+
+= 0.6.2 =
+Added support for disabling plugin on 404 pages, thanks to Alex (@piscis on GitHub)
+
+= 0.6.1 =
+Updates custom taxonomy check for custom taxonomy archives and some error logging functions.
 
 = 0.6 =
 Large improvements, including: a settings page to resolve issues on archives and blog roll pages, setting to keep jQuery in the header, and updated filters. Refer to the documentation if you are using a filter currently, as they have changed, prior to updating.
