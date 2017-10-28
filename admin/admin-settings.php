@@ -124,6 +124,15 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 				'exclude_options'          
 			);
 			
+			// Search Results option
+			add_settings_field(
+				'stf_404',
+				'404 pages', 
+				array( $this, 'stf_404' ),
+				'stf-settings',
+				'exclude_options'          
+			);
+			
 			// Post Type Archives options
 			add_settings_field(
 				'stf_post_type_archives',
@@ -182,6 +191,7 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 		 * Sanitize each setting field as needed
 		 *
 		 * @since 0.6.0
+		 * @since 0.6.2 added 404 support
 		 *
 		 * @param array $input Contains all settings fields as array keys
 		 */
@@ -192,9 +202,13 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 			
 			if( isset( $input['stf_exclude_search'] ) )
 				$new_input['stf_exclude_search'] = absint( $input['stf_exclude_search'] );
+			
+			if( isset( $input['stf_exclude_404'] ) )
+				$new_input['stf_exclude_404'] = absint( $input['stf_exclude_404'] );
 				
 			if( isset( $input['stf_exclude_archive'] ) )
 				$new_input['stf_exclude_archive'] = absint( $input['stf_exclude_archive'] );
+			
 			if( isset( $input['stf_exclude_author_archive'] ) )
 				$new_input['stf_exclude_author_archive'] = absint( $input['stf_exclude_author_archive'] );
 			
@@ -296,6 +310,19 @@ if( !class_exists( 'Scripts_To_Footer_Settings' ) ) {
 				$this->options['stf_exclude_search'] = 0;
 			
 			echo '<input type="checkbox" name="' . STF_SETTINGS_FIELD . '[stf_exclude_search]" ' . checked( $this->options['stf_exclude_search'], 1, false ) . ' value="1">';
+		
+		}
+		
+		/** 
+		 * Get the settings option array and print one of its values.
+		 *
+		 * @since 0.6.2
+		 */
+		public function stf_404() {
+			if( !isset( $this->options['stf_exclude_404'] ) )
+				$this->options['stf_exclude_404'] = 0;
+			
+			echo '<input type="checkbox" name="' . STF_SETTINGS_FIELD . '[stf_exclude_404]" ' . checked( $this->options['stf_exclude_404'], 1, false ) . ' value="1">';
 		
 		}
 		

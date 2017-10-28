@@ -1,5 +1,8 @@
 ### Changelog
 
+##### 0.6.2
+Added support for disabling plugin on 404 pages, thanks to Alex (@piscis on GitHub)
+
 ##### 0.6.1
 Updates custom taxonomy check for custom taxonomy archives and some error logging functions. 
 
