@@ -4,14 +4,14 @@
  *
  * @package    Scripts_To_Footer
  * @author     Joshua David Nelson <josh@joshuadnelson.com>
- * @copyright  Copyright (c) 2014, Joshua David Nelson
+ * @copyright  Copyright (c) 2018, Joshua David Nelson
  * @license    http://www.opensource.org/licenses/gpl-license.php GPL-2.0+
  * @link       http://joshuadnelson.com/scripts-to-footer-plugin
  *
  * Plugin Name: Scripts-To-Footer
  * Plugin URI: http://wordpress.org/plugins/scripts-to-footerphp/
  * Description: Moves scripts to the footer to decrease page load times, while keeping stylesheets in the header. Requires that plugins and theme correctly utilizes wp_enqueue_scripts hook. Can be disabled via a checkbox on specific pages and posts.
- * Version: 0.6.2
+ * Version: 0.6.3
  * Author: Joshua David Nelson
  * Author URI: http://joshuadnelson.com
  * License: GPL2
@@ -185,6 +185,7 @@ class Scripts_To_Footer {
 	 * and plugin links.
 	 *
 	 * @since 0.2
+	 * @since 0.6.3 moved 'set_header_scripts' into 'wp_head' action.
 	 */
 	function init() {
 		
@@ -193,10 +194,10 @@ class Scripts_To_Footer {
 		add_filter( 'stf_include', array( $this, 'stf_includes' ) );
 		
 		// Set the header scripts to be forced into the header
-		$this->set_header_scripts();
+		add_action( 'wp_head', array( $this, 'set_header_scripts' ), 1 );
 		
 		// Add select scripts into the header
-		add_action( 'wp_head', array( $this, 'print_head_scripts' ) );
+		add_action( 'wp_head', array( $this, 'print_head_scripts' ), 10 );
 		
 		// Add Links to Plugin Bar
 		if( function_exists( 'stf_plugin_links' ) )
@@ -222,6 +223,7 @@ class Scripts_To_Footer {
 		}
 		
 		$this->header_scripts = apply_filters( 'stf_exclude_scripts', $head_scripts );
+		
 	}
 	
 	/**
@@ -329,7 +331,7 @@ class Scripts_To_Footer {
 				// Older override check, depreciated
 				$excluded_override = apply_filters( 'scripts_to_footer_exclude_page', null, $queried_object_id );
 				if( 'on' == $excluded_override || true == $excluded_override ) {
-					$this->log_me( 'The scripts_to_footer_exclude_page is depreciated, please use stf_{$post_type} returning false to exclude');
+					$this->log_me( 'The \'scripts_to_footer_exclude_page\' is depreciated, please use \'stf_{$post_type}\' returning false to exclude the page.');
 					return false;
 				}
 				
