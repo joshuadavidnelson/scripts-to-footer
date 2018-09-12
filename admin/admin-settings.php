@@ -5,7 +5,7 @@
  * @package    Scripts_To_Footer
  * @subpackage Scripts_To_Footer_Settings
  * @author     Joshua David Nelson <josh@joshuadnelson.com>
- * @copyright  Copyright (c) 2015, Joshua David Nelson
+ * @copyright  Copyright (c) 2018, Joshua David Nelson
  * @license    http://www.opensource.org/licenses/gpl-license.php GPL-2.0+
  * @link       http://joshuadnelson.com/scripts-to-footer-plugin
  **/

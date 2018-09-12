@@ -4,7 +4,7 @@
  *
  * @package    Scripts_To_Footer
  * @author     Joshua David Nelson <josh@joshuadnelson.com>
- * @copyright  Copyright (c) 2014, Joshua David Nelson
+ * @copyright  Copyright (c) 2018, Joshua David Nelson
  * @license    http://www.opensource.org/licenses/gpl-license.php GPL-2.0+
  * @link       http://joshuadnelson.com/scripts-to-footer-plugin
  *
@@ -222,6 +222,7 @@ class Scripts_To_Footer {
 		}
 		
 		$this->header_scripts = apply_filters( 'stf_exclude_scripts', $head_scripts );
+		
 	}
 	
 	/**
@@ -329,7 +330,7 @@ class Scripts_To_Footer {
 				// Older override check, depreciated
 				$excluded_override = apply_filters( 'scripts_to_footer_exclude_page', null, $queried_object_id );
 				if( 'on' == $excluded_override || true == $excluded_override ) {
-					$this->log_me( 'The scripts_to_footer_exclude_page is depreciated, please use stf_{$post_type} returning false to exclude');
+					$this->log_me( 'The \'scripts_to_footer_exclude_page\' is depreciated, please use \'stf_{$post_type}\' returning false to exclude the page.');
 					return false;
 				}
 				

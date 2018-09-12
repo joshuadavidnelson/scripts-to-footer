@@ -32,4 +32,4 @@ Download for your WordPress site here: [http://wordpress.org/plugins/scripts-to-
 
 ### Donate
 
-Like this plugin and feeling generous? Please consdier [donating](http://joshuadnelson.com/donate) to support freelance development.
+Like this plugin and feeling generous? Please consider [donating](http://joshuadnelson.com/donate) to support freelance development.
