@@ -193,10 +193,10 @@ class Scripts_To_Footer {
 		add_filter( 'stf_include', array( $this, 'stf_includes' ) );
 		
 		// Set the header scripts to be forced into the header
-		$this->set_header_scripts();
+		add_action( 'wp_head', array( $this, 'set_header_scripts' ), 1 );
 		
 		// Add select scripts into the header
-		add_action( 'wp_head', array( $this, 'print_head_scripts' ) );
+		add_action( 'wp_head', array( $this, 'print_head_scripts' ), 10 );
 		
 		// Add Links to Plugin Bar
 		if( function_exists( 'stf_plugin_links' ) )
