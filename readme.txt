@@ -3,8 +3,8 @@ Contributors: joshuadnelson
 Tags: javascript, footer, speed, head, performance
 Donate link: http://jdn.im/donate
 Requires at least: 3.1.0
-Tested up to: 4.8.2
-Stable tag: 0.6.2
+Tested up to: 4.9.8
+Stable tag: 0.6.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,8 @@ function jdn_header_scripts( $scripts ) {
 `
 
 You will need the correct script slug, which is used when the script is registered, and the script will only be printed into the header *if it's enqueued*. Check out the scripts that come registered [out-of-the-box with WordPress](http://codex.wordpress.org/Function_Reference/wp_enqueue_script#Default_Scripts_Included_and_Registered_by_WordPress).
+
+**Note:** As of version 0.6.3, [conditional tags](https://codex.wordpress.org/Conditional_Tags) will work with the `stf_exclude_scripts` filter.
 
 = Custom Post Type Support =
 If you're comfortable with code you can use the `scripts_to_footer_post_types` filter to change the post types this applies to (it only applies to pages and posts by default). For example, if you have a custom post type called "project" you could add support for this metabox via the post type filter like this:
@@ -109,6 +111,9 @@ Please feel free to open a [Github Issue](https://github.com/joshuadavidnelson/s
 
 == Changelog ==
 
+= 0.6.3 =
+Moved the 'set_header_scripts' function into a 'wp_head' add_action to allow for conditional checks to work within the 'stf_exclude_scripts' filter. 
+
 = 0.6.2 =
 Added support for disabling plugin on 404 pages, thanks to Alex (@piscis on GitHub)
 
@@ -145,6 +150,9 @@ Updating code to be object-oriented and added page metabox to disable plugin on 
 Initial release
 
 == Upgrade Notice ==
+
+= 0.6.3 =
+Moved the 'set_header_scripts' function into a 'wp_head' add_action to allow for conditional checks to work within the 'stf_exclude_scripts' filter. 
 
 = 0.6.2 =
 Added support for disabling plugin on 404 pages, thanks to Alex (@piscis on GitHub)

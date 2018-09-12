@@ -1,5 +1,8 @@
 ### Changelog
 
+##### 0.6.3 - 9-12-18
+Moved the 'set_header_scripts' function into a 'wp_head' add_action to allow for conditional checks to work within the 'stf_exclude_scripts' filter. 
+
 ##### 0.6.2
 Added support for disabling plugin on 404 pages, thanks to Alex (@piscis on GitHub)
 
