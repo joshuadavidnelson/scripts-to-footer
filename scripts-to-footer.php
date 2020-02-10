@@ -50,11 +50,11 @@ if( ! defined( 'STF_NAME' ) )
 
 // Plugin Directory
 if( ! defined( 'STF_DIR' ) )
-    define( 'STF_DIR', WP_PLUGIN_DIR . '/' . STF_NAME );
+    define( 'STF_DIR', WP_PLUGIN_DIR . '/' . trim( dirname( plugin_basename( __FILE__ ) ), '/' ) );
 
 // Plugin URL
 if( ! defined( 'STF_URL' ) )
-    define( 'STF_URL', WP_PLUGIN_URL . '/' . STF_NAME );
+    define( 'STF_URL', WP_PLUGIN_URL . '/' . trim( dirname( plugin_basename( __FILE__ ) ), '/' ) );
 
 /**
  * Scripts to Footer Class.
