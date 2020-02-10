@@ -405,7 +405,6 @@ class Scripts_To_Footer {
 			if( isset( $tax->name ) && $this->tax_supported( $tax->name ) ) {
 				$type = "{$tax->name}_archive";
 			} else {
-				$this->log_me( 'Error in taxonomy check' );
 				return false;
 			} 
 			
@@ -416,7 +415,6 @@ class Scripts_To_Footer {
 			if( $this->post_type_supported( $post_type ) ) {
 				$type = "{$post_type}_archive";
 			} else {
-				$this->log_me( 'Error in post type check check' );
 				return false;
 			}
 
@@ -467,7 +465,6 @@ class Scripts_To_Footer {
 		if( is_array( $post_types ) ) {
 			return $post_types;
 		} else {
-			$this->log_me( 'Invalid post types returned in scripts_to_footer_post_types filter' );
 			return false;
         }
         
@@ -504,7 +501,6 @@ class Scripts_To_Footer {
 		if( is_array( $taxes ) ) {
 			return $taxes;
 		} else {
-			$this->log_me( 'Invalid taxonomies returned in scripts_to_footer_taxonomies filter' );
 			return false;
         }
         
