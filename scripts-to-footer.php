@@ -56,6 +56,11 @@ if( ! defined( 'STF_DIR' ) )
 if( ! defined( 'STF_URL' ) )
     define( 'STF_URL', WP_PLUGIN_URL . '/' . trim( dirname( plugin_basename( __FILE__ ) ), '/' ) );
 
+// Custom Debug Constant, intented for developer use
+if( ! defined( 'STF_DEBUG' ) )
+    define( 'STF_DEBUG', false );
+
+
 /**
  * Scripts to Footer Class.
  *
@@ -533,7 +538,7 @@ class Scripts_To_Footer {
 	 */
 	public function log_me( $message ) {
 
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
+		if ( $this->debug() ) {
 			if ( is_array( $message ) || is_object( $message ) ) {
 				error_log( 'Scripts-to-Footer Plugin Error: ' . print_r( $message, true ) );
 			} else {
@@ -543,6 +548,19 @@ class Scripts_To_Footer {
         
     }
     
+    /**
+     * Check to see if we're in a debug mode.
+     * 
+     * @since 0.6.5
+     *
+     * @return bool
+     */
+    private function debug() {
+
+        return defined( 'WP_DEBUG' ) && true === WP_DEBUG
+                && defined( 'STF_DEBUG' ) && true === STF_DEBUG;
+
+    }
 }
 
 /**
