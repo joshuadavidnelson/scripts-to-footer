@@ -3,8 +3,8 @@ Contributors: joshuadnelson
 Tags: javascript, footer, speed, head, performance
 Donate link: http://jdn.im/donate
 Requires at least: 3.1.0
-Tested up to: 4.9.8
-Stable tag: 0.6.3
+Tested up to: 5.3.2
+Stable tag: 0.6.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -111,6 +111,10 @@ Please feel free to open a [Github Issue](https://github.com/joshuadavidnelson/s
 
 == Changelog ==
 
+= 0.6.4 =
+- Removed unnecessary logging functions and added a debug check before logging anything.
+- Tidy up code spacing and inline-documentation.
+
 = 0.6.3 =
 Moved the 'set_header_scripts' function into a 'wp_head' add_action to allow for conditional checks to work within the 'stf_exclude_scripts' filter. 
 
@@ -150,6 +154,10 @@ Updating code to be object-oriented and added page metabox to disable plugin on 
 Initial release
 
 == Upgrade Notice ==
+
+= 0.6.4 =
+- Removed unnecessary logging functions and added a debug check before logging anything.
+- Tidy up code spacing and inline-documentation.
 
 = 0.6.3 =
 Moved the 'set_header_scripts' function into a 'wp_head' add_action to allow for conditional checks to work within the 'stf_exclude_scripts' filter. 
