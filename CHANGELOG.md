@@ -1,6 +1,6 @@
 ### Changelog
 
-##### 0.6.4 - 2-09-20
+##### 0.6.4 - 4-12-20
 - Removed unnecessary logging functions and added a debug check before logging anything.
 - Tidy up code spacing and inline-documentation.
 
