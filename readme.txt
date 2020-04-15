@@ -3,8 +3,8 @@ Contributors: joshuadnelson
 Tags: javascript, footer, speed, head, performance
 Donate link: http://jdn.im/donate
 Requires at least: 3.1.0
-Tested up to: 4.9.8
-Stable tag: 0.6.3
+Tested up to: 5.4
+Stable tag: 0.6.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -111,6 +111,11 @@ Please feel free to open a [Github Issue](https://github.com/joshuadavidnelson/s
 
 == Changelog ==
 
+= 0.6.4 =
+- Removed unnecessary logging functions and added a debug check before logging anything.
+- Tidy up code spacing and inline-documentation.
+- Added `STF_DEBUG` for use in error logging function with `WP_DEBUG`, both must be `true` before error logging is output to the debug.log file.
+
 = 0.6.3 =
 Moved the 'set_header_scripts' function into a 'wp_head' add_action to allow for conditional checks to work within the 'stf_exclude_scripts' filter. 
 
@@ -128,7 +133,7 @@ Large number of improvements:
  - Add a changelog as a separate file.
  - Change the custom post type filter. Refer to updated [FAQ](https://github.com/joshuadavidnelson/scripts-to-footer/#faq) and [documentation](https://github.com/joshuadavidnelson/scripts-to-footer/wiki).
  - Add support for custom taxonomy archives.
- - Change the exclude filter, to be more relevant to the new options. Older filter is depreciated, but still supported (for now).
+ - Change the exclude filter, to be more relevant to the new options. Older filter is deprecated, but still supported for backwards compatibility.
  - Update the post meta for disabling the plugin on specific posts/pages.
  - Add Github Updater support.
  - Removed CMB and built metaboxes the old fashion way.
@@ -150,6 +155,10 @@ Updating code to be object-oriented and added page metabox to disable plugin on 
 Initial release
 
 == Upgrade Notice ==
+
+= 0.6.4 =
+- Removed unnecessary logging functions and added a debug check before logging anything.
+- Tidy up code spacing and inline-documentation.
 
 = 0.6.3 =
 Moved the 'set_header_scripts' function into a 'wp_head' add_action to allow for conditional checks to work within the 'stf_exclude_scripts' filter. 

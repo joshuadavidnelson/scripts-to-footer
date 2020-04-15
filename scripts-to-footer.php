@@ -4,14 +4,14 @@
  *
  * @package    Scripts_To_Footer
  * @author     Joshua David Nelson <josh@joshuadnelson.com>
- * @copyright  Copyright (c) 2018, Joshua David Nelson
+ * @copyright  Copyright (c) 2020, Joshua David Nelson
  * @license    http://www.opensource.org/licenses/gpl-license.php GPL-2.0+
  * @link       http://joshuadnelson.com/scripts-to-footer-plugin
  *
  * Plugin Name: Scripts-To-Footer
  * Plugin URI: http://wordpress.org/plugins/scripts-to-footerphp/
  * Description: Moves scripts to the footer to decrease page load times, while keeping stylesheets in the header. Requires that plugins and theme correctly utilizes wp_enqueue_scripts hook. Can be disabled via a checkbox on specific pages and posts.
- * Version: 0.6.3
+ * Version: 0.6.4
  * Author: Joshua David Nelson
  * Author URI: http://joshuadnelson.com
  * License: GPL2
@@ -22,9 +22,7 @@
 
 /**
  * Prevent direct access to this file.
- *
- * @since 0.2
- **/
+**/
 if( !defined( 'ABSPATH' ) ) {
         exit( 'You are not allowed to access this file directly.' );
 }
@@ -32,38 +30,43 @@ if( !defined( 'ABSPATH' ) ) {
 /**
  * Define our plugin variables
  *
- * @since 0.2
+ * @since 0.2.0
  **/
 // Plugin Settings Field
-if( !defined( 'STF_SETTINGS_FIELD' ) )
+if( ! defined( 'STF_SETTINGS_FIELD' ) )
 	define( 'STF_SETTINGS_FIELD', 'scripts-to-footer' );
 
 // Plugin Domain
-if( !defined( 'STF_DOMAIN' ) )
+if( ! defined( 'STF_DOMAIN' ) )
 	define( 'STF_DOMAIN', 'stf' );
 
 // Plugin Verison
 if( !defined( 'STF_VERSION' ) )
-	define( 'STF_VERSION', '0.6.2' );
+	define( 'STF_VERSION', '0.6.4' );
 
 // Plugin name
-if( !defined( 'STF_NAME' ) )
+if( ! defined( 'STF_NAME' ) )
     define( 'STF_NAME', trim( dirname( plugin_basename( __FILE__ ) ), '/' ) );
 
 // Plugin Directory
-if( !defined( 'STF_DIR' ) )
-    define( 'STF_DIR', WP_PLUGIN_DIR . '/' . STF_NAME );
+if( ! defined( 'STF_DIR' ) )
+    define( 'STF_DIR', WP_PLUGIN_DIR . '/' . trim( dirname( plugin_basename( __FILE__ ) ), '/' ) );
 
 // Plugin URL
-if( !defined( 'STF_URL' ) )
-    define( 'STF_URL', WP_PLUGIN_URL . '/' . STF_NAME );
+if( ! defined( 'STF_URL' ) )
+    define( 'STF_URL', WP_PLUGIN_URL . '/' . trim( dirname( plugin_basename( __FILE__ ) ), '/' ) );
+
+// Custom Debug Constant, intented for developer use
+if( ! defined( 'STF_DEBUG' ) )
+    define( 'STF_DEBUG', false );
+
 
 /**
  * Scripts to Footer Class.
  *
  * Forces scripts to the footer, unless excluded in the settings page.
  *
- * @since 0.2
+ * @since 0.2.0
  */
 global $stf_scripts_to_footer;
 $stf_scripts_to_footer = new Scripts_To_Footer();
@@ -84,9 +87,10 @@ class Scripts_To_Footer {
 	 *
 	 * Registers our activation hook and init hook.
 	 *
-	 * @since 0.2
+	 * @since 0.2.0
 	 */
 	function __construct() {
+        
 		add_action( 'admin_init', array( $this, 'check_version' ) );
 
 		// Don't run anything else in the plugin, if we're on an incompatible
@@ -98,7 +102,8 @@ class Scripts_To_Footer {
 		include_once( STF_DIR . '/admin/admin-settings.php' );
 		
 		// Make it so
-		add_action( 'init', array( $this, 'init' ) );
+        add_action( 'init', array( $this, 'init' ) );
+        
 	}
 	
 	/**
@@ -111,6 +116,7 @@ class Scripts_To_Footer {
 	 * @since 0.6.0
 	 */
 	static function activation_check() {
+        
 		if ( ! self::compatible_version() ) {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
 			wp_die( __( 'Scripts-to-Footer requires WordPress 3.1.0 or higher', 'stf' ) );
@@ -127,7 +133,8 @@ class Scripts_To_Footer {
 		
 			// Save current version
 			update_option( 'stf_version', STF_VERSION );
-		}
+        }
+        
 	}
 	
 	/**
@@ -139,6 +146,7 @@ class Scripts_To_Footer {
 	 * @since 0.6.0
 	 */
 	function check_version() {
+
 		if ( ! self::compatible_version() ) {
 			if ( is_plugin_active( plugin_basename( __FILE__ ) ) ) {
 				deactivate_plugins( plugin_basename( __FILE__ ) );
@@ -147,18 +155,19 @@ class Scripts_To_Footer {
 					unset( $_GET['activate'] );
 				}
 			}
-		}
+        }
+        
 	}
 	
 	/**
 	 * Display notice on deactivation.
 	 *
 	 * @since 0.6.0
-	 *
-	 * @return void
 	 */
 	function disabled_notice() {
-		echo '<strong>' . esc_html__( 'Scripts-to-Footer requires WordPress 3.1.0 or higher.', STF_DOMAIN ) . '</strong>';
+
+        echo '<strong>' . esc_html__( 'Scripts-to-Footer requires WordPress 3.1.0 or higher.', STF_DOMAIN ) . '</strong>';
+        
 	}
 	
 	/**
@@ -169,13 +178,15 @@ class Scripts_To_Footer {
 	 * @return boolean
 	 */
 	static function compatible_version() {
+
 		if ( version_compare( $GLOBALS['wp_version'], '3.1.0', '<' ) ) {
 			return false;
 		}
 
 		// Add sanity checks for other version requirements here
 
-		return true;
+        return true;
+        
 	}
 
 	/**
@@ -184,7 +195,7 @@ class Scripts_To_Footer {
 	 * Makes some checks and runs the filter, sets up the admin settings page
 	 * and plugin links.
 	 *
-	 * @since 0.2
+	 * @since 0.2.0
 	 * @since 0.6.3 moved 'set_header_scripts' into 'wp_head' action.
 	 */
 	function init() {
@@ -207,7 +218,8 @@ class Scripts_To_Footer {
 		if( function_exists( 'stf_plugin_settings_link' ) ) {
 			$plugin = plugin_basename(__FILE__); 
 			add_filter( "plugin_action_links_$plugin", 'stf_plugin_settings_link' );
-		}
+        }
+        
 	}
 	
 	/**
@@ -216,6 +228,7 @@ class Scripts_To_Footer {
 	 * @since 0.6.0
 	 */
 	public function set_header_scripts() {
+        
 		if( $exclude = stf_get_option( 'stf_jquery_header', false ) ) {
 			$head_scripts = array( 'jquery' );
 		} else {
@@ -230,25 +243,24 @@ class Scripts_To_Footer {
 	 * The holy grail: print select scripts in the header!
 	 *
 	 * @since 0.6.0
-	 *
-	 * @return void
 	 */
 	function print_head_scripts() {
-		if( !isset( $this->header_scripts ) || empty( $this->header_scripts ) || !is_array( $this->header_scripts ) )
+
+		if( ! isset( $this->header_scripts ) || empty( $this->header_scripts ) || ! is_array( $this->header_scripts ) )
 			return;
 		
 		// The main filter, true inacts the plugin, false does not (excludes the page)
-		$include = $this->is_included();
 		if( $this->is_included() ) {
 			foreach( $this->header_scripts as $script ) {
-				if( !is_string( $script ) )
+				if( ! is_string( $script ) )
 					continue;
 			
 				// If the script is enqueued for the page, print it
 				if( wp_script_is( $script ) )
 					wp_print_scripts( $script );
 			}
-		}
+        }
+        
 	}
 	
 	/**
@@ -257,7 +269,7 @@ class Scripts_To_Footer {
 	 * Checks the singular post/page first, then other common pages
 	 * and compares against any global settings and filters.
 	 *
-	 * @since 0.1
+	 * @since 0.1.0
 	 **/
 	function clean_head() {
 		
@@ -269,7 +281,7 @@ class Scripts_To_Footer {
 		$include = $this->is_included();
 		
 		// If this isn't set, then we're missing something
-		if( !isset( $include ) ) {
+		if( ! isset( $include ) ) {
 			$this->log_me( 'Something went wrong with the $include variable' );
 			return;
 		}
@@ -279,7 +291,8 @@ class Scripts_To_Footer {
 			remove_action( 'wp_head', 'wp_print_scripts' ); 
 			remove_action( 'wp_head', 'wp_print_head_scripts', 9 ); 
 			remove_action( 'wp_head', 'wp_enqueue_scripts', 1 ); 
-		}
+        }
+        
 	}
 
 	/**
@@ -290,6 +303,7 @@ class Scripts_To_Footer {
 	 * @return boolean Default is true.
 	 */
 	public function is_included() {
+
 		$include = apply_filters( 'stf_include', true );
 		
 		if( true === $include ) {
@@ -299,7 +313,8 @@ class Scripts_To_Footer {
 		} else {
 			$this->log_me( 'Non-boolean value in the stf_include filter' );
 			return true;
-		}
+        }
+        
 	}
 	
 	/**
@@ -310,13 +325,16 @@ class Scripts_To_Footer {
 	 * @return boolean
 	 */
 	function stf_includes() {
+        
 		// Collect the information
 		if( is_singular() || is_page() ) {
+
 			// Make sure we can grab the page/post id
 			$queried_object_id = get_queried_object_id();
 			
 			// verify we got a good result
 			if( absint( $queried_object_id ) && ( $post_type = get_post_type( $queried_object_id ) ) ) {
+
 				// See if post type is supported, if not bail
 				if( false === $this->post_type_supported( $post_type ) )
 					return false;
@@ -339,25 +357,28 @@ class Scripts_To_Footer {
 				return apply_filters( "stf_{$post_type}", true, $queried_object_id );
 			
 			} else {
-				$this->log_me( 'Unable to get a correct object id from get_queried_object_id or unable to get post type' );
 				return false;
 			}
 			
 		// Home (blog) page
 		} elseif( is_home() ) {
+
 			// Grab global setting
 			$type = 'home';
 			
 		// Search Result Page
 		} elseif( is_search() ) {
+
 			$type = 'search';
 
 		// 404 Pages
 		} elseif( is_404() ) {
+
 			$type = '404';
 
 		// Author Archive
 		} elseif( is_author() ) {
+
 			$type = 'author_archive';
 		
 		// Category Archive
@@ -366,7 +387,6 @@ class Scripts_To_Footer {
 			if( $this->tax_supported( 'category' ) ) {
 				$type = "category_archive";
 			} else {
-				$this->log_me( 'Error in category check' );
 				return false;
 			} 
 	
@@ -376,7 +396,6 @@ class Scripts_To_Footer {
 			if( $this->tax_supported( 'post_tag' ) ) {
 				$type = "post_tag_archive";
 			} else {
-				$this->log_me( 'Error in tag check' );
 				return false;
 			} 
 		
@@ -391,7 +410,6 @@ class Scripts_To_Footer {
 			if( isset( $tax->name ) && $this->tax_supported( $tax->name ) ) {
 				$type = "{$tax->name}_archive";
 			} else {
-				$this->log_me( 'Error in taxonomy check' );
 				return false;
 			} 
 			
@@ -402,34 +420,41 @@ class Scripts_To_Footer {
 			if( $this->post_type_supported( $post_type ) ) {
 				$type = "{$post_type}_archive";
 			} else {
-				$this->log_me( 'Error in post type check check' );
 				return false;
 			}
 
 		// Generic archives (date, author, etc)
 		} elseif( is_archive() ) {
+
 			$type = 'archive';
 		
 		// if all else fails return false
 		} else {
-			return false;
+
+            return false;
+            
 		}
 		
 		// Get the option and return the result with a filter to override
 		if( isset( $type ) && is_string( $type ) ) {
+
 			// Filter to *exclude* a type of page, return the opposite
 			$exclude = stf_get_option( "stf_exclude_{$type}", false );
 			if( $exclude ) {
 				$include = false;
 			} else {
 				$include = true;
-			}
+            }
+            
 			return apply_filters( "stf_{$type}", $include );
 			
 		} else {
+
 			$this->log_me( 'invalid $type element' );
-			return false;
-		}
+            return false;
+            
+        }
+        
 	}
 	
 	/**
@@ -440,13 +465,14 @@ class Scripts_To_Footer {
 	 * @return array Supported posts
 	 */
 	public function post_types_supported() {
+
 		$post_types = apply_filters( 'scripts_to_footer_post_types', array( 'page', 'post' ) );
 		if( is_array( $post_types ) ) {
 			return $post_types;
 		} else {
-			$this->log_me( 'Invalid post types returned in scripts_to_footer_post_types filter' );
 			return false;
-		}
+        }
+        
 	}
 	
 	/**
@@ -457,12 +483,14 @@ class Scripts_To_Footer {
 	 * @return array Supported posts
 	 */
 	public function post_type_supported( $post_type ) {
+
 		$post_types = $this->post_types_supported();
 		if( is_array( $post_types ) && is_string( $post_type ) && in_array( $post_type, $post_types ) ) {
 			return true;
 		} else {
 			return false;
-		}
+        }
+        
 	}
 	
 	/**
@@ -473,13 +501,14 @@ class Scripts_To_Footer {
 	 * @return array Supported posts
 	 */
 	public function taxonomies_supported() {
+
 		$taxes = apply_filters( 'scripts_to_footer_taxonomies', array( 'category', 'post_tag' ) );
 		if( is_array( $taxes ) ) {
 			return $taxes;
 		} else {
-			$this->log_me( 'Invalid taxonomies returned in scripts_to_footer_taxonomies filter' );
 			return false;
-		}
+        }
+        
 	}
 	
 	/**
@@ -490,12 +519,14 @@ class Scripts_To_Footer {
 	 * @return array Supported posts
 	 */
 	public function tax_supported( $taxonomy ) {
+
 		$taxes = $this->taxonomies_supported();
 		if( is_array( $taxes ) && is_string( $taxonomy ) && in_array( $taxonomy, $taxes ) ) {
 			return true;
 		} else {
 			return false;
-		}
+        }
+        
 	}
 	
 	/**
@@ -506,47 +537,66 @@ class Scripts_To_Footer {
 	 * @param string $message
 	 */
 	public function log_me( $message ) {
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG === true ) {
+
+		if ( $this->debug() ) {
 			if ( is_array( $message ) || is_object( $message ) ) {
 				error_log( 'Scripts-to-Footer Plugin Error: ' . print_r( $message, true ) );
 			} else {
 				error_log( 'Scripts-to-Footer Plugin Error: ' . $message );
 			}
-		}
-	}
+        }
+        
+    }
+    
+    /**
+     * Check to see if we're in a debug mode.
+     * 
+     * @since 0.6.5
+     *
+     * @return bool
+     */
+    private function debug() {
+
+        return defined( 'WP_DEBUG' ) && true === WP_DEBUG
+                && defined( 'STF_DEBUG' ) && true === STF_DEBUG;
+
+    }
 }
 
 /**
  * Add various links to plugin page
  *
- * @since  0.2
+ * @since  0.2.0
  *
  * @param  $links
  * @param  $file
  *
  * @return strings plugin links
  */
-if( !function_exists( 'stf_plugin_links' ) ) {
+if( ! function_exists( 'stf_plugin_links' ) ) {
 	function stf_plugin_links( $links, $file ) {
+        
 	    static $this_plugin;
 	
 		/** Capability Check */
 		if( ! current_user_can( 'install_plugins' ) ) 
 			return $links;
 	
-		if( !$this_plugin ) {
+		if( ! $this_plugin )
 			$this_plugin = plugin_basename(__FILE__);
-		}
 	
 		if( $file == $this_plugin ) {
+
 			$links[] = '<a href="http://wordpress.org/support/plugin/scripts-to-footerphp" title="' . __( 'Support', STF_DOMAIN ) . '">' . __( 'Support', STF_DOMAIN ) . '</a>';
 			
 			$links[] = '<a href="https://github.com/joshuadavidnelson/scripts-to-footer/wiki" title="' . __( 'Documentation', STF_DOMAIN ) . '" target="_blank">' . __( 'Documentation', STF_DOMAIN ) . '</a>';
 	
-			$links[] = '<a href="http://jdn.im/donate" title="' . __( 'Donate', STF_DOMAIN ) . '">' . __( 'Donate', STF_DOMAIN ) . '</a>';
+            $links[] = '<a href="http://jdn.im/donate" title="' . __( 'Donate', STF_DOMAIN ) . '">' . __( 'Donate', STF_DOMAIN ) . '</a>';
+            
 		}
 		
-		return $links;
+        return $links;
+        
 	}
 }
 
@@ -560,8 +610,12 @@ if( !function_exists( 'stf_plugin_links' ) ) {
  */
 if( !function_exists( 'stf_plugin_settings_link' ) ) {
 	function stf_plugin_settings_link( $links ) {
-		$settings_link = '<a href="options-general.php?page=' . STF_SETTINGS_FIELD . '">Settings</a>';
-		array_unshift( $links, $settings_link );
-		return $links;
-	}
+
+        $settings_link = '<a href="options-general.php?page=' . STF_SETTINGS_FIELD . '">Settings</a>';
+        
+        array_unshift( $links, $settings_link );
+        
+        return $links;
+        
+    }
 }
