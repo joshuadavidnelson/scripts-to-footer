@@ -1,8 +1,9 @@
 ### Changelog
 
-##### 0.6.4 - 4-12-20
+##### 0.6.4 - 4-14-20
 - Removed unnecessary logging functions and added a debug check before logging anything.
 - Tidy up code spacing and inline-documentation.
+- Added `STF_DEBUG` for use in error logging function with `WP_DEBUG`, both must be `true` before error logging is output to the debug.log file.
 
 ##### 0.6.3 - 9-12-18
 Moved the 'set_header_scripts' function into a 'wp_head' add_action to allow for conditional checks to work within the 'stf_exclude_scripts' filter. 
