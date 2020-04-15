@@ -1,5 +1,8 @@
 ### Changelog
 
+##### 0.6.4.1 - 4-14-20
+- Update Github Action to publish from github to WP.org.
+
 ##### 0.6.4 - 4-14-20
 - Removed unnecessary logging functions and added a debug check before logging anything.
 - Tidy up code spacing and inline-documentation.

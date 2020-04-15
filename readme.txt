@@ -4,7 +4,7 @@ Tags: javascript, footer, speed, head, performance
 Donate link: http://jdn.im/donate
 Requires at least: 3.1.0
 Tested up to: 5.4
-Stable tag: 0.6.4
+Stable tag: 0.6.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -110,6 +110,9 @@ e.g.
 Please feel free to open a [Github Issue](https://github.com/joshuadavidnelson/scripts-to-footer/issues) to report conflicts or goto [the  WP.org support forum](https://wordpress.org/support/plugin/scripts-to-footerphp). If there is something wrong with Scripts-to-Footer, we'll update it. However, if it's a another plugin or theme we can only contact the developer with the issue to attempt to resolve it.
 
 == Changelog ==
+
+= 0.6.4.1 =
+- Update Github Action to publish from github to WP.org.
 
 = 0.6.4 =
 - Removed unnecessary logging functions and added a debug check before logging anything.
