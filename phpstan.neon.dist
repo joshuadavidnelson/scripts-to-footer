@@ -6,7 +6,7 @@ parameters:
     inferPrivatePropertyTypeFromConstructor: true
     bootstrapFiles:
         - tests/bootstrap.php
-	scanFiles:
+    scanFiles:
         - includes/functions.php
     scanDirectories:
         - includes/
