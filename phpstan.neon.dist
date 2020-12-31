@@ -4,6 +4,12 @@ parameters:
 # TODO    level: max
     level: 5
     inferPrivatePropertyTypeFromConstructor: true
+    bootstrapFiles:
+        - tests/bootstrap.php
+	scanFiles:
+        - includes/functions.php
+    scanDirectories:
+        - includes/
     paths:
         - includes/
     ignoreErrors:
