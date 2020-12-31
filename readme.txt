@@ -1,10 +1,11 @@
 === Scripts To Footer ===
 Contributors: joshuadnelson
 Tags: javascript, footer, speed, head, performance
-Donate link: http://jdn.im/donate
-Requires at least: 3.1.0
-Tested up to: 5.4
-Stable tag: 0.6.4.1
+Donate link: https://joshuadnelson.com/donate/
+Requires at least: 4.0
+Requires PHP: 5.6
+Tested up to: 5.6
+Stable tag: 0.6.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
