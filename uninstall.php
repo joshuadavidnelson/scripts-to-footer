@@ -88,7 +88,7 @@ if ( is_multisite() ) {
 			switch_to_blog( $blog['blog_id'] );
 
 			// Delete plugin options.
-			delete_option( STF_SETTINGS_FIELD );
+			delete_option( 'scripts-to-footer' );
 			delete_option( 'stf_version' );
 
 			// Delete all post meta.
@@ -98,7 +98,7 @@ if ( is_multisite() ) {
 	}
 } else { // Otherwise, delete options from main options table.
 	// Delete plugin options.
-	delete_option( STF_SETTINGS_FIELD );
+	delete_option( 'scripts-to-footer' );
 	delete_option( 'stf_version' );
 
 	// Delete all post meta.

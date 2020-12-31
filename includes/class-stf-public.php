@@ -22,9 +22,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * The public-facing functionality of the plugin.
  *
- * Defines the plugin name, version, and two examples hooks for how to
- * enqueue the admin-specific stylesheet and JavaScript.
- *
  * @since 0.6.5
  */
 class STF_Public {
@@ -256,7 +253,7 @@ class STF_Public {
 			}
 		} elseif ( is_tag() ) { // Tag Archive.
 
-			if ( $this->functions->functions->tax_supported( 'post_tag' ) ) {
+			if ( $this->functions->tax_supported( 'post_tag' ) ) {
 				$type = 'post_tag_archive';
 			} else {
 				return false;
@@ -291,36 +288,26 @@ class STF_Public {
 
 		}
 
-		// Get the option and return the result with a filter to override.
-		if ( is_string( $type ) ) {
-
-			/**
-			 * Filter to *exclude* a type of page, return the opposite.
-			 *
-			 * @since 0.2.0
-			 * @param bool $exclude return true disable the plugin.
-			 */
-			$exclude = stf_get_option( "stf_exclude_{$type}", false );
-			if ( $exclude ) {
-				$include = false;
-			} else {
-				$include = true;
-			}
-
-			/**
-			 * Filter to include the template, true to move the scripts, false to not.
-			 *
-			 * @since 0.6.0
-			 * @param bool $include true to include, false to not.
-			 */
-			return apply_filters( "stf_{$type}", $include );
-
+		/**
+		 * Filter to *exclude* a type of page, return the opposite.
+		 *
+		 * @since 0.2.0
+		 * @param bool $exclude return true disable the plugin.
+		 */
+		$exclude = stf_get_option( "stf_exclude_{$type}", false );
+		if ( $exclude ) {
+			$include = false;
 		} else {
-
-			$this->functions->log_me( 'invalid $type element' );
-			return false;
-
+			$include = true;
 		}
+
+		/**
+		 * Filter to include the template, true to move the scripts, false to not.
+		 *
+		 * @since 0.6.0
+		 * @param bool $include true to include, false to not.
+		 */
+		return apply_filters( "stf_{$type}", $include );
 
 	}
 }

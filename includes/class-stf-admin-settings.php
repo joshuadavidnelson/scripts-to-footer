@@ -39,9 +39,19 @@ class STF_Admin_Settings {
 	 * Holds the values to be used in the fields callbacks
 	 *
 	 * @since 0.6.0
+	 * @access private
 	 * @var array
 	 */
 	private $options;
+
+	/**
+	 * The settings field.
+	 *
+	 * @since 0.6.5
+	 * @access protected
+	 * @var string
+	 */
+	protected $settings_field;
 
 	/**
 	 * Start up
@@ -50,7 +60,8 @@ class STF_Admin_Settings {
 	 */
 	public function __construct() {
 
-		$this->functions = new STF_Functions();
+		$this->functions      = new STF_Functions();
+		$this->settings_field = 'scripts-to-footer';
 
 	}
 
@@ -66,7 +77,7 @@ class STF_Admin_Settings {
 			'Scripts to Footer Settings',
 			'Scripts to Footer',
 			'manage_options',
-			STF_SETTINGS_FIELD,
+			$this->settings_field,
 			array( $this, 'create_admin_page' )
 		);
 
@@ -80,14 +91,14 @@ class STF_Admin_Settings {
 	public function create_admin_page() {
 
 		// Set class property.
-		$this->options = get_option( STF_SETTINGS_FIELD );
+		$this->options = get_option( $this->settings_field );
 		?>
 		<div class="wrap">
 			<h2>Scripts to Footer Settings</h2>
 			<form method="post" action="options.php">
 				<?php
 				// This prints out all hidden setting fields.
-				settings_fields( STF_SETTINGS_FIELD );
+				settings_fields( $this->settings_field );
 				do_settings_sections( 'stf-settings' );
 				submit_button();
 				?>
@@ -106,8 +117,8 @@ class STF_Admin_Settings {
 
 		// Admin options page.
 		register_setting(
-			STF_SETTINGS_FIELD, // Option group.
-			STF_SETTINGS_FIELD, // Option name.
+			$this->settings_field, // Option group.
+			$this->settings_field, // Option name.
 			array( $this, 'sanitize' ) // Sanitize.
 		);
 
@@ -329,7 +340,7 @@ class STF_Admin_Settings {
 			$this->options['stf_exclude_home'] = 0;
 		}
 
-		echo '<input type="checkbox" name="' . esc_attr( STF_SETTINGS_FIELD ) . '[stf_exclude_home]" ' . checked( $this->options['stf_exclude_home'], 1, false ) . ' value="1">';
+		echo '<input type="checkbox" name="' . esc_attr( $this->settings_field ) . '[stf_exclude_home]" ' . checked( $this->options['stf_exclude_home'], 1, false ) . ' value="1">';
 
 	}
 
@@ -344,7 +355,7 @@ class STF_Admin_Settings {
 			$this->options['stf_exclude_search'] = 0;
 		}
 
-		echo '<input type="checkbox" name="' . esc_attr( STF_SETTINGS_FIELD ) . '[stf_exclude_search]" ' . checked( $this->options['stf_exclude_search'], 1, false ) . ' value="1">';
+		echo '<input type="checkbox" name="' . esc_attr( $this->settings_field ) . '[stf_exclude_search]" ' . checked( $this->options['stf_exclude_search'], 1, false ) . ' value="1">';
 
 	}
 
@@ -359,7 +370,7 @@ class STF_Admin_Settings {
 			$this->options['stf_exclude_404'] = 0;
 		}
 
-		echo '<input type="checkbox" name="' . esc_attr( STF_SETTINGS_FIELD ) . '[stf_exclude_404]" ' . checked( $this->options['stf_exclude_404'], 1, false ) . ' value="1">';
+		echo '<input type="checkbox" name="' . esc_attr( $this->settings_field ) . '[stf_exclude_404]" ' . checked( $this->options['stf_exclude_404'], 1, false ) . ' value="1">';
 
 	}
 
@@ -383,7 +394,7 @@ class STF_Admin_Settings {
 				$obj = get_post_type_object( $post_type );
 
 				// @codingStandardsIgnoreStart - wants to escape variables here that are entirely safe.
-				echo "<li><input type=\"checkbox\" id=\"stf_exclude_{$post_type}_archive\" name=\"" . STF_SETTINGS_FIELD . "[stf_exclude_{$post_type}_archive]\" " . checked( $this->options[ "stf_exclude_{$post_type}_archive" ], 1, false ) . " value=\"1\"><label for=\"stf_exclude_{$post_type}_archive\">" . $obj->labels->singular_name . ' </label></li>';
+				echo "<li><input type=\"checkbox\" id=\"stf_exclude_{$post_type}_archive\" name=\"" . $this->settings_field . "[stf_exclude_{$post_type}_archive]\" " . checked( $this->options[ "stf_exclude_{$post_type}_archive" ], 1, false ) . " value=\"1\"><label for=\"stf_exclude_{$post_type}_archive\">" . $obj->labels->singular_name . ' </label></li>';
 				// @codingStandardsIgnoreEnd
 			}
 			echo '</ul>';
@@ -410,7 +421,7 @@ class STF_Admin_Settings {
 				$obj = get_taxonomy( $taxonomy );
 
 				// @codingStandardsIgnoreStart - wants to escape variables here that are entirely safe.
-				echo "<li><input type=\"checkbox\" id=\"stf_exclude_{$taxonomy}_archive\" name=\"" . STF_SETTINGS_FIELD . "[stf_exclude_{$taxonomy}_archive]\" " . checked( $this->options["stf_exclude_{$taxonomy}_archive"], 1, false ) . " value=\"1\"><label for=\"stf_exclude_{$taxonomy}_archive\">" . $obj->labels->singular_name . ' </label></li>';
+				echo "<li><input type=\"checkbox\" id=\"stf_exclude_{$taxonomy}_archive\" name=\"" . $this->settings_field . "[stf_exclude_{$taxonomy}_archive]\" " . checked( $this->options["stf_exclude_{$taxonomy}_archive"], 1, false ) . " value=\"1\"><label for=\"stf_exclude_{$taxonomy}_archive\">" . $obj->labels->singular_name . ' </label></li>';
 				// @codingStandardsIgnoreEnd
 			}
 			echo '</ul>';
@@ -429,7 +440,7 @@ class STF_Admin_Settings {
 		}
 
 		// @codingStandardsIgnoreStart - wants to escape variables here that are entirely safe.
-		echo '<input type="checkbox" name="' . STF_SETTINGS_FIELD . '[stf_exclude_author_archive]" ' . checked( $this->options['stf_exclude_author_archive'], 1, false ) . ' value="1">';
+		echo '<input type="checkbox" name="' . $this->settings_field . '[stf_exclude_author_archive]" ' . checked( $this->options['stf_exclude_author_archive'], 1, false ) . ' value="1">';
 		// @codingStandardsIgnoreEnd
 
 	}
@@ -446,7 +457,7 @@ class STF_Admin_Settings {
 		}
 
 		// @codingStandardsIgnoreStart - wants to escape variables here that are entirely safe.
-		echo '<input type="checkbox" name="' . STF_SETTINGS_FIELD . '[stf_exclude_archive]" ' . checked( $this->options['stf_exclude_archive'], 1, false ) . ' value="1">';
+		echo '<input type="checkbox" name="' . $this->settings_field . '[stf_exclude_archive]" ' . checked( $this->options['stf_exclude_archive'], 1, false ) . ' value="1">';
 		// @codingStandardsIgnoreEnd
 
 	}
@@ -477,7 +488,7 @@ class STF_Admin_Settings {
 		}
 
 		// @codingStandardsIgnoreStart - wants to escape variables here that are entirely safe.
-		echo '<input type="checkbox" name="' . STF_SETTINGS_FIELD . '[stf_jquery_header]" ' . checked( $this->options['stf_jquery_header'], 1, false ) . ' value="1">';
+		echo '<input type="checkbox" name="' . $this->settings_field . '[stf_jquery_header]" ' . checked( $this->options['stf_jquery_header'], 1, false ) . ' value="1">';
 		// @codingStandardsIgnoreEnd
 
 	}

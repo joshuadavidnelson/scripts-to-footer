@@ -26,11 +26,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'You are not allowed to access this file directly.' );
 }
 
-// Plugin Settings Field.
-if ( ! defined( 'STF_SETTINGS_FIELD' ) ) {
-	define( 'STF_SETTINGS_FIELD', 'scripts-to-footer' );
-}
-
 // Plugin Directory.
 if ( ! defined( 'STF_DIR' ) ) {
 	define( 'STF_DIR', dirname( __FILE__ ) );

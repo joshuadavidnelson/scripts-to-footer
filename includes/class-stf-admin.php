@@ -23,9 +23,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * The public-facing functionality of the plugin.
  *
- * Defines the plugin name, version, and two examples hooks for how to
- * enqueue the admin-specific stylesheet and JavaScript.
- *
  * @since 0.6.5
  */
 class STF_Admin {
@@ -58,6 +55,15 @@ class STF_Admin {
 	protected $functions;
 
 	/**
+	 * The settings field.
+	 *
+	 * @since 0.6.5
+	 * @access protected
+	 * @var string
+	 */
+	protected $settings_field;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since  0.6.5
@@ -66,9 +72,10 @@ class STF_Admin {
 	 */
 	public function __construct( $plugin_name, $version ) {
 
-		$this->plugin_name = $plugin_name;
-		$this->version     = $version;
-		$this->functions   = new STF_Functions();
+		$this->plugin_name    = $plugin_name;
+		$this->version        = $version;
+		$this->functions      = new STF_Functions();
+		$this->settings_field = 'scripts-to-footer';
 	}
 
 	/**
@@ -109,7 +116,7 @@ class STF_Admin {
 	 */
 	public function plugin_settings_link( $links ) {
 
-		$settings_link = '<a href="options-general.php?page=' . STF_SETTINGS_FIELD . '">Settings</a>';
+		$settings_link = '<a href="options-general.php?page=' . $this->settings_field . '">Settings</a>';
 
 		array_unshift( $links, $settings_link );
 
