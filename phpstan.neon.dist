@@ -4,8 +4,6 @@ parameters:
 # TODO    level: max
     level: 5
     inferPrivatePropertyTypeFromConstructor: true
-    autoload_directories:
-        - includes/
     paths:
         - includes/
     ignoreErrors:

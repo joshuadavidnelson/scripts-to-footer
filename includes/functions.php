@@ -21,7 +21,7 @@
 function stf_get_option( $key, $default = false, $setting = null ) {
 
 	// Get settings field options.
-	$setting = $setting ? $setting : STF_SETTINGS_FIELD;
+	$setting = $setting ? $setting : 'scripts-to-footer';
 	$options = get_option( $setting, $default );
 
 	if ( ! is_array( $options ) || ! array_key_exists( $key, $options ) ) {

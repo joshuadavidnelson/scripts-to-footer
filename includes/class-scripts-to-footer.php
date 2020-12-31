@@ -115,6 +115,24 @@ class Scripts_To_Footer {
 	}
 
 	/**
+	 * Define our plugin constants.
+	 *
+	 * @since 0.2.0
+	 * @since 0.6.5 moved into this class.
+	 */
+	private function setup_constants() {
+
+		// Custom Debug Constant, intented for developer use.
+		if ( ! defined( 'STF_DEBUG' ) ) {
+			define( 'STF_DEBUG', false );
+		}
+
+		// Plugin Verison.
+		define( 'STF_VERSION', $this->version );
+
+	}
+
+	/**
 	 * Upgrade check.
 	 *
 	 * @since 0.6.5
@@ -143,24 +161,6 @@ class Scripts_To_Footer {
 			// Save current version.
 			update_option( 'stf_version', STF_VERSION, false );
 		}
-
-	}
-
-	/**
-	 * Define our plugin constants.
-	 *
-	 * @since 0.2.0
-	 * @since 0.6.5 moved into this class.
-	 */
-	private function setup_constants() {
-
-		// Custom Debug Constant, intented for developer use.
-		if ( ! defined( 'STF_DEBUG' ) ) {
-			define( 'STF_DEBUG', false );
-		}
-
-		// Plugin Verison.
-		define( 'STF_VERSION', $this->version );
 
 	}
 
