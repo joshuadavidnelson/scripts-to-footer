@@ -2,620 +2,77 @@
 /**
  * Main Plugin File
  *
- * @package    Scripts_To_Footer
- * @author     Joshua David Nelson <josh@joshuadnelson.com>
- * @copyright  Copyright (c) 2020, Joshua David Nelson
- * @license    http://www.opensource.org/licenses/gpl-license.php GPL-2.0+
- * @link       http://joshuadnelson.com/scripts-to-footer-plugin
- *
  * Plugin Name: Scripts-To-Footer
  * Plugin URI: http://wordpress.org/plugins/scripts-to-footerphp/
  * Description: Moves scripts to the footer to decrease page load times, while keeping stylesheets in the header. Requires that plugins and theme correctly utilizes wp_enqueue_scripts hook. Can be disabled via a checkbox on specific pages and posts.
- * Version: 0.6.4.1
+ * Version: 0.6.5
  * Author: Joshua David Nelson
  * Author URI: http://joshuadnelson.com
  * License: GPL2
- * GitHub Plugin URI: https://github.com/joshuadavidnelson/scripts-to-footer 
+ * GitHub Plugin URI: https://github.com/joshuadavidnelson/scripts-to-footer
  * GitHub Branch: master
  *
- **/
+ * @package   Scripts_To_Footer
+ * @author    Joshua David Nelson <josh@joshuadnelson.com>
+ * @copyright Copyright (c) 2021, Joshua David Nelson
+ * @license   http://www.opensource.org/licenses/gpl-license.php GPL-2.0+
+ * @link      https://github.com/joshuadavidnelson/scripts-to-footer
+ */
 
 /**
  * Prevent direct access to this file.
-**/
-if( !defined( 'ABSPATH' ) ) {
-        exit( 'You are not allowed to access this file directly.' );
-}
-
-/**
- * Define our plugin variables
- *
- * @since 0.2.0
- **/
-// Plugin Settings Field
-if( ! defined( 'STF_SETTINGS_FIELD' ) )
-	define( 'STF_SETTINGS_FIELD', 'scripts-to-footer' );
-
-// Plugin Domain
-if( ! defined( 'STF_DOMAIN' ) )
-	define( 'STF_DOMAIN', 'stf' );
-
-// Plugin Verison
-if( !defined( 'STF_VERSION' ) )
-	define( 'STF_VERSION', '0.6.4.1' );
-
-// Plugin name
-if( ! defined( 'STF_NAME' ) )
-    define( 'STF_NAME', trim( dirname( plugin_basename( __FILE__ ) ), '/' ) );
-
-// Plugin Directory
-if( ! defined( 'STF_DIR' ) )
-    define( 'STF_DIR', WP_PLUGIN_DIR . '/' . trim( dirname( plugin_basename( __FILE__ ) ), '/' ) );
-
-// Plugin URL
-if( ! defined( 'STF_URL' ) )
-    define( 'STF_URL', WP_PLUGIN_URL . '/' . trim( dirname( plugin_basename( __FILE__ ) ), '/' ) );
-
-// Custom Debug Constant, intented for developer use
-if( ! defined( 'STF_DEBUG' ) )
-    define( 'STF_DEBUG', false );
-
-
-/**
- * Scripts to Footer Class.
- *
- * Forces scripts to the footer, unless excluded in the settings page.
- *
- * @since 0.2.0
  */
-global $stf_scripts_to_footer;
-$stf_scripts_to_footer = new Scripts_To_Footer();
+if ( ! defined( 'ABSPATH' ) ) {
+	exit( 'You are not allowed to access this file directly.' );
+}
 
-class Scripts_To_Footer {
-	
-	/**
-	 * An array of script slugs that should remain in the header.
-	 *
-	 * @since 0.6.0
-	 *
-	 * @var array
-	 */
-	protected $header_scripts;
+// Plugin Directory.
+if ( ! defined( 'STF_DIR' ) ) {
+	define( 'STF_DIR', dirname( __FILE__ ) );
+}
 
-	/**
-	 * Construct.
-	 *
-	 * Registers our activation hook and init hook.
-	 *
-	 * @since 0.2.0
-	 */
-	function __construct() {
-        
-		add_action( 'admin_init', array( $this, 'check_version' ) );
-
-		// Don't run anything else in the plugin, if we're on an incompatible
-		if ( ! self::compatible_version() ) {
-			return;
-		}
-		
-		// Admin settings
-		include_once( STF_DIR . '/admin/admin-settings.php' );
-		
-		// Make it so
-        add_action( 'init', array( $this, 'init' ) );
-        
-	}
-	
-	/**
-	 * Activation hook. 
-	 *
-	 * The primary sanity check, automatically disable the plugin on activation
-	 * if it doesn't meet minimum requirements. If it does, then it does some version
-	 * checks and updates the site version option.
-	 *
-	 * @since 0.6.0
-	 */
-	static function activation_check() {
-        
-		if ( ! self::compatible_version() ) {
-			deactivate_plugins( plugin_basename( __FILE__ ) );
-			wp_die( __( 'Scripts-to-Footer requires WordPress 3.1.0 or higher', 'stf' ) );
-		} else {
-			// Save the previous version we're upgrading from
-			$current_version = get_option( 'stf_version', false );
-			if ( $current_version )
-				update_option( 'stf_previous_version', $current_version );
-		
-			// See if it's a previous version, which may not have set the version option
-			if ( false === $current_version || $current_version != STF_VERSION ) {
-				// do things on update
-			}
-		
-			// Save current version
-			update_option( 'stf_version', STF_VERSION );
-        }
-        
-	}
-	
-	/**
-	 * The backup sanity check.
-	 *
-	 * This is just in case the plugin is activated in a weird way,
-	 * or the versions change after activation.
-	 *
-	 * @since 0.6.0
-	 */
-	function check_version() {
-
-		if ( ! self::compatible_version() ) {
-			if ( is_plugin_active( plugin_basename( __FILE__ ) ) ) {
-				deactivate_plugins( plugin_basename( __FILE__ ) );
-				add_action( 'admin_notices', array( $this, 'disabled_notice' ) );
-				if ( isset( $_GET['activate'] ) ) {
-					unset( $_GET['activate'] );
-				}
-			}
-        }
-        
-	}
-	
-	/**
-	 * Display notice on deactivation.
-	 *
-	 * @since 0.6.0
-	 */
-	function disabled_notice() {
-
-        echo '<strong>' . esc_html__( 'Scripts-to-Footer requires WordPress 3.1.0 or higher.', STF_DOMAIN ) . '</strong>';
-        
-	}
-	
-	/**
-	 * Check everything is compatible.
-	 *
-	 * @since 0.6.0
-	 *
-	 * @return boolean
-	 */
-	static function compatible_version() {
-
-		if ( version_compare( $GLOBALS['wp_version'], '3.1.0', '<' ) ) {
-			return false;
-		}
-
-		// Add sanity checks for other version requirements here
-
-        return true;
-        
-	}
-
-	/**
-	 * Plugin Init.
-	 *
-	 * Makes some checks and runs the filter, sets up the admin settings page
-	 * and plugin links.
-	 *
-	 * @since 0.2.0
-	 * @since 0.6.3 moved 'set_header_scripts' into 'wp_head' action.
-	 */
-	function init() {
-		
-		// Run the plugin
-		add_action( 'wp_enqueue_scripts', array( $this, 'clean_head' ) );
-		add_filter( 'stf_include', array( $this, 'stf_includes' ) );
-		
-		// Set the header scripts to be forced into the header
-		add_action( 'wp_head', array( $this, 'set_header_scripts' ), 1 );
-		
-		// Add select scripts into the header
-		add_action( 'wp_head', array( $this, 'print_head_scripts' ), 10 );
-		
-		// Add Links to Plugin Bar
-		if( function_exists( 'stf_plugin_links' ) )
-			add_filter( 'plugin_row_meta', 'stf_plugin_links', 10, 2 );
-		
-		// Add setting link to plugin bar
-		if( function_exists( 'stf_plugin_settings_link' ) ) {
-			$plugin = plugin_basename(__FILE__); 
-			add_filter( "plugin_action_links_$plugin", 'stf_plugin_settings_link' );
-        }
-        
-	}
-	
-	/**
-	 * Set the scripts to be printed in the header, based on options and filter.
-	 *
-	 * @since 0.6.0
-	 */
-	public function set_header_scripts() {
-        
-		if( $exclude = stf_get_option( 'stf_jquery_header', false ) ) {
-			$head_scripts = array( 'jquery' );
-		} else {
-			$head_scripts = array();
-		}
-		
-		$this->header_scripts = apply_filters( 'stf_exclude_scripts', $head_scripts );
-		
-	}
-	
-	/**
-	 * The holy grail: print select scripts in the header!
-	 *
-	 * @since 0.6.0
-	 */
-	function print_head_scripts() {
-
-		if( ! isset( $this->header_scripts ) || empty( $this->header_scripts ) || ! is_array( $this->header_scripts ) )
-			return;
-		
-		// The main filter, true inacts the plugin, false does not (excludes the page)
-		if( $this->is_included() ) {
-			foreach( $this->header_scripts as $script ) {
-				if( ! is_string( $script ) )
-					continue;
-			
-				// If the script is enqueued for the page, print it
-				if( wp_script_is( $script ) )
-					wp_print_scripts( $script );
-			}
-        }
-        
-	}
-	
-	/**
-	 * Remove scripts from header, forces them to the footer.
-	 *
-	 * Checks the singular post/page first, then other common pages
-	 * and compares against any global settings and filters.
-	 *
-	 * @since 0.1.0
-	 **/
-	function clean_head() {
-		
-		// Bail if we're in the admin area
-		if( is_admin() )
-			return;
-		
-		// The main filter, true inacts the plugin, false does not (excludes the page)
-		$include = $this->is_included();
-		
-		// If this isn't set, then we're missing something
-		if( ! isset( $include ) ) {
-			$this->log_me( 'Something went wrong with the $include variable' );
-			return;
-		}
-		
-		// Either it's turned off site wide and included for this post/page, or turned on site wide and not excluded for this post/page - also not admin
-		if( true === $include ) {
-			remove_action( 'wp_head', 'wp_print_scripts' ); 
-			remove_action( 'wp_head', 'wp_print_head_scripts', 9 ); 
-			remove_action( 'wp_head', 'wp_enqueue_scripts', 1 ); 
-        }
-        
-	}
-
-	/**
-	 * Determing if the current page is included, via a filter.
-	 *
-	 * @since 0.6.0
-	 *
-	 * @return boolean Default is true.
-	 */
-	public function is_included() {
-
-		$include = apply_filters( 'stf_include', true );
-		
-		if( true === $include ) {
-			return true;
-		} elseif( false === $include ) {
-			return false;
-		} else {
-			$this->log_me( 'Non-boolean value in the stf_include filter' );
-			return true;
-        }
-        
-	}
-	
-	/**
-	 * Runs the various template checks and returns true/false.
-	 *
-	 * @since 0.6.0
-	 *
-	 * @return boolean
-	 */
-	function stf_includes() {
-        
-		// Collect the information
-		if( is_singular() || is_page() ) {
-
-			// Make sure we can grab the page/post id
-			$queried_object_id = get_queried_object_id();
-			
-			// verify we got a good result
-			if( absint( $queried_object_id ) && ( $post_type = get_post_type( $queried_object_id ) ) ) {
-
-				// See if post type is supported, if not bail
-				if( false === $this->post_type_supported( $post_type ) )
-					return false;
-
-				// Get the exclude post meta value
-				$exclude_page = get_post_meta( $queried_object_id, 'stf_exclude', true );
-				
-				// Support for older versions that use 'on' as well as newer versions with boolean
-				if( 'on' === $exclude_page || true == $exclude_page )
-					return false;
-				
-				// Older override check, depreciated
-				$excluded_override = apply_filters( 'scripts_to_footer_exclude_page', null, $queried_object_id );
-				if( 'on' == $excluded_override || true == $excluded_override ) {
-					$this->log_me( 'The \'scripts_to_footer_exclude_page\' is depreciated, please use \'stf_{$post_type}\' returning false to exclude the page.');
-					return false;
-				}
-				
-				// Allow override
-				return apply_filters( "stf_{$post_type}", true, $queried_object_id );
-			
-			} else {
-				return false;
-			}
-			
-		// Home (blog) page
-		} elseif( is_home() ) {
-
-			// Grab global setting
-			$type = 'home';
-			
-		// Search Result Page
-		} elseif( is_search() ) {
-
-			$type = 'search';
-
-		// 404 Pages
-		} elseif( is_404() ) {
-
-			$type = '404';
-
-		// Author Archive
-		} elseif( is_author() ) {
-
-			$type = 'author_archive';
-		
-		// Category Archive
-		} elseif( is_category() ) {
-			
-			if( $this->tax_supported( 'category' ) ) {
-				$type = "category_archive";
-			} else {
-				return false;
-			} 
-	
-		// Tag Archive
-		} elseif( is_tag() ) {
-			
-			if( $this->tax_supported( 'post_tag' ) ) {
-				$type = "post_tag_archive";
-			} else {
-				return false;
-			} 
-		
-		// Taxonomy Archive
-		} elseif( is_tax() ) {
-			
-			$taxonomy = get_query_var( 'taxonomy' );
-			if( !$taxonomy ) {
-				return false;
-			}
-			$tax = get_taxonomy( $taxonomy );
-			if( isset( $tax->name ) && $this->tax_supported( $tax->name ) ) {
-				$type = "{$tax->name}_archive";
-			} else {
-				return false;
-			} 
-			
-		// Post Type Archive
-		} elseif( is_post_type_archive() ) {
-		
-			$post_type = get_post_type();
-			if( $this->post_type_supported( $post_type ) ) {
-				$type = "{$post_type}_archive";
-			} else {
-				return false;
-			}
-
-		// Generic archives (date, author, etc)
-		} elseif( is_archive() ) {
-
-			$type = 'archive';
-		
-		// if all else fails return false
-		} else {
-
-            return false;
-            
-		}
-		
-		// Get the option and return the result with a filter to override
-		if( isset( $type ) && is_string( $type ) ) {
-
-			// Filter to *exclude* a type of page, return the opposite
-			$exclude = stf_get_option( "stf_exclude_{$type}", false );
-			if( $exclude ) {
-				$include = false;
-			} else {
-				$include = true;
-            }
-            
-			return apply_filters( "stf_{$type}", $include );
-			
-		} else {
-
-			$this->log_me( 'invalid $type element' );
-            return false;
-            
-        }
-        
-	}
-	
-	/**
-	 * Check for post type support, via the filter. Default support for page and post.
-	 *
-	 * @since 0.6.0
-	 *
-	 * @return array Supported posts
-	 */
-	public function post_types_supported() {
-
-		$post_types = apply_filters( 'scripts_to_footer_post_types', array( 'page', 'post' ) );
-		if( is_array( $post_types ) ) {
-			return $post_types;
-		} else {
-			return false;
-        }
-        
-	}
-	
-	/**
-	 * Check if a post type is supported.
-	 *
-	 * @since 0.6.0
-	 *
-	 * @return array Supported posts
-	 */
-	public function post_type_supported( $post_type ) {
-
-		$post_types = $this->post_types_supported();
-		if( is_array( $post_types ) && is_string( $post_type ) && in_array( $post_type, $post_types ) ) {
-			return true;
-		} else {
-			return false;
-        }
-        
-	}
-	
-	/**
-	 * Check for custom taxonomy support, via the filter.
-	 *
-	 * @since 0.6.0
-	 *
-	 * @return array Supported posts
-	 */
-	public function taxonomies_supported() {
-
-		$taxes = apply_filters( 'scripts_to_footer_taxonomies', array( 'category', 'post_tag' ) );
-		if( is_array( $taxes ) ) {
-			return $taxes;
-		} else {
-			return false;
-        }
-        
-	}
-	
-	/**
-	 * Check if a post type is supported.
-	 *
-	 * @since 0.6.0
-	 *
-	 * @return array Supported posts
-	 */
-	public function tax_supported( $taxonomy ) {
-
-		$taxes = $this->taxonomies_supported();
-		if( is_array( $taxes ) && is_string( $taxonomy ) && in_array( $taxonomy, $taxes ) ) {
-			return true;
-		} else {
-			return false;
-        }
-        
-	}
-	
-	/**
-	 * Log any errors, if debug mode is on.
-	 *
-	 * @since 0.6.0
-	 *
-	 * @param string $message
-	 */
-	public function log_me( $message ) {
-
-		if ( $this->debug() ) {
-			if ( is_array( $message ) || is_object( $message ) ) {
-				error_log( 'Scripts-to-Footer Plugin Error: ' . print_r( $message, true ) );
-			} else {
-				error_log( 'Scripts-to-Footer Plugin Error: ' . $message );
-			}
-        }
-        
-    }
-    
-    /**
-     * Check to see if we're in a debug mode.
-     * 
-     * @since 0.6.5
-     *
-     * @return bool
-     */
-    private function debug() {
-
-        return defined( 'WP_DEBUG' ) && true === WP_DEBUG
-                && defined( 'STF_DEBUG' ) && true === STF_DEBUG;
-
-    }
+// Plugin URL.
+if ( ! defined( 'STF_URL' ) ) {
+	define( 'STF_URL', plugins_url( '/', __FILE__ ) );
 }
 
 /**
- * Add various links to plugin page
- *
- * @since  0.2.0
- *
- * @param  $links
- * @param  $file
- *
- * @return strings plugin links
+ * The code that runs during plugin activation.
+ * This action is documented in includes/class-stf-activator.php
  */
-if( ! function_exists( 'stf_plugin_links' ) ) {
-	function stf_plugin_links( $links, $file ) {
-        
-	    static $this_plugin;
-	
-		/** Capability Check */
-		if( ! current_user_can( 'install_plugins' ) ) 
-			return $links;
-	
-		if( ! $this_plugin )
-			$this_plugin = plugin_basename(__FILE__);
-	
-		if( $file == $this_plugin ) {
-
-			$links[] = '<a href="http://wordpress.org/support/plugin/scripts-to-footerphp" title="' . __( 'Support', STF_DOMAIN ) . '">' . __( 'Support', STF_DOMAIN ) . '</a>';
-			
-			$links[] = '<a href="https://github.com/joshuadavidnelson/scripts-to-footer/wiki" title="' . __( 'Documentation', STF_DOMAIN ) . '" target="_blank">' . __( 'Documentation', STF_DOMAIN ) . '</a>';
-	
-            $links[] = '<a href="http://jdn.im/donate" title="' . __( 'Donate', STF_DOMAIN ) . '">' . __( 'Donate', STF_DOMAIN ) . '</a>';
-            
-		}
-		
-        return $links;
-        
-	}
+function activate_scripts_to_footer() {
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-stf-activator.php';
+	Scripts_To_Footer_Activator::activate();
 }
 
 /**
- * Add link to options page in plguin screen.
- *
- * @since 0.6.0
- *
- * @param string $links Links.
- * @return $links Amended links.
+ * The code that runs during plugin deactivation.
+ * This action is documented in includes/class-stf-deactivator.php
  */
-if( !function_exists( 'stf_plugin_settings_link' ) ) {
-	function stf_plugin_settings_link( $links ) {
-
-        $settings_link = '<a href="options-general.php?page=' . STF_SETTINGS_FIELD . '">Settings</a>';
-        
-        array_unshift( $links, $settings_link );
-        
-        return $links;
-        
-    }
+function deactivate_scripts_to_footer() {
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-stf-deactivator.php';
+	Scripts_To_Footer_Deactivator::deactivate();
 }
+register_activation_hook( __FILE__, 'activate_scripts_to_footer' );
+register_deactivation_hook( __FILE__, 'deactivate_scripts_to_footer' );
+
+/**
+ * The core plugin class that is used to define internationalization,
+ * admin-specific hooks, and public-facing site hooks.
+ */
+require plugin_dir_path( __FILE__ ) . 'includes/class-scripts-to-footer.php';
+
+/**
+ * Begins execution of the plugin.
+ *
+ * Since everything within the plugin is registered via hooks,
+ * then kicking off the plugin from this point in the file does
+ * not affect the page life cycle.
+ *
+ * @since 0.6.5
+ */
+function run_scripts_to_footer() {
+	$plugin = new Scripts_To_Footer();
+	$plugin->run();
+}
+add_action( 'plugins_loaded', 'run_scripts_to_footer', 10, 0 );
