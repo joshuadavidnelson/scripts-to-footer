@@ -150,16 +150,16 @@ class Scripts_To_Footer {
 		$current_version = get_option( 'stf_version', false );
 
 		// Update the previous version if we're upgrading.
-		if ( $current_version && STF_VERSION !== $current_version ) {
+		if ( $current_version && $this->version !== $current_version ) {
 			update_option( 'stf_previous_version', $current_version, false );
 		}
 
 		// See if it's a previous version, which may not have set the version option.
-		if ( false === $current_version || STF_VERSION !== $current_version ) {
+		if ( false === $current_version || $this->version !== $current_version ) {
 			// do things on update.
 
 			// Save current version.
-			update_option( 'stf_version', STF_VERSION, false );
+			update_option( 'stf_version', $this->version, false );
 		}
 
 	}
