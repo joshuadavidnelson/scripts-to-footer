@@ -100,7 +100,7 @@ class STF_Activator {
 	 */
 	public static function compatible_version() {
 
-		if ( issset( $GLOBALS['wp_version'] )
+		if ( isset( $GLOBALS['wp_version'] )
 			&& version_compare( $GLOBALS['wp_version'], '3.1.0', '<' ) ) {
 			return false;
 		}

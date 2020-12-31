@@ -26,6 +26,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'You are not allowed to access this file directly.' );
 }
 
+// Plugin Settings Field.
+if ( ! defined( 'STF_SETTINGS_FIELD' ) ) {
+	define( 'STF_SETTINGS_FIELD', 'scripts-to-footer' );
+}
+
 // Plugin Directory.
 if ( ! defined( 'STF_DIR' ) ) {
 	define( 'STF_DIR', dirname( __FILE__ ) );
@@ -42,7 +47,7 @@ if ( ! defined( 'STF_URL' ) ) {
  */
 function activate_scripts_to_footer() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-stf-activator.php';
-	Scripts_To_Footer_Activator::activate();
+	STF_Activator::activate();
 }
 
 /**
@@ -51,7 +56,7 @@ function activate_scripts_to_footer() {
  */
 function deactivate_scripts_to_footer() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-stf-deactivator.php';
-	Scripts_To_Footer_Deactivator::deactivate();
+	STF_Deactivator::deactivate();
 }
 register_activation_hook( __FILE__, 'activate_scripts_to_footer' );
 register_deactivation_hook( __FILE__, 'deactivate_scripts_to_footer' );

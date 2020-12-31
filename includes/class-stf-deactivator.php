@@ -4,7 +4,7 @@
  *
  * @since      0.6.5
  * @package    Scripts_To_Footer
- * @subpackage Scripts_To_Footer_Deactivator
+ * @subpackage STF_Deactivator
  * @author     Joshua David Nelson <josh@joshuadnelson.com>
  * @copyright  Copyright (c) 2021, Joshua David Nelson
  * @license    http://www.opensource.org/licenses/gpl-license.php GPL-2.0+
@@ -18,7 +18,7 @@
  *
  * @since 0.6.5
  */
-class Scripts_To_Footer_Deactivator {
+class STF_Deactivator {
 
 	/**
 	 * Clear the global comment cache.

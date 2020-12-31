@@ -56,6 +56,14 @@ class Scripts_To_Footer {
 	protected $plugin_name;
 
 	/**
+	 * The plugin filtename.
+	 *
+	 * @since 0.6.5
+	 * @access protected
+	 * @var string $plugin_file The plugin file.
+	 */
+	protected $plugin_file;
+	/**
 	 * The current version of the plugin.
 	 *
 	 * @since 0.6.5
@@ -145,11 +153,6 @@ class Scripts_To_Footer {
 	 * @since 0.6.5 moved into this class.
 	 */
 	private function setup_constants() {
-
-		// Plugin Settings Field.
-		if ( ! defined( 'STF_SETTINGS_FIELD' ) ) {
-			define( 'STF_SETTINGS_FIELD', 'scripts-to-footer' );
-		}
 
 		// Custom Debug Constant, intented for developer use.
 		if ( ! defined( 'STF_DEBUG' ) ) {

@@ -4,9 +4,6 @@ parameters:
 # TODO    level: max
     level: 5
     inferPrivatePropertyTypeFromConstructor: true
-    autoload_files:
-        - tests/bootstrap.php
-        - includes/functions.php
     autoload_directories:
         - includes/
     paths:
@@ -14,5 +11,3 @@ parameters:
     ignoreErrors:
         # Uses func_get_args()
         - '#^Function apply_filters(_ref_array)? invoked with [34567] parameters, 2 required\.$#'
-        # Not including WC stubs for 1 line of code
-        - '#^Function WC not found\.$#'

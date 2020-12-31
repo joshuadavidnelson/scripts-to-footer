@@ -94,7 +94,7 @@ class STF_Functions {
 	 * Check if a post type is supported.
 	 *
 	 * @since 0.6.0
-	 * @param array $taxonomy the current taxonomy slug.
+	 * @param string $taxonomy the current taxonomy slug.
 	 * @return bool
 	 */
 	public function tax_supported( $taxonomy ) {
@@ -112,7 +112,7 @@ class STF_Functions {
 	 * Log any errors, if debug mode is on.
 	 *
 	 * @since 0.6.0
-	 * @param string $message the message to be logged.
+	 * @param mixed $message the message to be logged.
 	 * @return void
 	 */
 	public function log_me( $message ) {

@@ -104,8 +104,8 @@ class STF_Admin {
 	 * Add link to options page in plguin screen.
 	 *
 	 * @since 0.6.0
-	 * @param string $links Links.
-	 * @return $links Amended links.
+	 * @param array $links Links.
+	 * @return array
 	 */
 	public function plugin_settings_link( $links ) {
 

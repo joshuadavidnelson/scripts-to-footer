@@ -15,13 +15,14 @@
  *
  * @since 0.6.0
  * @param string $key     The key.
+ * @param mixed  $default The default value.
  * @param string $setting The settings field.
  */
-function stf_get_option( $key, $setting = null ) {
+function stf_get_option( $key, $default = false, $setting = null ) {
 
 	// Get settings field options.
 	$setting = $setting ? $setting : STF_SETTINGS_FIELD;
-	$options = get_option( $setting );
+	$options = get_option( $setting, $default );
 
 	if ( ! is_array( $options ) || ! array_key_exists( $key, $options ) ) {
 		return '';

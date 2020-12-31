@@ -57,6 +57,15 @@ class STF_Public {
 	protected $functions;
 
 	/**
+	 * Scripts to remain in the head.
+	 *
+	 * @since  0.6.5
+	 * @access private
+	 * @var    array $header_scripts A group strings[] of script slugs.
+	 */
+	private $header_scripts;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since  0.6.5
@@ -143,12 +152,6 @@ class STF_Public {
 		// The main filter, true inacts the plugin, false does not (excludes the page).
 		$include = $this->is_included();
 
-		// If this isn't set, then we're missing something.
-		if ( ! isset( $include ) ) {
-			$this->log_me( 'Something went wrong with the $include variable' );
-			return;
-		}
-
 		// Either it's turned off site wide and included for this post/page, or turned on site wide and not excluded for this post/page - also not admin.
 		if ( true === $include ) {
 			remove_action( 'wp_head', 'wp_print_scripts' );
@@ -211,7 +214,7 @@ class STF_Public {
 				// Older override check, depreciated.
 				$excluded_override = apply_filters( 'scripts_to_footer_exclude_page', null, $queried_object_id );
 				if ( 'on' === $excluded_override || true === $excluded_override ) {
-					$this->log_me( 'The \'scripts_to_footer_exclude_page\' is depreciated, please use \'stf_{$post_type}\' returning false to exclude the page.' );
+					$this->functions->log_me( 'The \'scripts_to_footer_exclude_page\' is depreciated, please use \'stf_{$post_type}\' returning false to exclude the page.' );
 					return false;
 				}
 
@@ -246,14 +249,14 @@ class STF_Public {
 
 		} elseif ( is_category() ) { // Category Archive.
 
-			if ( $this->tax_supported( 'category' ) ) {
+			if ( $this->functions->tax_supported( 'category' ) ) {
 				$type = 'category_archive';
 			} else {
 				return false;
 			}
 		} elseif ( is_tag() ) { // Tag Archive.
 
-			if ( $this->tax_supported( 'post_tag' ) ) {
+			if ( $this->functions->functions->tax_supported( 'post_tag' ) ) {
 				$type = 'post_tag_archive';
 			} else {
 				return false;
@@ -265,7 +268,7 @@ class STF_Public {
 				return false;
 			}
 			$tax = get_taxonomy( $taxonomy );
-			if ( isset( $tax->name ) && $this->tax_supported( $tax->name ) ) {
+			if ( isset( $tax->name ) && $this->functions->tax_supported( $tax->name ) ) {
 				$type = "{$tax->name}_archive";
 			} else {
 				return false;
@@ -289,7 +292,7 @@ class STF_Public {
 		}
 
 		// Get the option and return the result with a filter to override.
-		if ( isset( $type ) && is_string( $type ) ) {
+		if ( is_string( $type ) ) {
 
 			/**
 			 * Filter to *exclude* a type of page, return the opposite.
@@ -314,7 +317,7 @@ class STF_Public {
 
 		} else {
 
-			$this->log_me( 'invalid $type element' );
+			$this->functions->log_me( 'invalid $type element' );
 			return false;
 
 		}
