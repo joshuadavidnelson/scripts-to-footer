@@ -4,8 +4,8 @@ Scripts To Footer
 [![WordPress Plugin Version](https://img.shields.io/wordpress/plugin/v/scripts-to-footerphp)](https://wordpress.org/plugins/scripts-to-footerphp/) ![Downloads](https://img.shields.io/wordpress/plugin/dt/scripts-to-footerphp.svg) ![Rating](https://img.shields.io/wordpress/plugin/r/scripts-to-footerphp.svg)
 
 **Requires at least:** 4.0  
-**Tested up to WordPress:** 5.6  
-**Stable version:** 0.6.5å∑  
+**Tested up to WordPress:** 5.8  
+**Stable version:** 0.6.5  
 **License:** GPLv2 or later  
 **Requires PHP:** 5.6  
 **Tested up to PHP:** 7.4
