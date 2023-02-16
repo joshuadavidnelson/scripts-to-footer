@@ -119,9 +119,9 @@ class STF_Functions {
 
 		if ( $this->debug() ) {
 			if ( is_array( $message ) || is_object( $message ) ) {
-				error_log( 'Scripts-to-Footer Plugin Error: ' . print_r( $message, true ) );
+				error_log( 'Scripts-to-Footer Plugin Error: ' . print_r( $message, true ) ); // phpcs:ignore
 			} else {
-				error_log( 'Scripts-to-Footer Plugin Error: ' . $message );
+				error_log( 'Scripts-to-Footer Plugin Error: ' . $message ); // phpcs:ignore
 			}
 		}
 
