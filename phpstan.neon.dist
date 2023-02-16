@@ -4,7 +4,7 @@ parameters:
 # TODO    level: max
     level: 5
     inferPrivatePropertyTypeFromConstructor: true
-	reportUnmatchedIgnoredErrors: false
+    reportUnmatchedIgnoredErrors: false
     bootstrapFiles:
         - tests/bootstrap.php
     scanFiles:
