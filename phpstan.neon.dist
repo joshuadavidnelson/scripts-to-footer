@@ -15,7 +15,7 @@ parameters:
         - includes/
     ignoreErrors:
         - '#^Property STF_Admin::\$version is never read, only written\.$#'
-        - '#^Else branch is unreachable because previous condition is always true\.&#'
+        - '#^Else branch is unreachable because previous condition is always true\.$#'
         - '#^Property STF_Public::\$plugin_name is never read, only written\.$#'
         - '#^Property STF_Public::\$version is never read, only written\.$#'
         - '#^Property STF_Public::\$header_scripts \(array\) in isset\(\) is not nullable\.$#'
