@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Forces scripts to the footer, unless excluded in the settings page.
  *
  * @since 0.2.0
- * @since 0.6.5 placed in includes/ folder.
+ * @since 0.7.0 placed in includes/ folder.
  */
 class Scripts_To_Footer {
 
@@ -40,7 +40,7 @@ class Scripts_To_Footer {
 	 * The loader that's responsible for maintaining and registering all hooks that power
 	 * the plugin.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 * @access protected
 	 * @var STF_Loader $loader Maintains and registers all hooks for the plugin.
 	 */
@@ -49,7 +49,7 @@ class Scripts_To_Footer {
 	/**
 	 * The unique identifier of this plugin.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 * @access protected
 	 * @var string $plugin_name The string used to uniquely identify this plugin.
 	 */
@@ -58,7 +58,7 @@ class Scripts_To_Footer {
 	/**
 	 * The plugin filtename.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 * @access protected
 	 * @var string $plugin_file The plugin file.
 	 */
@@ -66,7 +66,7 @@ class Scripts_To_Footer {
 	/**
 	 * The current version of the plugin.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 * @access protected
 	 * @var string $version The current version of the plugin.
 	 */
@@ -75,7 +75,7 @@ class Scripts_To_Footer {
 	/**
 	 * The functions class contains helper functions.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 * @access protected
 	 * @var STF_Functions $functions Contains functions used by multiple classes.
 	 */
@@ -100,7 +100,7 @@ class Scripts_To_Footer {
 	public function __construct() {
 
 		$this->plugin_name = 'scripts-to-footer';
-		$this->version     = '0.6.5';
+		$this->version     = '0.7.0';
 		$this->plugin_file = 'scripts-to-footer/scripts-to-footer.php';
 
 		do_action( 'stf_init' );
@@ -118,7 +118,7 @@ class Scripts_To_Footer {
 	 * Define our plugin constants.
 	 *
 	 * @since 0.2.0
-	 * @since 0.6.5 moved into this class.
+	 * @since 0.7.0 moved into this class.
 	 */
 	private function setup_constants() {
 
@@ -135,7 +135,7 @@ class Scripts_To_Footer {
 	/**
 	 * Upgrade check.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 *
 	 * @access private
 	 */
@@ -177,7 +177,7 @@ class Scripts_To_Footer {
 	 * Create an instance of the loader which will be used to register the hooks
 	 * with WordPress.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 * @access private
 	 */
 	private function load_dependencies() {
@@ -233,7 +233,7 @@ class Scripts_To_Footer {
 	 * Uses the Scripts_To_Footer_I18n class in order to set the domain and to register the hook
 	 * with WordPress.
 	 *
-	 * @since  0.6.5
+	 * @since  0.7.0
 	 * @access private
 	 */
 	private function set_locale() {
@@ -248,7 +248,7 @@ class Scripts_To_Footer {
 	 * Register all of the hooks related to the admin area functionality
 	 * of the plugin.
 	 *
-	 * @since  0.6.5
+	 * @since  0.7.0
 	 * @access private
 	 */
 	private function define_admin_hooks() {
@@ -278,7 +278,7 @@ class Scripts_To_Footer {
 	 * Register all of the hooks related to the public-facing functionality
 	 * of the plugin.
 	 *
-	 * @since  0.6.5
+	 * @since  0.7.0
 	 * @access private
 	 */
 	private function define_public_hooks() {
@@ -300,7 +300,7 @@ class Scripts_To_Footer {
 	/**
 	 * Run the loader to execute all of the hooks with WordPress.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 */
 	public function run() {
 		$this->loader->run();
@@ -310,7 +310,7 @@ class Scripts_To_Footer {
 	 * The name of the plugin used to uniquely identify it within the context of
 	 * WordPress and to define internationalization functionality.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 * @return string The name of the plugin.
 	 */
 	public function get_plugin_name() {
@@ -320,7 +320,7 @@ class Scripts_To_Footer {
 	/**
 	 * The reference to the class that orchestrates the hooks with the plugin.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 * @return STF_Loader Orchestrates the hooks of the plugin.
 	 */
 	public function get_loader() {
@@ -330,7 +330,7 @@ class Scripts_To_Footer {
 	/**
 	 * Retrieve the version number of the plugin.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 * @return string The version number of the plugin.
 	 */
 	public function get_version() {

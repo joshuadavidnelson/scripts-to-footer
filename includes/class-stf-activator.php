@@ -2,7 +2,7 @@
 /**
  * Fired during plugin activation
  *
- * @since      0.6.5
+ * @since      0.7.0
  * @package    Scripts_To_Footer
  * @subpackage Scripts_To_Footer_Activator
  * @author     Joshua David Nelson <josh@joshuadnelson.com>
@@ -16,14 +16,14 @@
  *
  * This class defines all code necessary to run during the plugin's activation.
  *
- * @since 0.6.5
+ * @since 0.7.0
  */
 class STF_Activator {
 
 	/**
 	 * Clear the global comment count cache.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 */
 	public static function activate() {
 
@@ -39,7 +39,7 @@ class STF_Activator {
 	 * checks and updates the site version option.
 	 *
 	 * @since 0.6.0
-	 * @since 0.6.5 moved into Activator class.
+	 * @since 0.7.0 moved into Activator class.
 	 */
 	public static function activation_check() {
 
@@ -61,7 +61,7 @@ class STF_Activator {
 	 * or the versions change after activation.
 	 *
 	 * @since 0.6.0
-	 * @since 0.6.5 moved into Activator class.
+	 * @since 0.7.0 moved into Activator class.
 	 */
 	public function check_version() {
 
@@ -83,7 +83,7 @@ class STF_Activator {
 	 * Display notice on deactivation.
 	 *
 	 * @since 0.6.0
-	 * @since 0.6.5 moved into Activator class.
+	 * @since 0.7.0 moved into Activator class.
 	 */
 	public function disabled_notice() {
 
@@ -95,7 +95,7 @@ class STF_Activator {
 	 * Check everything is compatible.
 	 *
 	 * @since 0.6.0
-	 * @since 0.6.5 moved into Activator class.
+	 * @since 0.7.0 moved into Activator class.
 	 * @return bool
 	 */
 	public static function compatible_version() {

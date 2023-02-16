@@ -5,7 +5,7 @@
  * Loads and defines the internationalization files for this plugin
  * so that it is ready for translation.
  *
- * @since      0.6.5
+ * @since      0.7.0
  * @package    Scripts_To_Footer
  * @subpackage Scripts_To_Footer/includes
  * @link       https://github.com/joshuadavidnelson/scripts-to-footer
@@ -17,7 +17,7 @@
  * Loads and defines the internationalization files for this plugin
  * so that it is ready for translation.
  *
- * @since      0.6.5
+ * @since      0.7.0
  * @package    Scripts_To_Footer
  * @subpackage Scripts_To_Footer/includes
  * @author     Joshua Nelson <josh@joshuadnelson.com>

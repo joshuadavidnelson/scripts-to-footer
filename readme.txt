@@ -3,9 +3,9 @@ Contributors: joshuadnelson
 Tags: javascript, footer, speed, head, performance
 Donate link: https://joshuadnelson.com/donate/
 Requires at least: 4.0
-Requires PHP: 5.6
-Tested up to: 5.8
-Stable tag: 0.6.5
+Requires PHP: 7.4
+Tested up to: 6.1.1
+Stable tag: 0.7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,7 +24,7 @@ You can disable the plugin on specific archive pages (blog page, search page, po
 Check out the [documentation](https://github.com/joshuadavidnelson/scripts-to-footer/wiki) on [GitHub](https://github.com/joshuadavidnelson/scripts-to-footer) or some quick walkthroughs below.
 
 = Keeping specific Scripts in the Header =
-As of version 0.6 you can now keep specific scripts in the header. Note: this will print any scripts they depend on as well (if you want to keep `jquery-effects-core` in the header, you'll also get `jQuery` in the header, so no need to add both). 
+As of version 0.6 you can now keep specific scripts in the header. Note: this will print any scripts they depend on as well (if you want to keep `jquery-effects-core` in the header, you'll also get `jQuery` in the header, so no need to add both).
 
 Specifically for jQuery, see the settings page option, as it is a common request we've built it into the settings.
 
@@ -47,7 +47,7 @@ If you're comfortable with code you can use the `scripts_to_footer_post_types` f
 `
 function stf_add_cpt_support( $post_types ) {
 	$post_types[] = 'project';
-	
+
 	return $post_types;
 }
 add_filter( 'scripts_to_footer_post_types', 'stf_add_cpt_support' );
@@ -67,7 +67,7 @@ function stf_exclude_my_page( $exclude_page, $post_id ) {
 add_filter( 'stf_page', 'stf_exclude_my_page' );
 `
 
-Replace `stf_page` with `stf_post` for posts, or the slug of your custom post type. For instance, a post type called "project" can be filtered with `stf_project`. 
+Replace `stf_page` with `stf_post` for posts, or the slug of your custom post type. For instance, a post type called "project" can be filtered with `stf_project`.
 
 = More Documentation =
 [View this plugin on GitHub](https://github.com/joshuadavidnelson/scripts-to-footer/wiki).
@@ -96,7 +96,7 @@ e.g.
 1. My scripts are not moving to the footer. This is likely due to one of three things:
  - The theme you're using is not enqueuing scripts per [WordPress standards](https://codex.wordpress.org/Function_Reference/wp_enqueue_script#Using_a_Hook).
  - You have a plugin that is not enqueing scripts [per standards](https://codex.wordpress.org/Function_Reference/wp_enqueue_script#Using_a_Hook).
- - (Less common) There is a conflict with this plugin and another one. Deactivate all plugins and revert to a built-in theme (like TwentyTwelve or TwentyFifteen). Then activate Scripts-to-Footer. Check your HTML source to confirm it's working. 
+ - (Less common) There is a conflict with this plugin and another one. Deactivate all plugins and revert to a built-in theme (like TwentyTwelve or TwentyFifteen). Then activate Scripts-to-Footer. Check your HTML source to confirm it's working.
  - If so, proceed to activate each of your other plugins one at a time, checking your HTML source each time to see if the scripts behavior changes. Eventually you'll find a conflict, if not with the plugins then activate your theme and check.
 
 2. Everything Breaks!!
@@ -112,6 +112,11 @@ Please feel free to open a [Github Issue](https://github.com/joshuadavidnelson/s
 
 == Changelog ==
 
+= 0.7.0 =
+- Update tested WP up to 6.1.1
+- Update minimum PHP to 7.4
+- Restructuring files to match plugin boilerplate structure.
+
 = 0.6.4.1 =
 - Update Github Action to publish from github to WP.org.
 
@@ -121,7 +126,7 @@ Please feel free to open a [Github Issue](https://github.com/joshuadavidnelson/s
 - Added `STF_DEBUG` for use in error logging function with `WP_DEBUG`, both must be `true` before error logging is output to the debug.log file.
 
 = 0.6.3 =
-Moved the 'set_header_scripts' function into a 'wp_head' add_action to allow for conditional checks to work within the 'stf_exclude_scripts' filter. 
+Moved the 'set_header_scripts' function into a 'wp_head' add_action to allow for conditional checks to work within the 'stf_exclude_scripts' filter.
 
 = 0.6.2 =
 Added support for disabling plugin on 404 pages, thanks to Alex (@piscis on GitHub)
@@ -149,9 +154,9 @@ Reverted metabox version to previous - invalid error was sneaking through.
 = 0.4 =
 Added filter to exclude pages, updated metabox version, plugin version bump and updated readme.txt file.
 
-= 0.3 = 
-Added conditional to disable on plugin on admin dashboard, version bump. 
- 	
+= 0.3 =
+Added conditional to disable on plugin on admin dashboard, version bump.
+
 = 0.2 =
 Updating code to be object-oriented and added page metabox to disable plugin on specific pages.
 
@@ -160,12 +165,17 @@ Initial release
 
 == Upgrade Notice ==
 
+= 0.7.0 =
+- Update tested WP up to 6.1.1
+- Update minimum PHP to 7.4
+- Restructuring files to match plugin boilerplate structure.
+
 = 0.6.4 =
 - Removed unnecessary logging functions and added a debug check before logging anything.
 - Tidy up code spacing and inline-documentation.
 
 = 0.6.3 =
-Moved the 'set_header_scripts' function into a 'wp_head' add_action to allow for conditional checks to work within the 'stf_exclude_scripts' filter. 
+Moved the 'set_header_scripts' function into a 'wp_head' add_action to allow for conditional checks to work within the 'stf_exclude_scripts' filter.
 
 = 0.6.2 =
 Added support for disabling plugin on 404 pages, thanks to Alex (@piscis on GitHub)
@@ -183,7 +193,7 @@ Please update to avoid an error on 0.4 version. If you're updating from version 
 Adds filter for excluded page ids and updated to most current metabox system.
 
 = 0.3 =
-Adds safeguard to avoid conflicts on admin dashboard. 
+Adds safeguard to avoid conflicts on admin dashboard.
 
 = 0.2 =
 This upgrade adds options to disable plugin on specific pages.

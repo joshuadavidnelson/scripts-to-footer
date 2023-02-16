@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Common functions used by other classes.
  *
- * @since 0.6.5
+ * @since 0.7.0
  */
 class STF_Functions {
 

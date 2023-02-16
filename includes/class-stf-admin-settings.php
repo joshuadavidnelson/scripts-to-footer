@@ -29,7 +29,7 @@ class STF_Admin_Settings {
 	/**
 	 * The functions class contains helper functions.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 * @access protected
 	 * @var STF_Functions $functions Contains functions used by multiple classes.
 	 */
@@ -47,7 +47,7 @@ class STF_Admin_Settings {
 	/**
 	 * The settings field.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 * @access protected
 	 * @var string
 	 */

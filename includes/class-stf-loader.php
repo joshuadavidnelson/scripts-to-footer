@@ -3,7 +3,7 @@
  * Register all actions and filters for the plugin
  *
  * @link       https://github.com/joshuadavidnelson/scripts-to-footer
- * @since      0.6.5
+ * @since      0.7.0
  * @package    Scripts_To_Footer
  * @subpackage STF_Loader
  */
@@ -24,7 +24,7 @@ class STF_Loader {
 	/**
 	 * The array of actions registered with WordPress.
 	 *
-	 * @since  0.6.5
+	 * @since  0.7.0
 	 * @access protected
 	 * @var    array $actions The actions registered with WordPress to fire when the plugin loads.
 	 */
@@ -33,7 +33,7 @@ class STF_Loader {
 	/**
 	 * The array of filters registered with WordPress.
 	 *
-	 * @since  0.6.5
+	 * @since  0.7.0
 	 * @access protected
 	 * @var    array $filters The filters registered with WordPress to fire when the plugin loads.
 	 */
@@ -42,7 +42,7 @@ class STF_Loader {
 	/**
 	 * Initialize the collections used to maintain the actions and filters.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 */
 	public function __construct() {
 
@@ -54,7 +54,7 @@ class STF_Loader {
 	/**
 	 * Add a new action to the collection to be registered with WordPress.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 * @param string $hook          The name of the WordPress action that is being registered.
 	 * @param object $component     A reference to the instance of the object on which the action is defined.
 	 * @param string $callback      The name of the function definition on the $component.
@@ -68,7 +68,7 @@ class STF_Loader {
 	/**
 	 * Add a new filter to the collection to be registered with WordPress.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 * @param string $hook          The name of the WordPress filter that is being registered.
 	 * @param object $component     A reference to the instance of the object on which the filter is defined.
 	 * @param string $callback      The name of the function definition on the $component.
@@ -83,7 +83,7 @@ class STF_Loader {
 	 * A utility function that is used to register the actions and hooks into a single
 	 * collection.
 	 *
-	 * @since  0.6.5
+	 * @since  0.7.0
 	 * @access private
 	 * @param  array  $hooks         The collection of hooks that is being registered (that is, actions or filters).
 	 * @param  string $hook          The name of the WordPress filter that is being registered.
@@ -110,7 +110,7 @@ class STF_Loader {
 	/**
 	 * Register the filters and actions with WordPress.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 */
 	public function run() {
 

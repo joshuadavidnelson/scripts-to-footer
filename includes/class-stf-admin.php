@@ -23,14 +23,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * The public-facing functionality of the plugin.
  *
- * @since 0.6.5
+ * @since 0.7.0
  */
 class STF_Admin {
 
 	/**
 	 * The ID of this plugin.
 	 *
-	 * @since  0.6.5
+	 * @since  0.7.0
 	 * @access private
 	 * @var    string $plugin_name The ID of this plugin.
 	 */
@@ -39,7 +39,7 @@ class STF_Admin {
 	/**
 	 * The version of this plugin.
 	 *
-	 * @since  0.6.5
+	 * @since  0.7.0
 	 * @access private
 	 * @var    string $version The current version of this plugin.
 	 */
@@ -48,7 +48,7 @@ class STF_Admin {
 	/**
 	 * The functions class contains helper functions.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 * @access protected
 	 * @var STF_Functions $functions Contains functions used by multiple classes.
 	 */
@@ -57,7 +57,7 @@ class STF_Admin {
 	/**
 	 * The settings field.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 * @access protected
 	 * @var string
 	 */
@@ -66,7 +66,7 @@ class STF_Admin {
 	/**
 	 * Initialize the class and set its properties.
 	 *
-	 * @since  0.6.5
+	 * @since  0.7.0
 	 * @param string $plugin_name The name of the plugin.
 	 * @param string $version     The version of this plugin.
 	 */

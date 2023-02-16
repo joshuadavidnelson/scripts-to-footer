@@ -22,14 +22,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * The public-facing functionality of the plugin.
  *
- * @since 0.6.5
+ * @since 0.7.0
  */
 class STF_Public {
 
 	/**
 	 * The ID of this plugin.
 	 *
-	 * @since  0.6.5
+	 * @since  0.7.0
 	 * @access private
 	 * @var    string $plugin_name The ID of this plugin.
 	 */
@@ -38,7 +38,7 @@ class STF_Public {
 	/**
 	 * The version of this plugin.
 	 *
-	 * @since  0.6.5
+	 * @since  0.7.0
 	 * @access private
 	 * @var    string $version The current version of this plugin.
 	 */
@@ -47,7 +47,7 @@ class STF_Public {
 	/**
 	 * The functions class contains helper functions.
 	 *
-	 * @since 0.6.5
+	 * @since 0.7.0
 	 * @access protected
 	 * @var STF_Functions $functions Contains functions used by multiple classes.
 	 */
@@ -56,7 +56,7 @@ class STF_Public {
 	/**
 	 * Scripts to remain in the head.
 	 *
-	 * @since  0.6.5
+	 * @since  0.7.0
 	 * @access private
 	 * @var    array $header_scripts A group strings[] of script slugs.
 	 */
@@ -65,7 +65,7 @@ class STF_Public {
 	/**
 	 * Initialize the class and set its properties.
 	 *
-	 * @since  0.6.5
+	 * @since  0.7.0
 	 * @param string $plugin_name The name of the plugin.
 	 * @param string $version     The version of this plugin.
 	 */
