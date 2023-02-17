@@ -150,6 +150,8 @@ class STF_Admin {
 
 		// Grab current value.
 		$exclude = get_post_meta( get_the_ID(), 'stf_exclude', true );
+
+		// Update old 'on' values to bool values.
 		if ( 'on' === $exclude ) {
 			update_post_meta( get_the_ID(), 'stf_exclude', 1, 'on' );
 			$exclude = 1;
