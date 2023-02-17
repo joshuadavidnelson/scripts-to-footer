@@ -204,7 +204,7 @@ class STF_Public {
 				$exclude_page = get_post_meta( $queried_object_id, 'stf_exclude', true );
 
 				// Support for older versions that use 'on' as well as newer versions with bool.
-				if ( 'on' === $exclude_page || true === $exclude_page ) {
+				if ( 'on' === $exclude_page || true === (bool) $exclude_page ) {
 					return false;
 				}
 
