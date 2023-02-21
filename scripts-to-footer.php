@@ -4,7 +4,7 @@
  *
  * Plugin Name: Scripts-To-Footer
  * Plugin URI: http://wordpress.org/plugins/scripts-to-footerphp/
- * Description: Moves scripts to the footer to decrease page load times, while keeping stylesheets in the header. Requires that plugins and theme correctly utilizes wp_enqueue_scripts hook. Can be disabled via a checkbox on specific pages and posts.
+ * Description: Move your scripts to the footer to help speed up perceived page load times and improve user experience.
  * Version: 0.7.0
  * Author: Joshua David Nelson
  * Author URI: http://joshuadnelson.com
