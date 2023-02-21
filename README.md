@@ -1,6 +1,15 @@
 Scripts To Footer
 =================
 
+[![WordPress Plugin Version](https://img.shields.io/wordpress/plugin/v/scripts-to-footerphp)](https://wordpress.org/plugins/scripts-to-footerphp/) ![Downloads](https://img.shields.io/wordpress/plugin/dt/scripts-to-footerphp.svg) ![Rating](https://img.shields.io/wordpress/plugin/r/scripts-to-footerphp.svg)
+
+**Requires at least:** 4.0  
+**Tested up to WordPress:** 6.1.1  
+**Stable version:** 0.7.0  
+**License:** GPLv2 or later  
+**Requires PHP:** 7.4  
+**Tested up to PHP:** 8.0
+
 Move your scripts to the footer to speed up perceived page load times and improve user experience.
 
 Please utilize the [issues](https://github.com/joshuadavidnelson/scripts-to-footer/issues) section if you run into problems or have suggestions for making the plugin better. You can also view the most recent official, stable release on the WordPress repo linked below.
