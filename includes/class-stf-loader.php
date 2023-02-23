@@ -2,7 +2,6 @@
 /**
  * Register all actions and filters for the plugin
  *
- * @link       https://github.com/joshuadavidnelson/scripts-to-footer
  * @since      0.7.0
  * @package    Scripts_To_Footer
  * @subpackage STF_Loader
@@ -15,9 +14,7 @@
  * the plugin, and register them with the WordPress API. Call the
  * run function to execute the list of actions and filters.
  *
- * @package    Scripts_To_Footer
- * @subpackage STF_Loader
- * @author     Joshua Nelson <josh@joshuadnelson.com>
+ * @since 0.7.0
  */
 class STF_Loader {
 
