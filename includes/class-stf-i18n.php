@@ -7,8 +7,7 @@
  *
  * @since      0.7.0
  * @package    Scripts_To_Footer
- * @subpackage Scripts_To_Footer/includes
- * @link       https://github.com/joshuadavidnelson/scripts-to-footer
+ * @subpackage STF_I18n
  */
 
 /**
@@ -18,9 +17,6 @@
  * so that it is ready for translation.
  *
  * @since      0.7.0
- * @package    Scripts_To_Footer
- * @subpackage Scripts_To_Footer/includes
- * @author     Joshua Nelson <josh@joshuadnelson.com>
  */
 class STF_I18n {
 
