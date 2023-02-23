@@ -5,7 +5,7 @@ parameters:
     level: 5
     inferPrivatePropertyTypeFromConstructor: true
     reportUnmatchedIgnoredErrors: false
-    treatPhpDocTypesAsCertain: false
+	treatPhpDocTypesAsCertain: false
     bootstrapFiles:
         - tests/bootstrap.php
     scanFiles:
