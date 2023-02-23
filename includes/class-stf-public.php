@@ -107,11 +107,9 @@ class STF_Public {
 	 */
 	public function print_head_scripts() {
 
-		// @codingStandardsIgnoreStart - ignoring the phpstan "Negated boolean expression is always false."
-		if ( ! isset( $this->header_scripts ) || empty( $this->header_scripts ) || ! is_array( $this->header_scripts ) ) {
+		if ( ! isset( $this->header_scripts ) || empty( $this->header_scripts ) || ! is_array( $this->header_scripts ) ) { // phpcs:ignore
 			return;
 		}
-		// @codingStandardsIgnoreEnd
 
 		// The main filter, true inacts the plugin, false does not (excludes the page).
 		if ( $this->is_included() ) {
