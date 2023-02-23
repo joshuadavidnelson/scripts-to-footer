@@ -5,7 +5,7 @@ Donate link: https://joshuadnelson.com/donate/
 Requires at least: 4.0
 Requires PHP: 7.4
 Tested up to: 6.1.1
-Stable tag: 0.7.0
+Stable tag: 0.7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -110,6 +110,9 @@ See number "Everything Breaks!!" above. Try checking the "Keep jQuery in the hea
 This plugin should not change your actual page _speed_ - the same scripts are being loaded, that takes the same amount of time. However, by placing scripts in the footer you can change the _precieved_ load times, moving [render-blocking scripts](https://developers.google.com/speed/docs/insights/BlockingJS) below the fold, allowing your content to load first - instead of loading scripts and slowing the visual portions of your site. That's the whole point. Outside of that, this plugin is not intended to increase page load speed or minify scripts in anyway.
 
 == Changelog ==
+
+= 0.7.1 =
+- Remove duplicated plugin header to fix fresh install error.
 
 = 0.7.0 =
 - Update tested WP up to 6.1.1
