@@ -1,5 +1,8 @@
 ### Changelog
 
+##### 0.7.1
+Remove duplicated plugin header to fix fresh install error.
+
 ##### 0.7.0
 - Update tested WP up to 6.1.1
 - Update minimum PHP to 7.4

@@ -1,17 +1,8 @@
 <?php
 /**
- * Main Plugin File
+ * Main Plugin class.
  *
- * Plugin Name: Scripts-To-Footer
- * Plugin URI: http://wordpress.org/plugins/scripts-to-footerphp/
- * Description: Moves scripts from the head to the footer of your site.
- * Version: 0.6.4.1
- * Author: Joshua David Nelson
- * Author URI: http://joshuadnelson.com
- * License: GPL2
- * GitHub Plugin URI: https://github.com/joshuadavidnelson/scripts-to-footer
- * GitHub Branch: master
- *
+ * @since     0.7.0
  * @package   Scripts_To_Footer
  * @author    Joshua David Nelson <josh@joshuadnelson.com>
  * @copyright Copyright (c) 2023, Joshua David Nelson
@@ -100,7 +91,7 @@ class Scripts_To_Footer {
 	public function __construct() {
 
 		$this->plugin_name = 'scripts-to-footer';
-		$this->version     = '0.7.0';
+		$this->version     = '0.7.1';
 		$this->plugin_file = 'scripts-to-footer/scripts-to-footer.php';
 
 		do_action( 'stf_init' );
