@@ -16,7 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'You are not allowed to access this file directly.' );
 }
 
-
 /**
  * The public-facing functionality of the plugin.
  *
