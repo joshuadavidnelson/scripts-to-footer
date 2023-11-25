@@ -49,7 +49,7 @@ Added filter to exclude pages, updated metabox version, plugin version bump and 
 
 ##### 0.3
 Added conditional to disable on plugin on admin dashboard, version bump. 
- 	
+
 ##### 0.2
 Updating code to be object-oriented and added page metabox to disable plugin on specific pages.
 
