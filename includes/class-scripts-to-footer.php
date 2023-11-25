@@ -102,7 +102,6 @@ class Scripts_To_Footer {
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-
 	}
 
 	/**
@@ -120,7 +119,6 @@ class Scripts_To_Footer {
 
 		// Plugin Verison.
 		define( 'STF_VERSION', $this->version );
-
 	}
 
 	/**
@@ -152,7 +150,6 @@ class Scripts_To_Footer {
 			// Save current version.
 			update_option( 'stf_version', STF_VERSION, false );
 		}
-
 	}
 
 	/**
@@ -173,7 +170,7 @@ class Scripts_To_Footer {
 	 */
 	private function load_dependencies() {
 
-		$includes_dir = plugin_dir_path( dirname( __FILE__ ) ) . 'includes';
+		$includes_dir = plugin_dir_path( __DIR__ ) . 'includes';
 
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
@@ -215,7 +212,6 @@ class Scripts_To_Footer {
 
 		$this->loader    = new STF_Loader();
 		$this->functions = new STF_Functions();
-
 	}
 
 	/**
@@ -232,7 +228,6 @@ class Scripts_To_Footer {
 		$plugin_i18n = new STF_I18n();
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
-
 	}
 
 	/**
@@ -262,7 +257,6 @@ class Scripts_To_Footer {
 
 		// Create the admin page.
 		$this->loader->add_action( 'admin_init', $admin_settings, 'page_init' );
-
 	}
 
 	/**
@@ -285,7 +279,6 @@ class Scripts_To_Footer {
 
 		// Add select scripts into the header.
 		$this->loader->add_action( 'wp_head', $plugin_public, 'print_head_scripts', 10 );
-
 	}
 
 	/**
@@ -327,5 +320,4 @@ class Scripts_To_Footer {
 	public function get_version() {
 		return $this->version;
 	}
-
 }

@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Plugin Directory.
 if ( ! defined( 'STF_DIR' ) ) {
-	define( 'STF_DIR', dirname( __FILE__ ) );
+	define( 'STF_DIR', __DIR__ );
 }
 
 // Plugin URL.
