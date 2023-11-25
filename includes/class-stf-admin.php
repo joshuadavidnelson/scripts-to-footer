@@ -104,7 +104,7 @@ class STF_Admin {
 	}
 
 	/**
-	 * Add link to options page in plguin screen.
+	 * Add link to options page in plugin screen.
 	 *
 	 * @since 0.6.0
 	 * @param array $links Links.

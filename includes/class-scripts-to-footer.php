@@ -112,12 +112,12 @@ class Scripts_To_Footer {
 	 */
 	private function setup_constants() {
 
-		// Custom Debug Constant, intented for developer use.
+		// Custom Debug Constant, intended for developer use.
 		if ( ! defined( 'STF_DEBUG' ) ) {
 			define( 'STF_DEBUG', false );
 		}
 
-		// Plugin Verison.
+		// Plugin Version.
 		define( 'STF_VERSION', $this->version );
 	}
 

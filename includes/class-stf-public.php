@@ -152,7 +152,7 @@ class STF_Public {
 	}
 
 	/**
-	 * Determing if the current page is included, via a filter.
+	 * Determining if the current page is included, via a filter.
 	 *
 	 * @since 0.6.0
 	 * @return bool Default is true.
@@ -211,7 +211,7 @@ class STF_Public {
 				 * Allow override of plugin functionality based on post type.
 				 *
 				 * @since 0.6.0
-				 * @param bool $exclude           defaults to true, whch runs the plugin.
+				 * @param bool $exclude           defaults to true, which runs the plugin.
 				 * @param int  $queried_object_id the current object id.
 				 */
 				return apply_filters( "stf_{$post_type}", true, $queried_object_id );
