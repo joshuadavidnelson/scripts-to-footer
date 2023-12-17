@@ -7,6 +7,7 @@
 .gitattributes
 .gitignore
 .distignore
+code-of-conduct.md
 composer.json
 composer.lock
 contributing.md
