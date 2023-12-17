@@ -16,3 +16,5 @@ parameters:
 		- '#^Property STF_Public::\$plugin_name is never read, only written\.$#'
 		- '#^Property STF_Public::\$version is never read, only written\.$#'
 		- '#^Property STF_Public::\$header_scripts \(array\) in isset\(\) is not nullable\.$#'
+		- '#^Result of \&\& is always false\.$#'
+		- '#^Right side of \&\& is always false\.$#'
