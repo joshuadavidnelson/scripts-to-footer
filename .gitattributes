@@ -1,0 +1,7 @@
+/.distignore export-ignore
+/.editorconfig export-ignore
+/.gitattributes export-ignore
+/.github/ export-ignore
+/contributing.md export-ignore
+/phpstan.neon.dist export-ignore
+/tests/ export-ignore

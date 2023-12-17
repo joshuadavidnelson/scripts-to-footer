@@ -43,7 +43,6 @@ class STF_Functions {
 		} else {
 			return false;
 		}
-
 	}
 
 	/**
@@ -61,7 +60,6 @@ class STF_Functions {
 		} else {
 			return false;
 		}
-
 	}
 
 	/**
@@ -84,7 +82,6 @@ class STF_Functions {
 		} else {
 			return false;
 		}
-
 	}
 
 	/**
@@ -102,7 +99,6 @@ class STF_Functions {
 		} else {
 			return false;
 		}
-
 	}
 
 	/**
@@ -121,7 +117,6 @@ class STF_Functions {
 				error_log( 'Scripts-to-Footer Plugin Error: ' . $message ); // phpcs:ignore
 			}
 		}
-
 	}
 
 	/**
@@ -134,6 +129,5 @@ class STF_Functions {
 
 		return defined( 'WP_DEBUG' ) && true === WP_DEBUG
 				&& defined( 'STF_DEBUG' ) && true === STF_DEBUG;
-
 	}
 }

@@ -59,7 +59,6 @@ class STF_Admin_Settings {
 
 		$this->functions      = new STF_Functions();
 		$this->settings_field = 'scripts-to-footer';
-
 	}
 
 	/**
@@ -77,7 +76,6 @@ class STF_Admin_Settings {
 			$this->settings_field,
 			array( $this, 'create_admin_page' )
 		);
-
 	}
 
 	/**
@@ -102,7 +100,6 @@ class STF_Admin_Settings {
 			</form>
 		</div>
 		<?php
-
 	}
 
 	/**
@@ -266,7 +263,6 @@ class STF_Admin_Settings {
 		}
 
 		return $new_input;
-
 	}
 
 	/**
@@ -289,7 +285,6 @@ class STF_Admin_Settings {
 		}
 
 		return $options;
-
 	}
 
 	/**
@@ -311,7 +306,6 @@ class STF_Admin_Settings {
 		}
 
 		return $options;
-
 	}
 
 	/**
@@ -323,7 +317,6 @@ class STF_Admin_Settings {
 
 		// translators: tell the user that the options on this settings page are for selecting pages that will NOT have the scripts moved.
 		echo wp_kses_post( _x( 'Select which templates should <em><strong>not</strong></em> have scripts moved to the footer:', 'stf' ) );
-
 	}
 
 	/**
@@ -338,7 +331,6 @@ class STF_Admin_Settings {
 		}
 
 		echo '<input type="checkbox" name="' . esc_attr( $this->settings_field ) . '[stf_exclude_home]" ' . checked( $this->options['stf_exclude_home'], 1, false ) . ' value="1">';
-
 	}
 
 	/**
@@ -353,7 +345,6 @@ class STF_Admin_Settings {
 		}
 
 		echo '<input type="checkbox" name="' . esc_attr( $this->settings_field ) . '[stf_exclude_search]" ' . checked( $this->options['stf_exclude_search'], 1, false ) . ' value="1">';
-
 	}
 
 	/**
@@ -368,7 +359,6 @@ class STF_Admin_Settings {
 		}
 
 		echo '<input type="checkbox" name="' . esc_attr( $this->settings_field ) . '[stf_exclude_404]" ' . checked( $this->options['stf_exclude_404'], 1, false ) . ' value="1">';
-
 	}
 
 	/**
@@ -396,7 +386,6 @@ class STF_Admin_Settings {
 			}
 			echo '</ul>';
 		}
-
 	}
 
 	/**
@@ -439,7 +428,6 @@ class STF_Admin_Settings {
 		// @codingStandardsIgnoreStart - wants to escape variables here that are entirely safe.
 		echo '<input type="checkbox" name="' . $this->settings_field . '[stf_exclude_author_archive]" ' . checked( $this->options['stf_exclude_author_archive'], 1, false ) . ' value="1">';
 		// @codingStandardsIgnoreEnd
-
 	}
 
 	/**
@@ -456,7 +444,6 @@ class STF_Admin_Settings {
 		// @codingStandardsIgnoreStart - wants to escape variables here that are entirely safe.
 		echo '<input type="checkbox" name="' . $this->settings_field . '[stf_exclude_archive]" ' . checked( $this->options['stf_exclude_archive'], 1, false ) . ' value="1">';
 		// @codingStandardsIgnoreEnd
-
 	}
 
 	/**
@@ -470,7 +457,6 @@ class STF_Admin_Settings {
 		// translators: intro for the head scripts settings section and link to the documentation on Github.
 		echo sprintf( __( 'Options for keeping specific scripts in the header, if they occur. Want to exclude a different script? Check out the <a href="%s" title="On Github">documentation</a> for more information.', 'stf' ), 'https://github.com/joshuadavidnelson/scripts-to-footer/wiki' );
 		// @codingStandardsIgnoreEnd
-
 	}
 
 	/**
@@ -487,7 +473,5 @@ class STF_Admin_Settings {
 		// @codingStandardsIgnoreStart - wants to escape variables here that are entirely safe.
 		echo '<input type="checkbox" name="' . $this->settings_field . '[stf_jquery_header]" ' . checked( $this->options['stf_jquery_header'], 1, false ) . ' value="1">';
 		// @codingStandardsIgnoreEnd
-
 	}
-
 }
