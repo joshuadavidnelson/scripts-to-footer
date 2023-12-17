@@ -96,29 +96,11 @@ class Scripts_To_Footer {
 
 		do_action( 'stf_init' );
 
-		$this->setup_constants();
 		$this->upgrade_check();
 		$this->load_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
-	}
-
-	/**
-	 * Define our plugin constants.
-	 *
-	 * @since 0.2.0
-	 * @since 0.7.0 moved into this class.
-	 */
-	private function setup_constants() {
-
-		// Custom Debug Constant, intended for developer use.
-		if ( ! defined( 'STF_DEBUG' ) ) {
-			define( 'STF_DEBUG', false );
-		}
-
-		// Plugin Version.
-		define( 'STF_VERSION', $this->version );
 	}
 
 	/**

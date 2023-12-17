@@ -36,6 +36,11 @@ if ( ! defined( 'STF_URL' ) ) {
 	define( 'STF_URL', plugins_url( '/', __FILE__ ) );
 }
 
+// Custom Debug Constant, intended for developer use.
+if ( ! defined( 'STF_DEBUG' ) ) {
+	define( 'STF_DEBUG', false );
+}
+
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-stf-activator.php
