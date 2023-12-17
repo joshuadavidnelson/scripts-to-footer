@@ -3,8 +3,8 @@
 ## 0.7.2
 - Tested up to WordPress 6.4.2.
 - Bump minimum WordPress version to 5.3, aligning with minimum PHP support.
-- A unch of code tidy, fix coding standards, typos, and CI. h/t @szepeviktor 
-- Add github action, update php
+- A bunch of code tidy, fix coding standards, typos, and CI. h/t @szepeviktor 
+- Add github actions
 
 ## 0.7.1
 Remove duplicated plugin header to fix fresh install error.
