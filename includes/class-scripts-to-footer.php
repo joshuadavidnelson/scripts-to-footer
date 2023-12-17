@@ -90,8 +90,8 @@ class Scripts_To_Footer {
 	 */
 	public function __construct() {
 
-		$this->plugin_name = 'scripts-to-footer';
-		$this->version     = '0.7.1';
+		$this->plugin_name = STF_PLUGIN_NAME;
+		$this->version     = STF_VERSION;
 		$this->plugin_file = 'scripts-to-footer/scripts-to-footer.php';
 
 		do_action( 'stf_init' );
