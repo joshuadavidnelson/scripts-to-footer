@@ -127,7 +127,7 @@ class STF_Functions {
 	 */
 	private function debug() {
 
-		return defined( 'WP_DEBUG' ) && true === WP_DEBUG
-				&& defined( 'STF_DEBUG' ) && true === STF_DEBUG;
+		return ( defined( 'WP_DEBUG' ) && WP_DEBUG )
+				&& ( defined( 'STF_DEBUG' ) && STF_DEBUG );
 	}
 }
