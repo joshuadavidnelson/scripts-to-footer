@@ -71,7 +71,6 @@ class STF_Public {
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
 		$this->functions   = new STF_Functions();
-
 	}
 
 	/**
@@ -97,7 +96,6 @@ class STF_Public {
 		 * @return array
 		 */
 		$this->header_scripts = apply_filters( 'stf_exclude_scripts', $head_scripts );
-
 	}
 
 	/**
@@ -124,7 +122,6 @@ class STF_Public {
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -152,11 +149,10 @@ class STF_Public {
 			remove_action( 'wp_head', 'wp_print_head_scripts', 9 );
 			remove_action( 'wp_head', 'wp_enqueue_scripts', 1 );
 		}
-
 	}
 
 	/**
-	 * Determing if the current page is included, via a filter.
+	 * Determining if the current page is included, via a filter.
 	 *
 	 * @since 0.6.0
 	 * @return bool Default is true.
@@ -171,7 +167,6 @@ class STF_Public {
 		 * @return bool
 		 */
 		return (bool) apply_filters( 'stf_include', true );
-
 	}
 
 	/**
@@ -216,7 +211,7 @@ class STF_Public {
 				 * Allow override of plugin functionality based on post type.
 				 *
 				 * @since 0.6.0
-				 * @param bool $exclude           defaults to true, whch runs the plugin.
+				 * @param bool $exclude           defaults to true, which runs the plugin.
 				 * @param int  $queried_object_id the current object id.
 				 */
 				return apply_filters( "stf_{$post_type}", true, $queried_object_id );
@@ -305,6 +300,5 @@ class STF_Public {
 		 * @param bool $include true to include, false to not.
 		 */
 		return apply_filters( "stf_{$type}", $include );
-
 	}
 }

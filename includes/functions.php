@@ -11,20 +11,19 @@
  * Get custom settings.
  *
  * @since 0.6.0
- * @param string $key     The key.
- * @param mixed  $default The default value.
- * @param string $setting The settings field.
+ * @param string $key           The key.
+ * @param mixed  $default_value The default value.
+ * @param string $setting       The settings field.
  */
-function stf_get_option( $key, $default = false, $setting = null ) {
+function stf_get_option( $key, $default_value = false, $setting = null ) {
 
 	// Get settings field options.
 	$setting = $setting ? $setting : 'scripts-to-footer';
-	$options = get_option( $setting, $default );
+	$options = get_option( $setting, $default_value );
 
 	if ( ! is_array( $options ) || ! array_key_exists( $key, $options ) ) {
 		return '';
 	}
 
 	return is_array( $options[ $key ] ) ? stripslashes_deep( $options[ $key ] ) : stripslashes( wp_kses_decode_entities( $options[ $key ] ) );
-
 }

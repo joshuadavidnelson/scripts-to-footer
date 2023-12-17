@@ -16,7 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 'You are not allowed to access this file directly.' );
 }
 
-
 /**
  * The public-facing functionality of the plugin.
  *
@@ -101,11 +100,10 @@ class STF_Admin {
 		}
 
 		return $links;
-
 	}
 
 	/**
-	 * Add link to options page in plguin screen.
+	 * Add link to options page in plugin screen.
 	 *
 	 * @since 0.6.0
 	 * @param array $links Links.
@@ -118,7 +116,6 @@ class STF_Admin {
 		array_unshift( $links, $settings_link );
 
 		return $links;
-
 	}
 
 	/**
@@ -135,7 +132,6 @@ class STF_Admin {
 		}
 
 		add_meta_box( 'scripts-to-footer', 'Scripts to Footer Settings', array( $this, 'metabox_render' ), $post_type, 'normal', 'high' );
-
 	}
 
 	/**
@@ -172,7 +168,6 @@ class STF_Admin {
 		// @codingStandardsIgnoreEnd
 
 		echo '</p>';
-
 	}
 
 	/**
@@ -216,5 +211,4 @@ class STF_Admin {
 			delete_post_meta( $post_id, 'stf_exclude' );
 		}
 	}
-
 }

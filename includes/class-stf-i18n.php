@@ -30,9 +30,7 @@ class STF_I18n {
 		load_plugin_textdomain(
 			'stf',
 			false,
-			dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/'
+			dirname( plugin_basename( __FILE__ ), 2 ) . '/languages/'
 		);
-
 	}
-
 }
