@@ -2,10 +2,10 @@
 Contributors: joshuadnelson
 Tags: javascript, footer, speed, head, performance
 Donate link: https://joshuadnelson.com/donate/
-Requires at least: 4.0
+Requires at least: 5.3
 Requires PHP: 7.4
-Tested up to: 6.1.1
-Stable tag: 0.7.1
+Tested up to: 6.4.2
+Stable tag: 0.7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,7 +75,7 @@ Replace `stf_page` with `stf_post` for posts, or the slug of your custom post ty
 = View on GitHub =
 [View this plugin on GitHub](https://github.com/joshuadavidnelson/scripts-to-footer).
 
-Please feel free to open a [Github Issue](https://github.com/joshuadavidnelson/scripts-to-footer/issues) to report conflicts or goto [the  WP.org support forum](https://wordpress.org/support/plugin/scripts-to-footerphp). If there is something wrong with Scripts-to-Footer, we'll update it. However, if it's a another plugin or theme we can only contact the developer with the issue to attempt to resolve it.
+Please feel free to open a [Github Issue](https://github.com/joshuadavidnelson/scripts-to-footer/issues) to report conflicts or goto [the WP.org support forum](https://wordpress.org/support/plugin/scripts-to-footerphp). If there is something wrong with Scripts-to-Footer, we'll update it. However, if it's a another plugin or theme we can only contact the developer with the issue to attempt to resolve it.
 
 == Installation ==
 
@@ -97,19 +97,25 @@ e.g.
 = My scripts are not moving to the footer. =
 This is likely due to one of three things:
  - The theme you're using is not enqueuing scripts per [WordPress standards](https://codex.wordpress.org/Function_Reference/wp_enqueue_script#Using_a_Hook).
- - You have a plugin that is not enqueing scripts [per standards](https://codex.wordpress.org/Function_Reference/wp_enqueue_script#Using_a_Hook).
+ - You have a plugin that is not enqueuing scripts [per standards](https://codex.wordpress.org/Function_Reference/wp_enqueue_script#Using_a_Hook).
  - (Less common) There is a conflict with this plugin and another one. Deactivate all plugins and revert to a built-in theme (like TwentyTwelve or TwentyFifteen). Then activate Scripts-to-Footer. Check your HTML source to confirm it's working. If so, proceed to activate each of your other plugins one at a time, checking your HTML source each time to see if the scripts behavior changes. Eventually you'll find a conflict, if not with the plugins then activate your theme and check.
 
 = Everything Breaks!! =
-There are lots of scripts that require things like jQuery in the header. Try checking the "Keep jQuery in the header" option in Settings > Scripts to Footer or using the `stf_exclude_scripts` filter noted in the [documnetation](https://github.com/joshuadavidnelson/scripts-to-footer/wiki) (Note: only for version 0.6 and higher).
+There are lots of scripts that require things like jQuery in the header. Try checking the "Keep jQuery in the header" option in Settings > Scripts to Footer or using the `stf_exclude_scripts` filter noted in the [documentation](https://github.com/joshuadavidnelson/scripts-to-footer/wiki) (Note: only for version 0.6 and higher).
 
 = My Slider stopped working =
-See number "Everything Breaks!!" above. Try checking the "Keep jQuery in the header" option in Settings > Scripts to Footer or using the `stf_exclude_scripts` filter noted in the [documnetation](https://github.com/joshuadavidnelson/scripts-to-footer/wiki)
+See number "Everything Breaks!!" above. Try checking the "Keep jQuery in the header" option in Settings > Scripts to Footer or using the `stf_exclude_scripts` filter noted in the [documentation](https://github.com/joshuadavidnelson/scripts-to-footer/wiki)
 
 = My Page Speed hasn't improved (or it's worse) =
 This plugin should not change your actual page _speed_ - the same scripts are being loaded, that takes the same amount of time. However, by placing scripts in the footer you can change the _precieved_ load times, moving [render-blocking scripts](https://developers.google.com/speed/docs/insights/BlockingJS) below the fold, allowing your content to load first - instead of loading scripts and slowing the visual portions of your site. That's the whole point. Outside of that, this plugin is not intended to increase page load speed or minify scripts in anyway.
 
 == Changelog ==
+
+= 0.7.2 =
+- Tested up to WordPress 6.4.2.
+- Bump minimum WordPress version to 5.3, aligning with minimum PHP support.
+- A bunch of code tidy, fix coding standards, typos, and CI. h/t @szepeviktor
+- Add github actions
 
 = 0.7.1 =
 - Remove duplicated plugin header to fix fresh install error.
@@ -166,6 +172,15 @@ Updating code to be object-oriented and added page metabox to disable plugin on 
 Initial release
 
 == Upgrade Notice ==
+
+= 0.7.2 =
+- Tested up to WordPress 6.4.2.
+- Bump minimum WordPress version to 5.3, aligning with minimum PHP support.
+- A bunch of code tidy, fix coding standards, typos, and CI. h/t @szepeviktor
+- Add github actions
+
+= 0.7.1 =
+- Remove duplicated plugin header to fix fresh install error.
 
 = 0.7.0 =
 - Update tested WP up to 6.1.1

@@ -1,9 +1,15 @@
-### Changelog
+# Changelog
 
-##### 0.7.1
+## 0.7.2
+- Tested up to WordPress 6.4.2.
+- Bump minimum WordPress version to 5.3, aligning with minimum PHP support.
+- A bunch of code tidy, fix coding standards, typos, and CI. h/t @szepeviktor 
+- Add github actions
+
+## 0.7.1
 Remove duplicated plugin header to fix fresh install error.
 
-##### 0.7.0
+## 0.7.0
 - Update tested WP up to 6.1.1
 - Update minimum PHP to 7.4
 - Restructuring files to match plugin boilerplate structure.
@@ -11,24 +17,24 @@ Remove duplicated plugin header to fix fresh install error.
 - Create a contributing.md file.
 - Add a .distignore file.
 
-##### 0.6.4.1
+## 0.6.4.1
 - Update Github Action to publish from github to WP.org.
 
-##### 0.6.4
+## 0.6.4
 - Removed unnecessary logging functions and added a debug check before logging anything.
 - Tidy up code spacing and inline-documentation.
 - Added `STF_DEBUG` for use in error logging function with `WP_DEBUG`, both must be `true` before error logging is output to the debug.log file.
 
-##### 0.6.3
+## 0.6.3
 Moved the 'set_header_scripts' function into a 'wp_head' add_action to allow for conditional checks to work within the 'stf_exclude_scripts' filter. 
 
-##### 0.6.2
+## 0.6.2
 Added support for disabling plugin on 404 pages, thanks to Alex (@piscis on GitHub)
 
-##### 0.6.1
+## 0.6.1
 Updates custom taxonomy check for custom taxonomy archives and some error logging functions. 
 
-##### 0.6.0
+## 0.6.0
 - Add settings page with global disable options for home page, search pages, post type archives, taxonomy archives, and other archives.
 - Update uninstall.php to remove things correctly.
 - Add FAQ to readme.txt and readme.md.
@@ -41,17 +47,17 @@ Updates custom taxonomy check for custom taxonomy archives and some error loggin
 - Removed CMB and built metaboxes the old fashion way.
 - Added debug logging to better track any potential errors moving forward.
 
-##### 0.5
+## 0.5
 Reverted metabox version to previous - invalid error was sneaking through.
 
-##### 0.4
+## 0.4
 Added filter to exclude pages, updated metabox version, plugin version bump and updated readme.txt file.
 
-##### 0.3
+## 0.3
 Added conditional to disable on plugin on admin dashboard, version bump. 
- 	
-##### 0.2
+
+## 0.2
 Updating code to be object-oriented and added page metabox to disable plugin on specific pages.
 
-##### 0.1
+## 0.1
 Initial release

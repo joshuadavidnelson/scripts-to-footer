@@ -1,0 +1,21 @@
+{
+	"name": "scripts-to-footer",
+	"version": "0.7.2",
+	"description": "Move your scripts to the footer to help speed up perceived page load times and improve user experience.",
+	"author": "Joshua David Nelson",
+	"license": "GPL-2.0-or-later",
+	"homepage": "https://github.com/joshuadavidnelson/scripts-to-footer/",
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:joshuadavidnelson/scripts-to-footer.git"
+	},
+	"scripts": {
+		"env": "wp-env",
+		"env:start": "wp-env start",
+		"env:stop": "wp-env stop"
+	},
+	"devDependencies": {
+		"@types/node": "^18.0.0",
+		"@wordpress/env": "^5.0.0"
+	}
+}

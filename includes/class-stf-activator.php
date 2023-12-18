@@ -24,7 +24,6 @@ class STF_Activator {
 	public static function activate() {
 
 		flush_rewrite_rules();
-
 	}
 
 	/**
@@ -47,7 +46,6 @@ class STF_Activator {
 			// @codingStandardsIgnoreEnd
 
 		}
-
 	}
 
 	/**
@@ -72,7 +70,6 @@ class STF_Activator {
 				// @codingStandardsIgnoreEnd
 			}
 		}
-
 	}
 
 	/**
@@ -84,7 +81,6 @@ class STF_Activator {
 	public function disabled_notice() {
 
 		echo '<strong>' . esc_html__( 'Scripts-to-Footer requires WordPress 4.0 or higher.', 'stf' ) . '</strong>';
-
 	}
 
 	/**
@@ -104,7 +100,5 @@ class STF_Activator {
 		// Add sanity checks for other version requirements here.
 
 		return true;
-
 	}
-
 }
