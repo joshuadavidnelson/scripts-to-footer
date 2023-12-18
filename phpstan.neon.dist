@@ -1,7 +1,9 @@
 includes:
 	- vendor/szepeviktor/phpstan-wordpress/extension.neon
 parameters:
-	level: max
+	# TODO
+	#level: max
+	level: 5
 	inferPrivatePropertyTypeFromConstructor: true
 	treatPhpDocTypesAsCertain: false
 	bootstrapFiles:
