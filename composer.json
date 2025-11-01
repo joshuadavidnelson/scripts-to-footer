@@ -1,0 +1,66 @@
+{
+  "name": "joshuadavidnelson/scripts-to-footer",
+  "type": "wordpress-plugin",
+  "description": "This plugin gives you the power to archive your WordPress content.",
+  "homepage": "https://github.com/joshuadavidnelson/scripts-to-footer/",
+  "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Joshua David Nelson",
+      "email": "josh@joshuadnelson.com"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/joshuadavidnelson/scripts-to-footer/issues",
+    "forum": "https://wordpress.org/support/plugin/scripts-to-footer/",
+    "docs": "https://github.com/joshuadavidnelson/scripts-to-footer/wiki"
+  },
+  "require": {
+    "php": ">=8.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5.24",
+    "10up/wp_mock": "^0.5.0",
+    "yoast/phpunit-polyfills": "^1.0",
+    "phpstan/phpstan": "^2.1",
+    "phpstan/extension-installer": "^1.4",
+    "wp-coding-standards/wpcs": "^3.1",
+    "phpcompatibility/php-compatibility": "*",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
+    "phpcompatibility/phpcompatibility-wp": "*",
+    "szepeviktor/phpstan-wordpress": "^2.0",
+    "phpstan/phpstan-phpunit": "^2.0",
+    "php-stubs/wordpress-tests-stubs": "^6.7",
+    "johnbillion/wp-compat": "^1.3",
+    "sirbrillig/phpcs-variable-analysis": "^2.12",
+    "squizlabs/php_codesniffer": "^3.7"
+  },
+  "scripts": {
+    "phpstan": [
+      "./vendor/bin/phpstan analyse --memory-limit=2048M"
+    ],
+    "phpunit": [
+      "./vendor/bin/phpunit"
+    ],
+    "phpunit:coverage": [
+      "./vendor/bin/phpunit --coverage-text"
+    ],
+    "phpunit:coverage-html": [
+      "./vendor/bin/phpunit --coverage-html coverage"
+    ],
+    "phpcs": [
+      "./vendor/bin/phpcs"
+    ],
+    "phpcbf": [
+      "./vendor/bin/phpcbf"
+    ]
+  },
+  "prefer-stable": true,
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true,
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "phpstan/extension-installer": true
+    }
+  }
+}
