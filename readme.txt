@@ -32,7 +32,9 @@ For any other scripts, use this filter:
 `
 add_filter( 'stf_exclude_scripts', 'jdn_header_scripts', 10, 1 );
 function jdn_header_scripts( $scripts ) {
+
 	$scripts[] = 'backbone'; // Replace 'backbone' with the script slug
+
 	return $scripts;
 }
 `
@@ -46,6 +48,7 @@ If you're comfortable with code you can use the `scripts_to_footer_post_types` f
 
 `
 function stf_add_cpt_support( $post_types ) {
+
 	$post_types[] = 'project';
 
 	return $post_types;
@@ -54,14 +57,16 @@ add_filter( 'scripts_to_footer_post_types', 'stf_add_cpt_support' );
 `
 
 = Excluding Pages/Posts/Templates Via Filter =
-As of version 0.5 you can either use the checkbox option to disable the plugin's action on a specific page/post, or you can utilize a filter (updated with version 0.6). The filter also passes the post/page id, if there is one (archive templates don't have ids!).
+You can either use the checkbox option to disable the plugin's action on a specific page/post, or you can utilize a filter. The filter also passes the post/page id, if there is one (archive templates don't have ids!).
 
 For example, for the "page" post type:
 `
 function stf_exclude_my_page( $exclude_page, $post_id ) {
-	if( is_front_page() ) {
+
+	if ( is_front_page() ) {
 		$exclude_page = 'on'; // this turns on the "exclude" option
 	}
+
 	return $exclude_page;
 }
 add_filter( 'stf_page', 'stf_exclude_my_page' );
