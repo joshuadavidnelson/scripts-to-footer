@@ -4,8 +4,8 @@ Tags: javascript, footer, speed, head, performance
 Donate link: https://joshuadnelson.com/donate/
 Requires at least: 5.3
 Requires PHP: 7.4
-Tested up to: 6.4.2
-Stable tag: 0.7.2
+Tested up to: 6.8.3
+Stable tag: 0.7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -111,6 +111,11 @@ This plugin should not change your actual page _speed_ - the same scripts are be
 
 == Changelog ==
 
+= 0.7.3 =
+- Tested up to WordPress 6.8.3
+- Add composer support
+- Update github actions
+
 = 0.7.2 =
 - Tested up to WordPress 6.4.2.
 - Bump minimum WordPress version to 5.3, aligning with minimum PHP support.
@@ -172,6 +177,9 @@ Updating code to be object-oriented and added page metabox to disable plugin on 
 Initial release
 
 == Upgrade Notice ==
+
+= 0.7.3 =
+- Tested up to WordPress 6.8.3, add composer support, update github actions.
 
 = 0.7.2 =
 - Tested up to WordPress 6.4.2.
