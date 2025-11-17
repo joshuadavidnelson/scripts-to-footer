@@ -5,7 +5,7 @@
  * Plugin Name: Scripts-To-Footer
  * Plugin URI: http://wordpress.org/plugins/scripts-to-footerphp/
  * Description: Move your scripts to the footer to help speed up perceived page load times and improve user experience.
- * Version: 0.7.2
+ * Version: 0.7.3
  * Requires at least: 5.3
  * Requires PHP: 7.4
  * Author: Joshua David Nelson
@@ -45,7 +45,7 @@ if ( ! defined( 'STF_DEBUG' ) ) {
 
 // Constants.
 define( 'STF_PLUGIN_NAME', 'scripts-to-footer' );
-define( 'STF_VERSION', '0.7.2' );
+define( 'STF_VERSION', '0.7.3' );
 
 /**
  * The code that runs during plugin activation.
