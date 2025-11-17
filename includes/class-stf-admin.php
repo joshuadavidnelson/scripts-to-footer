@@ -176,7 +176,7 @@ class STF_Admin {
 	 * @param object $post    the post object.
 	 * @return void
 	 */
-	public function metabox_save( $post_id, $post ) {
+	public function metabox_save( $post_id, $post ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
 
 		// Security check.
 		// @codingStandardsIgnoreStart
