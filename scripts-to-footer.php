@@ -6,7 +6,7 @@
  * Plugin URI: http://wordpress.org/plugins/scripts-to-footerphp/
  * Description: Move your scripts to the footer to help speed up perceived page load times and improve user experience.
  * Version: 0.7.2
- * Requires at least: 4.8
+ * Requires at least: 5.3
  * Requires PHP: 7.4
  * Author: Joshua David Nelson
  * Author URI: http://joshuadnelson.com
