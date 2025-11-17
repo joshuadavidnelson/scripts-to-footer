@@ -215,27 +215,18 @@ class STF_Public {
 				 * @param int  $queried_object_id the current object id.
 				 */
 				return apply_filters( "stf_{$post_type}", true, $queried_object_id );
-
 			} else {
 				return false;
 			}
 		} elseif ( is_home() ) { // Home (blog) page.
-
 			// Grab global setting.
 			$type = 'home';
-
 		} elseif ( is_search() ) { // Search Result Page.
-
 			$type = 'search';
-
 		} elseif ( is_404() ) { // 404 Pages.
-
 			$type = '404';
-
 		} elseif ( is_author() ) { // Author Archive.
-
 			$type = 'author_archive';
-
 		} elseif ( is_category() ) { // Category Archive.
 
 			if ( $this->functions->tax_supported( 'category' ) ) {
@@ -271,13 +262,9 @@ class STF_Public {
 				return false;
 			}
 		} elseif ( is_archive() ) { // Generic archives (date, author, etc).
-
 			$type = 'archive';
-
 		} else { // if all else fails return false.
-
 			return false;
-
 		}
 
 		/**

@@ -90,13 +90,11 @@ class STF_Admin {
 		}
 
 		if ( basename( dirname( $file ) ) === $this->plugin_name ) {
-
 			$links[] = '<a href="http://wordpress.org/support/plugin/scripts-to-footerphp" title="' . __( 'Support', 'stf' ) . '">' . __( 'Support', 'stf' ) . '</a>';
 
 			$links[] = '<a href="https://github.com/joshuadavidnelson/scripts-to-footer/wiki" title="' . __( 'Documentation', 'stf' ) . '" target="_blank">' . __( 'Documentation', 'stf' ) . '</a>';
 
 			$links[] = '<a href="http://joshuadnelson.com/donate" title="' . __( 'Donate', 'stf' ) . '">' . __( 'Donate', 'stf' ) . '</a>';
-
 		}
 
 		return $links;
