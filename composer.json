@@ -1,7 +1,7 @@
 {
   "name": "joshuadavidnelson/scripts-to-footer",
   "type": "wordpress-plugin",
-  "description": "This plugin gives you the power to archive your WordPress content.",
+  "description": "Move your scripts to the footer to help speed up perceived page load times and improve user experience.",
   "homepage": "https://github.com/joshuadavidnelson/scripts-to-footer/",
   "license": "GPL-2.0-or-later",
   "authors": [
