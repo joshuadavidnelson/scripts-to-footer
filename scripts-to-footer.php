@@ -7,7 +7,7 @@
  * Description: Move your scripts to the footer to help speed up perceived page load times and improve user experience.
  * Version: 0.7.2
  * Requires at least: 4.8
- * Requires PHP: 8.1
+ * Requires PHP: 7.4
  * Author: Joshua David Nelson
  * Author URI: http://joshuadnelson.com
  * License: GPL2
