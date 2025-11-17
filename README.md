@@ -22,7 +22,7 @@ You can disable the plugin on specific archive pages (blog page, search page, po
 
 **Everything Broken?** Try placing jQuery back into the header via Settings > Scripts to Footer, "Keep jQuery in the Header" checkbox. If that doesn't work, refer to the walkthrough below for using the `stf_exclude_scripts` filter for the script that is causing the issue.
 
-Check out the [documentation](https://github.com/joshuadavidnelson/scripts-to-footer/wiki) on [GitHub](https://github.com/joshuadavidnelson/scripts-to-footer) or some quick walkthroughs below.
+Check out the [documentation](https://github.com/joshuadavidnelson/scripts-to-footer/wiki) on [GitHub](https://github.com/joshuadavidnelson/scripts-to-footer) for comprehensive filter and action documentation, usage examples, and advanced customization options.
 
 ## Support
 

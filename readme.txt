@@ -75,11 +75,12 @@ add_filter( 'stf_page', 'stf_exclude_my_page' );
 Replace `stf_page` with `stf_post` for posts, or the slug of your custom post type. For instance, a post type called "project" can be filtered with `stf_project`.
 
 = More Documentation =
-[View this plugin on GitHub](https://github.com/joshuadavidnelson/scripts-to-footer/wiki).
+[See the plugin's wiki](https://github.com/joshuadavidnelson/scripts-to-footer/wiki).
 
-= View on GitHub =
+= Development / Contributing =
 [View this plugin on GitHub](https://github.com/joshuadavidnelson/scripts-to-footer).
 
+= Support =
 Please feel free to open a [Github Issue](https://github.com/joshuadavidnelson/scripts-to-footer/issues) to report conflicts or goto [the WP.org support forum](https://wordpress.org/support/plugin/scripts-to-footerphp). If there is something wrong with Scripts-to-Footer, we'll update it. However, if it's a another plugin or theme we can only contact the developer with the issue to attempt to resolve it.
 
 == Installation ==
