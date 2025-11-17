@@ -4,8 +4,8 @@ Tags: javascript, footer, speed, head, performance
 Donate link: https://joshuadnelson.com/donate/
 Requires at least: 5.3
 Requires PHP: 7.4
-Tested up to: 6.4.2
-Stable tag: 0.7.2
+Tested up to: 6.8.3
+Stable tag: 0.7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,7 +32,9 @@ For any other scripts, use this filter:
 `
 add_filter( 'stf_exclude_scripts', 'jdn_header_scripts', 10, 1 );
 function jdn_header_scripts( $scripts ) {
+
 	$scripts[] = 'backbone'; // Replace 'backbone' with the script slug
+
 	return $scripts;
 }
 `
@@ -46,6 +48,7 @@ If you're comfortable with code you can use the `scripts_to_footer_post_types` f
 
 `
 function stf_add_cpt_support( $post_types ) {
+
 	$post_types[] = 'project';
 
 	return $post_types;
@@ -54,14 +57,16 @@ add_filter( 'scripts_to_footer_post_types', 'stf_add_cpt_support' );
 `
 
 = Excluding Pages/Posts/Templates Via Filter =
-As of version 0.5 you can either use the checkbox option to disable the plugin's action on a specific page/post, or you can utilize a filter (updated with version 0.6). The filter also passes the post/page id, if there is one (archive templates don't have ids!).
+You can either use the checkbox option to disable the plugin's action on a specific page/post, or you can utilize a filter. The filter also passes the post/page id, if there is one (archive templates don't have ids!).
 
 For example, for the "page" post type:
 `
 function stf_exclude_my_page( $exclude_page, $post_id ) {
-	if( is_front_page() ) {
+
+	if ( is_front_page() ) {
 		$exclude_page = 'on'; // this turns on the "exclude" option
 	}
+
 	return $exclude_page;
 }
 add_filter( 'stf_page', 'stf_exclude_my_page' );
@@ -70,11 +75,12 @@ add_filter( 'stf_page', 'stf_exclude_my_page' );
 Replace `stf_page` with `stf_post` for posts, or the slug of your custom post type. For instance, a post type called "project" can be filtered with `stf_project`.
 
 = More Documentation =
-[View this plugin on GitHub](https://github.com/joshuadavidnelson/scripts-to-footer/wiki).
+[See the plugin's wiki](https://github.com/joshuadavidnelson/scripts-to-footer/wiki).
 
-= View on GitHub =
+= Development / Contributing =
 [View this plugin on GitHub](https://github.com/joshuadavidnelson/scripts-to-footer).
 
+= Support =
 Please feel free to open a [Github Issue](https://github.com/joshuadavidnelson/scripts-to-footer/issues) to report conflicts or goto [the WP.org support forum](https://wordpress.org/support/plugin/scripts-to-footerphp). If there is something wrong with Scripts-to-Footer, we'll update it. However, if it's a another plugin or theme we can only contact the developer with the issue to attempt to resolve it.
 
 == Installation ==
@@ -110,6 +116,11 @@ See number "Everything Breaks!!" above. Try checking the "Keep jQuery in the hea
 This plugin should not change your actual page _speed_ - the same scripts are being loaded, that takes the same amount of time. However, by placing scripts in the footer you can change the _precieved_ load times, moving [render-blocking scripts](https://developers.google.com/speed/docs/insights/BlockingJS) below the fold, allowing your content to load first - instead of loading scripts and slowing the visual portions of your site. That's the whole point. Outside of that, this plugin is not intended to increase page load speed or minify scripts in anyway.
 
 == Changelog ==
+
+= 0.7.3 =
+- Tested up to WordPress 6.8.3
+- Add composer support
+- Update github actions
 
 = 0.7.2 =
 - Tested up to WordPress 6.4.2.
@@ -172,6 +183,9 @@ Updating code to be object-oriented and added page metabox to disable plugin on 
 Initial release
 
 == Upgrade Notice ==
+
+= 0.7.3 =
+- Tested up to WordPress 6.8.3, add composer support, update github actions.
 
 = 0.7.2 =
 - Tested up to WordPress 6.4.2.

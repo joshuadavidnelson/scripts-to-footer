@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.3
+- Tested up to WordPress 6.8.3
+- Add composer support
+- Update github actions
+
 ## 0.7.2
 - Tested up to WordPress 6.4.2.
 - Bump minimum WordPress version to 5.3, aligning with minimum PHP support.

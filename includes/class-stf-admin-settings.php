@@ -86,7 +86,7 @@ class STF_Admin_Settings {
 	public function create_admin_page() {
 
 		// Set class property.
-		$this->options = get_option( $this->settings_field );
+		$this->options = get_option( $this->settings_field, array() );
 		?>
 		<div class="wrap">
 			<h2>Scripts to Footer Settings</h2>

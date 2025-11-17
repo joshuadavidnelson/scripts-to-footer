@@ -4,11 +4,11 @@ Scripts To Footer
 [![WordPress Plugin Version](https://img.shields.io/wordpress/plugin/v/scripts-to-footerphp)](https://wordpress.org/plugins/scripts-to-footerphp/) ![Downloads](https://img.shields.io/wordpress/plugin/dt/scripts-to-footerphp.svg) ![Rating](https://img.shields.io/wordpress/plugin/r/scripts-to-footerphp.svg)
 
 **Requires at least:** 5.3  
-**Tested up to WordPress:** 6.4.2  
-**Stable version:** 0.7.2  
+**Tested up to WordPress:** 6.8.3  
+**Stable version:** 0.7.3  
 **License:** GPLv2 or later  
 **Requires PHP:** 7.4  
-**Tested up to PHP:** 8.1
+**Tested up to PHP:** 8.3
 
 Move your scripts to the footer to speed up perceived page load times and improve user experience.
 
@@ -22,7 +22,7 @@ You can disable the plugin on specific archive pages (blog page, search page, po
 
 **Everything Broken?** Try placing jQuery back into the header via Settings > Scripts to Footer, "Keep jQuery in the Header" checkbox. If that doesn't work, refer to the walkthrough below for using the `stf_exclude_scripts` filter for the script that is causing the issue.
 
-Check out the [documentation](https://github.com/joshuadavidnelson/scripts-to-footer/wiki) on [GitHub](https://github.com/joshuadavidnelson/scripts-to-footer) or some quick walkthroughs below.
+Check out the [documentation](https://github.com/joshuadavidnelson/scripts-to-footer/wiki) on [GitHub](https://github.com/joshuadavidnelson/scripts-to-footer) for comprehensive filter and action documentation, usage examples, and advanced customization options.
 
 ## Support
 
