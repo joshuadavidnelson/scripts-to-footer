@@ -189,10 +189,10 @@ class STF_Admin {
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
 		}
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+		if ( wp_doing_ajax() ) {
 			return;
 		}
-		if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
+		if ( wp_doing_cron() ) {
 			return;
 		}
 
