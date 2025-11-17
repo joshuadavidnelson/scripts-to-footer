@@ -1,8 +1,7 @@
 name: "Integrate"
 
 on:
-  pull_request: null
-  push:
+  pull_request:
     branches:
       - stable
       - develop
