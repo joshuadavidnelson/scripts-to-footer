@@ -9,6 +9,10 @@
 		"type": "git",
 		"url": "git@github.com:joshuadavidnelson/scripts-to-footer.git"
 	},
+	"engines": {
+		"node": ">=24.18.0",
+		"npm": ">=11.16.0"
+	},
 	"scripts": {
 		"env": "wp-env",
 		"env:start": "wp-env start",
