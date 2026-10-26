@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.4
+- Tested up to WordPress 7.1
+- Update development dependencies to resolve all open Composer and npm security advisories
+- Update @wordpress/env to version 12, which now requires Node 22.13 or newer. Run npm install before wp-env start.
+
 ## 0.7.3
 - Tested up to WordPress 6.8.3
 - Add composer support
