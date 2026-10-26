@@ -26,7 +26,7 @@
     "phpstan/extension-installer": "^1.4",
     "wp-coding-standards/wpcs": "^3.1",
     "phpcompatibility/php-compatibility": "*",
-    "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
     "phpcompatibility/phpcompatibility-wp": "*",
     "szepeviktor/phpstan-wordpress": "^2.0",
     "phpstan/phpstan-phpunit": "^2.0",
