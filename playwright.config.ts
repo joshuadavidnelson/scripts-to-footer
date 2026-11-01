@@ -49,6 +49,10 @@ export default defineConfig( {
 	workers: 1,
 	fullyParallel: false,
 
+	// Pinned to 0 (the shared config retries twice on CI): a retry would turn
+	// a race in a settings or meta box save into a silent pass.
+	retries: 0,
+
 	use: {
 		...baseConfig.use,
 		storageState: ADMIN_STORAGE_STATE,

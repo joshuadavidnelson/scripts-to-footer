@@ -9,13 +9,14 @@ import { RequestUtils } from '@wordpress/e2e-test-utils-playwright';
  * Internal dependencies
  */
 import { ADMIN_STORAGE_STATE, PLUGIN_SLUG, THEME_SLUG } from './roles';
-import { ensureBaseline, resetSite } from './seed';
+import { ensureBaseline, resetBaselineMeta, resetSite } from './seed';
 
 /**
  * Prepare the e2e site once, before any project runs: authenticate, pin the
  * classic theme, make sure the plugin is active (a lifecycle run that died
  * mid-test can leave it inactive), reset site options, plugin options and
- * filter overrides, and seed the baseline content.
+ * filter overrides, and seed the baseline content (clearing any exclude
+ * meta a previous run left on it).
  *
  * @param config Resolved Playwright config.
  */
@@ -41,7 +42,7 @@ async function globalSetup( config: FullConfig ): Promise< void > {
 
 	await requestUtils.activatePlugin( PLUGIN_SLUG );
 	await resetSite( requestUtils );
-	await ensureBaseline( requestUtils );
+	await resetBaselineMeta( requestUtils, await ensureBaseline( requestUtils ) );
 
 	await requestContext.dispose();
 }

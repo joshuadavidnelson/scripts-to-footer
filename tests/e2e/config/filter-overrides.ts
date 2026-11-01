@@ -106,6 +106,16 @@ export async function setFilterOverrides(
 	requestUtils: RequestUtils,
 	overrides: FilterOverrides
 ): Promise< void > {
+	const include = overrides.stf_include;
+	if (
+		include !== undefined &&
+		! ( typeof include === 'object' && ( include.priority ?? 10 ) > 10 )
+	) {
+		// At priority 10 or below the plugin's own stf_includes() runs last
+		// and discards the override, so the spec would silently test nothing.
+		throw new Error( 'An stf_include override needs { set: …, priority: AFTER_PLUGIN }.' );
+	}
+
 	await requestUtils.rest( {
 		method: 'POST',
 		path: '/wp/v2/settings',

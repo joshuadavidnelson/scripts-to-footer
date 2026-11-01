@@ -52,10 +52,32 @@ export interface ScriptPlacement {
 	html: string;
 }
 
-const SCRIPT_ID = /<script\b[^>]*?\bid\s*=\s*(["'])([^"']+)\1/gi;
+/**
+ * A `<script …>` opening tag. Quoted attribute values are consumed whole, so
+ * a `>` inside one does not end the tag early.
+ */
+const SCRIPT_TAG = /<script\b((?:[^>"']|"[^"]*"|'[^']*')*)>/gi;
 
-function scriptIds( html: string ): string[] {
-	return Array.from( html.matchAll( SCRIPT_ID ), ( match ) => match[ 2 ] );
+/**
+ * The `id` attribute inside a tag's attribute string. Requires whitespace
+ * before `id`, so `data-id="…"` is not mistaken for it.
+ */
+const ID_ATTR = /(?:^|\s)id\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+))/i;
+
+/**
+ * Every `<script id>` in `html`, in document order.
+ *
+ * @param html HTML fragment.
+ */
+export function scriptIds( html: string ): string[] {
+	const ids: string[] = [];
+	for ( const tag of html.matchAll( SCRIPT_TAG ) ) {
+		const id = ID_ATTR.exec( tag[ 1 ] );
+		if ( id ) {
+			ids.push( id[ 1 ] ?? id[ 2 ] ?? id[ 3 ] );
+		}
+	}
+	return ids;
 }
 
 /**
@@ -160,7 +182,11 @@ export function expectOrderingIntact( placement: ScriptPlacement ): void {
 	const all = [ ...placement.headIds, ...placement.bodyIds ];
 	const at = ( id: string ) => all.indexOf( id );
 
-	expect( at( 'stf-test-inline-js-before' ), 'inline before-script printed' ).toBeGreaterThan( -1 );
+	// Presence first: indexOf() of a missing id is -1, which would make every
+	// "printed before" comparison below pass vacuously.
+	for ( const id of [ 'stf-test-inline-js-before', 'stf-test-inline-js', 'stf-test-dep-a-js', 'stf-test-dep-b-js', 'stf-test-chain-js' ] ) {
+		expect( all, `${ id } printed on ${ placement.url }` ).toContain( id );
+	}
 	expect( at( 'stf-test-inline-js' ) - at( 'stf-test-inline-js-before' ), 'inline before-script directly precedes its handle' ).toBe( 1 );
 	expect( at( 'stf-test-dep-a-js' ) ).toBeLessThan( at( 'stf-test-dep-b-js' ) );
 	expect( at( 'stf-test-dep-b-js' ) ).toBeLessThan( at( 'stf-test-chain-js' ) );

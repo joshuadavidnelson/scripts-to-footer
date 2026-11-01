@@ -107,27 +107,42 @@ jobs:
         npx wp-env --config=.wp-env.test.json run cli -- php -r 'echo PHP_VERSION, PHP_EOL;'
 
     - name: "Browser suite"
+      env:
+        # wp-scripts otherwise runs a bare `playwright install`, downloading
+        # Firefox and WebKit on top of the cached Chromium.
+        PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: "1"
       run: "npm run test:e2e"
 
     # Always, not just on failure: a PHP notice or deprecation usually breaks
     # no assertion, so on a green run it would otherwise never be seen.
     - name: "Collect the WordPress debug log"
+      id: "debug-log"
       if: always()
-      continue-on-error: true
       run: |
         mkdir -p artifacts
-        npx wp-env --config=.wp-env.test.json run cli -- cat /var/www/html/wp-content/debug.log > artifacts/debug.log 2>/dev/null || true
+        # The inner `|| true` covers a site that logged nothing; a failure of
+        # wp-env itself still fails this step instead of passing as "empty".
+        npx wp-env --config=.wp-env.test.json run cli -- \
+          sh -c 'cat /var/www/html/wp-content/debug.log 2>/dev/null || true' > artifacts/debug.log
 
     - name: "Check the debug log for PHP diagnostics"
-      if: always()
+      if: always() && steps.debug-log.outcome == 'success'
       env:
         LEG: "WP ${{ matrix.wp }} / PHP ${{ matrix.php }}"
       run: |
-        test -s artifacts/debug.log || exit 0
+        test -s artifacts/debug.log || { echo "debug.log is empty: nothing was logged."; exit 0; }
 
-        if grep -qE "PHP (Warning|Deprecated|Notice)" artifacts/debug.log; then
-          echo "::warning title=PHP diagnostics::${LEG} logged PHP diagnostics; see the debug.log artifact."
-          grep -E "PHP (Warning|Deprecated|Notice)" artifacts/debug.log | sort -u | head -40
+        DIAG="PHP (Warning|Deprecated|Notice)"
+        # Diagnostics raised from the plugin's own files, listed first so they
+        # aren't buried under core and theme noise.
+        if grep -E "${DIAG}" artifacts/debug.log | grep -q "/plugins/scripts-to-footer/"; then
+          echo "::warning title=Plugin PHP diagnostics::${LEG}: scripts-to-footer logged PHP diagnostics; see the debug.log artifact."
+          grep -E "${DIAG}" artifacts/debug.log | grep "/plugins/scripts-to-footer/" | sed -E 's/^\[[^]]*\] //' | sort -u | head -40
+        fi
+
+        if grep -E "${DIAG}" artifacts/debug.log | grep -vq "/plugins/scripts-to-footer/"; then
+          echo "::warning title=Other PHP diagnostics::${LEG}: core, theme or fixture code logged PHP diagnostics; see the debug.log artifact."
+          grep -E "${DIAG}" artifacts/debug.log | grep -v "/plugins/scripts-to-footer/" | sed -E 's/^\[[^]]*\] //' | sort -u | head -20
         fi
 
         if grep -q "PHP Fatal error" artifacts/debug.log; then

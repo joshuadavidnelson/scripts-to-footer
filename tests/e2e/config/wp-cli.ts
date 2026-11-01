@@ -31,6 +31,12 @@ export const WP_ENV_CONFIG = '.wp-env.test.json';
  */
 const WP_ENV_BIN = path.join( REPO_ROOT, 'node_modules', '.bin', 'wp-env' );
 
+/**
+ * Upper bound for one CLI call, so a hung container fails the test instead
+ * of stalling the run until the global timeout.
+ */
+const CLI_TIMEOUT = 120_000;
+
 export interface WpCliResult {
 	exitCode: number;
 	stdout: string;
@@ -48,21 +54,26 @@ export async function runInCli( command: string[] ): Promise< WpCliResult > {
 		const { stdout, stderr } = await execFileAsync(
 			WP_ENV_BIN,
 			[ `--config=${ WP_ENV_CONFIG }`, 'run', 'cli', '--', ...command ],
-			{ cwd: REPO_ROOT, maxBuffer: 10 * 1024 * 1024 }
+			{ cwd: REPO_ROOT, maxBuffer: 10 * 1024 * 1024, timeout: CLI_TIMEOUT }
 		);
 
 		return { exitCode: 0, stdout: stdout.trim(), stderr: stderr.trim() };
 	} catch ( error ) {
 		const failure = error as {
 			code?: number | string;
+			signal?: string | null;
+			message?: string;
 			stdout?: string;
 			stderr?: string;
 		};
+		const stderr = ( failure.stderr ?? '' ).trim();
 
 		return {
 			exitCode: typeof failure.code === 'number' ? failure.code : 1,
 			stdout: ( failure.stdout ?? '' ).trim(),
-			stderr: ( failure.stderr ?? '' ).trim(),
+			// A spawn failure (ENOENT) or a timeout kill has no stderr of its
+			// own; surface the reason instead of an empty string.
+			stderr: stderr || `${ failure.message ?? 'wp-env failed' }${ failure.signal ? ` (signal ${ failure.signal })` : '' }`,
 		};
 	}
 }

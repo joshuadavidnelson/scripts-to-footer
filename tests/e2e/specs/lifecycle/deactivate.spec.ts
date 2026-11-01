@@ -10,7 +10,7 @@ import { test, expect } from '@wordpress/e2e-test-utils-playwright';
 import { ensureBaseline, resetSite } from '../../config/seed';
 import type { Baseline } from '../../config/seed';
 import { PLUGIN_SLUG } from '../../config/roles';
-import { expectCliSuccess, wpCli } from '../../config/wp-cli';
+import { expectCliSuccess, wpCli, wpCliOk } from '../../config/wp-cli';
 import {
 	getPlacement,
 	visitorContext,
@@ -28,36 +28,40 @@ test.describe( 'Plugin deactivation', () => {
 
 	test.afterAll( async ( { requestUtils } ) => {
 		// Whatever happened above, leave the plugin active for later runs.
-		await wpCli( [ 'plugin', 'activate', PLUGIN_SLUG ] );
+		await wpCliOk( [ 'plugin', 'activate', PLUGIN_SLUG ] );
 		await resetSite( requestUtils );
 	} );
 
 	test( 'restores head scripts on the home page and a post', async ( { baseURL } ) => {
 		const visitor = await visitorContext( baseURL );
-		expectMovedToFooter( await getPlacement( visitor, baseline.urls.home ) );
-		expectMovedToFooter( await getPlacement( visitor, baseline.postLink ) );
+		try {
+			expectMovedToFooter( await getPlacement( visitor, baseline.urls.home ) );
+			expectMovedToFooter( await getPlacement( visitor, baseline.postLink ) );
 
-		expectCliSuccess( await wpCli( [ 'plugin', 'deactivate', PLUGIN_SLUG ] ), 'plugin deactivate' );
+			expectCliSuccess( await wpCli( [ 'plugin', 'deactivate', PLUGIN_SLUG ] ), 'plugin deactivate' );
 
-		expectLeftInHead( await getPlacement( visitor, baseline.urls.home ) );
-		expectLeftInHead( await getPlacement( visitor, baseline.postLink ) );
-
-		await visitor.dispose();
+			expectLeftInHead( await getPlacement( visitor, baseline.urls.home ) );
+			expectLeftInHead( await getPlacement( visitor, baseline.postLink ) );
+		} finally {
+			await visitor.dispose();
+		}
 	} );
 
 	test( 'reactivating moves scripts to the footer again', async ( { baseURL } ) => {
 		const visitor = await visitorContext( baseURL );
+		try {
 
-		expectCliSuccess( await wpCli( [ 'plugin', 'deactivate', PLUGIN_SLUG ] ), 'plugin deactivate' );
-		expectLeftInHead( await getPlacement( visitor, baseline.urls.home ) );
+			expectCliSuccess( await wpCli( [ 'plugin', 'deactivate', PLUGIN_SLUG ] ), 'plugin deactivate' );
+			expectLeftInHead( await getPlacement( visitor, baseline.urls.home ) );
 
-		const activated = await wpCli( [ 'plugin', 'activate', PLUGIN_SLUG ] );
-		expectCliSuccess( activated, 'plugin activate' );
-		expect( activated.stdout ).toMatch( /Activated|Success/i );
+			const activated = await wpCli( [ 'plugin', 'activate', PLUGIN_SLUG ] );
+			expectCliSuccess( activated, 'plugin activate' );
+			expect( activated.stdout ).toMatch( /Activated|Success/i );
 
-		expectMovedToFooter( await getPlacement( visitor, baseline.urls.home ) );
-		expectMovedToFooter( await getPlacement( visitor, baseline.postLink ) );
-
-		await visitor.dispose();
+			expectMovedToFooter( await getPlacement( visitor, baseline.urls.home ) );
+			expectMovedToFooter( await getPlacement( visitor, baseline.postLink ) );
+		} finally {
+			await visitor.dispose();
+		}
 	} );
 } );

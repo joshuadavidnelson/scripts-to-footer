@@ -66,7 +66,10 @@ test.describe( 'Plugin uninstall', () => {
 	} );
 
 	test.afterAll( async ( { requestUtils } ) => {
-		await wpCli( [ 'plugin', 'activate', PLUGIN_SLUG ] );
+		await wpCliOk( [ 'plugin', 'activate', PLUGIN_SLUG ] );
+		// uninstall.php leaves this behind (see the fixme below); don't let
+		// the seeded value outlive the spec.
+		await wpCli( [ 'option', 'delete', 'stf_previous_version' ] );
 		await resetSite( requestUtils );
 	} );
 
