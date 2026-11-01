@@ -78,7 +78,7 @@ register_deactivation_hook( __FILE__, 'stf_deactivate' );
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */
-require plugin_dir_path( __FILE__ ) . 'includes/class-scripts-to-footer.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-scripts-to-footer.php';
 
 /**
  * Begins execution of the plugin.
