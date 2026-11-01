@@ -6,6 +6,13 @@ on:
     branches:
       - stable
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   syntax-check:
     name: "Syntax check on all PHP versions"
@@ -98,3 +105,130 @@ jobs:
 
     - name: "Audit npm packages"
       run: "npm audit --audit-level=high"
+
+  phpunit:
+    name: "PHPUnit unit tests (PHP ${{ matrix.php }})"
+    runs-on: "ubuntu-latest"
+    strategy:
+      fail-fast: false
+      matrix:
+        # Composer floor (composer.json "php": ">=8.1") and the newest supported version.
+        php: ['8.1', '8.5']
+    steps:
+    - name: "Checkout"
+      uses: "actions/checkout@v6"
+
+    - name: "Install PHP"
+      uses: "shivammathur/setup-php@v2"
+      with:
+        php-version: ${{ matrix.php }}
+        coverage: "none"
+
+    - name: "Cache Composer dependencies"
+      uses: "actions/cache@v4"
+      with:
+        path: vendor
+        key: composer-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
+        restore-keys: |
+          composer-${{ matrix.php }}-
+
+    - name: "Install Composer Packages"
+      run: "composer install --no-interaction --no-progress"
+
+    - name: "Run PHPUnit"
+      run: "composer test"
+
+  coverage:
+    name: "PHPUnit coverage (>= 90% lines)"
+    runs-on: "ubuntu-latest"
+    steps:
+    - name: "Checkout"
+      uses: "actions/checkout@v6"
+
+    - name: "Install PHP"
+      uses: "shivammathur/setup-php@v2"
+      with:
+        php-version: "8.4"
+        coverage: "xdebug"
+
+    - name: "Cache Composer dependencies"
+      uses: "actions/cache@v4"
+      with:
+        path: vendor
+        key: composer-8.4-${{ hashFiles('composer.lock') }}
+        restore-keys: |
+          composer-8.4-
+
+    - name: "Install Composer Packages"
+      run: "composer install --no-interaction --no-progress"
+
+    - name: "Run PHPUnit with coverage"
+      run: "composer test:coverage-clover"
+
+    - name: "Enforce the line coverage floor"
+      run: "composer test:coverage-check"
+
+  integration:
+    name: "Integration tests (WP ${{ matrix.wp }}, PHP ${{ matrix.php }})"
+    runs-on: "ubuntu-latest"
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - wp: "latest"
+            php: "8.3"
+            experimental: false
+          # Oldest WordPress whose test library runs on the PHP floor with PHPUnit 9.
+          - wp: "6.2"
+            php: "8.1"
+            experimental: false
+          - wp: "trunk"
+            php: "8.4"
+            experimental: true
+    services:
+      mysql:
+        image: "mysql:8"
+        env:
+          MYSQL_ROOT_PASSWORD: "root"
+          MYSQL_DATABASE: "wordpress_test"
+        ports:
+          - "3306:3306"
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      WP_CORE_DIR: "/tmp/wordpress/"
+      WP_TESTS_DIR: "/tmp/wordpress-tests-lib"
+    steps:
+    - name: "Checkout"
+      uses: "actions/checkout@v6"
+
+    - name: "Install PHP"
+      uses: "shivammathur/setup-php@v2"
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: "mysqli"
+        coverage: "none"
+
+    - name: "Install Subversion"
+      run: "sudo apt-get update -q && sudo apt-get install -y -q subversion"
+
+    - name: "Cache Composer dependencies"
+      uses: "actions/cache@v4"
+      with:
+        path: vendor
+        key: composer-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
+        restore-keys: |
+          composer-${{ matrix.php }}-
+
+    - name: "Install Composer Packages"
+      run: "composer install --no-interaction --no-progress"
+
+    - name: "Install WordPress and the test library"
+      run: "bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 ${{ matrix.wp }} true"
+
+    - name: "Run integration tests"
+      run: "composer test:integration"

@@ -29,3 +29,7 @@
 /CHANGELOG.md
 /code-of-conduct.md
 /contributing.md
+
+# PHPUnit suites and the integration-test installer
+/phpunit*.xml.dist
+/bin/

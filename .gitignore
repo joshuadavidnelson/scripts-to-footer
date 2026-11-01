@@ -7,3 +7,7 @@ node_modules
 dist
 vendor
 *.cache
+
+# PHPUnit (unit + integration suites)
+.phpunit.cache/
+/coverage/
