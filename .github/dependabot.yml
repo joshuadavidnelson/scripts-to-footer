@@ -4,7 +4,7 @@ updates:
     directory: "/"
     target-branch: "stable"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     groups:
       composer:
         patterns:
@@ -14,7 +14,7 @@ updates:
     directory: "/"
     target-branch: "stable"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     groups:
       npm:
         patterns:
@@ -24,7 +24,7 @@ updates:
     directory: "/"
     target-branch: "stable"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     groups:
       github-actions:
         patterns:
