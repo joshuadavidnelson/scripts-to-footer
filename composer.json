@@ -46,7 +46,7 @@
       "./vendor/bin/phpstan analyse --memory-limit=2048M"
     ],
     "phpunit": [
-      "./vendor/bin/phpunit"
+      "[ -f phpunit.xml.dist ] || [ -f phpunit.xml ] || { echo 'No PHPUnit suite in this release yet; nothing to run.'; exit 0; }; ./vendor/bin/phpunit"
     ],
     "phpunit:coverage": [
       "./vendor/bin/phpunit --coverage-text"
