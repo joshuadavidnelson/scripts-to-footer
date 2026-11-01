@@ -101,7 +101,10 @@ class STF_Admin {
 			return $links;
 		}
 
-		if ( '' !== $this->plugin_file && $file === $this->plugin_file ) {
+		// Third-party code may construct this class without a plugin file; resolve it lazily.
+		$plugin_file = '' === $this->plugin_file ? plugin_basename( STF_DIR . '/scripts-to-footer.php' ) : $this->plugin_file;
+
+		if ( $file === $plugin_file ) {
 			$links[] = '<a href="http://wordpress.org/support/plugin/scripts-to-footerphp" title="' . __( 'Support', 'scripts-to-footerphp' ) . '">' . __( 'Support', 'scripts-to-footerphp' ) . '</a>';
 
 			$links[] = '<a href="https://github.com/joshuadavidnelson/scripts-to-footer/wiki" title="' . __( 'Documentation', 'scripts-to-footerphp' ) . '" target="_blank">' . __( 'Documentation', 'scripts-to-footerphp' ) . '</a>';
