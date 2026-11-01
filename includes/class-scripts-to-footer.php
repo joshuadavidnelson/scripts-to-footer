@@ -128,9 +128,40 @@ class Scripts_To_Footer {
 		// See if it's a previous version, which may not have set the version option.
 		if ( false === $current_version || STF_VERSION !== $current_version ) {
 			// do things on update.
+			$this->migrate_legacy_exclude_meta();
 
 			// Save current version.
 			update_option( 'stf_version', STF_VERSION, false );
+		}
+	}
+
+	/**
+	 * Convert legacy 'on' stf_exclude values to '1'.
+	 *
+	 * Older versions stored 'on'; this runs once per version change so rendering the
+	 * metabox no longer has to write post meta.
+	 *
+	 * @since 0.7.0
+	 *
+	 * @access private
+	 */
+	private function migrate_legacy_exclude_meta() {
+		global $wpdb;
+
+		// A one-off bulk update of a legacy value on version change; the meta API has no bulk equivalent.
+		// phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_meta_key,WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Runs once per version change, not per request.
+		$updated = $wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Cache flushed below.
+			$wpdb->postmeta,
+			array( 'meta_value' => '1' ),
+			array(
+				'meta_key'   => 'stf_exclude',
+				'meta_value' => 'on',
+			)
+		);
+		// phpcs:enable WordPress.DB.SlowDBQuery.slow_db_query_meta_key,WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+
+		if ( $updated && function_exists( 'wp_cache_supports' ) && function_exists( 'wp_cache_flush_group' ) && wp_cache_supports( 'flush_group' ) ) {
+			wp_cache_flush_group( 'post_meta' );
 		}
 	}
 
