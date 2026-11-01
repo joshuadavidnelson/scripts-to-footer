@@ -6,6 +6,8 @@
  */
 
 /**
+ * Unit tests for STF_Loader.
+ *
  * @covers STF_Loader
  */
 class LoaderTest extends TestCase {

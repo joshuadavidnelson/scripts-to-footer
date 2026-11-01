@@ -5,6 +5,7 @@
  * @package Scripts_To_Footer
  */
 
+// Composer autoloader: PHPUnit, WP_Mock, Mockery and the polyfills.
 require dirname( __DIR__, 3 ) . '/vendor/autoload.php';
 
 /*
@@ -12,7 +13,7 @@ require dirname( __DIR__, 3 ) . '/vendor/autoload.php';
  * defines STF_PLUGIN_NAME and STF_VERSION without defined() guards and registers
  * WordPress hooks at file scope, so the classes under test are loaded directly instead.
  */
-define( 'ABSPATH', dirname( __DIR__, 3 ) . '/' );
+define( 'ABSPATH', dirname( __DIR__, 3 ) . '/' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- WordPress core constant.
 define( 'STF_PLUGIN_NAME', 'scripts-to-footer' );
 define( 'STF_VERSION', '0.7.4' );
 define( 'STF_DIR', dirname( __DIR__, 3 ) );
