@@ -9,8 +9,8 @@
  * Unit tests for scripts-to-footer.php.
  *
  * Each test requires the main file, which declares global functions, so each runs in its
- * own process. plugin_dir_path() points the file's includes at empty fixtures because the
- * bootstrap has already loaded the real classes.
+ * own process. The main file loads its classes with require_once, so the real includes the
+ * bootstrap already loaded are not loaded twice.
  *
  * @runTestsInSeparateProcesses
  * @preserveGlobalState disabled
@@ -40,7 +40,7 @@ class MainFileTest extends TestCase {
 				'return' => function ( $file ) {
 					$this->assertSame( $this->main_file, $file );
 
-					return dirname( __DIR__ ) . '/Support/fixtures/';
+					return dirname( __DIR__, 3 ) . '/';
 				},
 			)
 		);
