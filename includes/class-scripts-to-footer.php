@@ -54,6 +54,7 @@ class Scripts_To_Footer {
 	 * @var string $plugin_file The plugin file.
 	 */
 	protected $plugin_file;
+
 	/**
 	 * The current version of the plugin.
 	 *
@@ -92,7 +93,7 @@ class Scripts_To_Footer {
 
 		$this->plugin_name = STF_PLUGIN_NAME;
 		$this->version     = STF_VERSION;
-		$this->plugin_file = 'scripts-to-footer/scripts-to-footer.php';
+		$this->plugin_file = plugin_basename( STF_DIR . '/scripts-to-footer.php' );
 
 		do_action( 'stf_init' );
 
@@ -252,7 +253,7 @@ class Scripts_To_Footer {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin   = new STF_Admin( $this->get_plugin_name(), $this->get_version() );
+		$plugin_admin   = new STF_Admin( $this->get_plugin_name(), $this->get_version(), $this->plugin_file );
 		$admin_settings = new STF_Admin_Settings();
 
 		// Add Links to Plugin Bar.

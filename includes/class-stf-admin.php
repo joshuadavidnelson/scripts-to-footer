@@ -42,6 +42,15 @@ class STF_Admin {
 	private $version;
 
 	/**
+	 * The plugin's basename (directory and main file, as WordPress lists it).
+	 *
+	 * @since  0.7.0
+	 * @access private
+	 * @var    string $plugin_file The plugin basename.
+	 */
+	private $plugin_file;
+
+	/**
 	 * The functions class contains helper functions.
 	 *
 	 * @since 0.7.0
@@ -65,11 +74,13 @@ class STF_Admin {
 	 * @since  0.7.0
 	 * @param string $plugin_name The name of the plugin.
 	 * @param string $version     The version of this plugin.
+	 * @param string $plugin_file The plugin basename, e.g. 'scripts-to-footerphp/scripts-to-footer.php'.
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct( $plugin_name, $version, $plugin_file = '' ) {
 
 		$this->plugin_name    = $plugin_name;
 		$this->version        = $version;
+		$this->plugin_file    = $plugin_file;
 		$this->functions      = new STF_Functions();
 		$this->settings_field = 'scripts-to-footer';
 	}
@@ -89,7 +100,7 @@ class STF_Admin {
 			return $links;
 		}
 
-		if ( basename( dirname( $file ) ) === $this->plugin_name ) {
+		if ( '' !== $this->plugin_file && $file === $this->plugin_file ) {
 			$links[] = '<a href="http://wordpress.org/support/plugin/scripts-to-footerphp" title="' . __( 'Support', 'scripts-to-footerphp' ) . '">' . __( 'Support', 'scripts-to-footerphp' ) . '</a>';
 
 			$links[] = '<a href="https://github.com/joshuadavidnelson/scripts-to-footer/wiki" title="' . __( 'Documentation', 'scripts-to-footerphp' ) . '" target="_blank">' . __( 'Documentation', 'scripts-to-footerphp' ) . '</a>';
