@@ -8,7 +8,7 @@ import { test } from '@wordpress/e2e-test-utils-playwright';
  */
 import { expectLeftInHead, expectMovedToFooter } from '../../config/scripts';
 import { fetchPlacement } from '../../config/front';
-import { ensureBaseline, resetSite } from '../../config/seed';
+import { ensureBaseline, resetSite, CPT, TAX } from '../../config/seed';
 import type { Baseline } from '../../config/seed';
 import { setPluginOptions } from '../../config/plugin-state';
 import { setFilterOverrides } from '../../config/filter-overrides';
@@ -51,6 +51,11 @@ test.describe( 'stf_{type} filters', () => {
 
 			expectLeftInHead( await fetchPlacement( baseURL, view.url( baseline ), view.status ?? 200 ) );
 
+			// In-test control: the plugin is live and the home view still moves
+			// (or, for the home case, a post does).
+			const control = view.type === 'home' ? baseline.postLink : baseline.urls.home;
+			expectMovedToFooter( await fetchPlacement( baseURL, control ) );
+
 			// Scoped: a post and a different view still move.
 			expectMovedToFooter( await fetchPlacement( baseURL, baseline.postLink ) );
 			const other = VIEWS.find( ( v ) => v !== view )!;
@@ -64,5 +69,46 @@ test.describe( 'stf_{type} filters', () => {
 
 		await setFilterOverrides( requestUtils, { stf_home: true } );
 		expectMovedToFooter( await fetchPlacement( baseURL, baseline.urls.home ) );
+	} );
+
+	test( 'stf_<cpt>_archive false leaves only the opted-in CPT archive in the head', async ( { requestUtils, baseURL } ) => {
+		await setFilterOverrides( requestUtils, {
+			scripts_to_footer_post_types: { append: [ CPT ] },
+			scripts_to_footer_taxonomies: { append: [ TAX ] },
+		} );
+
+		// Control: opted in, the CPT archive moves.
+		expectMovedToFooter( await fetchPlacement( baseURL, baseline.urls.cptArchive ) );
+
+		await setFilterOverrides( requestUtils, {
+			scripts_to_footer_post_types: { append: [ CPT ] },
+			scripts_to_footer_taxonomies: { append: [ TAX ] },
+			[ `stf_${ CPT }_archive` ]: false,
+		} );
+
+		expectLeftInHead( await fetchPlacement( baseURL, baseline.urls.cptArchive ) );
+		expectMovedToFooter( await fetchPlacement( baseURL, baseline.urls.taxArchive ) );
+		expectMovedToFooter( await fetchPlacement( baseURL, baseline.itemLink ) );
+		expectMovedToFooter( await fetchPlacement( baseURL, baseline.postLink ) );
+	} );
+
+	test( 'stf_<tax>_archive false leaves only the opted-in taxonomy archive in the head', async ( { requestUtils, baseURL } ) => {
+		await setFilterOverrides( requestUtils, {
+			scripts_to_footer_post_types: { append: [ CPT ] },
+			scripts_to_footer_taxonomies: { append: [ TAX ] },
+		} );
+
+		// Control: opted in, the taxonomy archive moves.
+		expectMovedToFooter( await fetchPlacement( baseURL, baseline.urls.taxArchive ) );
+
+		await setFilterOverrides( requestUtils, {
+			scripts_to_footer_post_types: { append: [ CPT ] },
+			scripts_to_footer_taxonomies: { append: [ TAX ] },
+			[ `stf_${ TAX }_archive` ]: false,
+		} );
+
+		expectLeftInHead( await fetchPlacement( baseURL, baseline.urls.taxArchive ) );
+		expectMovedToFooter( await fetchPlacement( baseURL, baseline.urls.cptArchive ) );
+		expectMovedToFooter( await fetchPlacement( baseURL, baseline.postLink ) );
 	} );
 } );
