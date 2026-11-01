@@ -253,8 +253,8 @@ class Scripts_To_Footer {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin   = new STF_Admin( $this->get_plugin_name(), $this->get_version(), $this->plugin_file );
-		$admin_settings = new STF_Admin_Settings();
+		$plugin_admin   = new STF_Admin( $this->get_plugin_name(), $this->get_version(), $this->plugin_file, $this->functions );
+		$admin_settings = new STF_Admin_Settings( $this->functions );
 
 		// Add Links to Plugin Bar.
 		$this->loader->add_filter( 'plugin_row_meta', $plugin_admin, 'plugin_links', 10, 2 );
@@ -282,7 +282,7 @@ class Scripts_To_Footer {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new STF_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new STF_Public( $this->get_plugin_name(), $this->get_version(), $this->functions );
 
 		// Run the plugin.
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'clean_head' );
