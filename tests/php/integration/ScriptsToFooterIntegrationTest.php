@@ -723,15 +723,25 @@ class ScriptsToFooterIntegrationTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Footer scripts stay in the footer.
+	 * While the plugin moves head scripts, a script already enqueued for the footer
+	 * still prints once in the footer, after the moved head script.
 	 *
 	 * @return void
 	 */
-	public function test_footer_script_stays_in_footer() {
+	public function test_footer_script_stays_in_footer_alongside_moved_head_script() {
 		$post_id = self::factory()->post->create();
 		$this->go_to( get_permalink( $post_id ) );
-		wp_enqueue_script( 'stf-footer', self::SCRIPT_SRC, array(), '1.0', true );
+		$this->enqueue_test_script();
+		wp_enqueue_script( 'stf-footer', 'https://example.org/footer.js', array(), '1.0', true );
 
-		$this->assertMovedToFooter( self::SCRIPT_SRC, $this->render_page() );
+		$page = $this->render_page();
+
+		$this->assertMovedToFooter( self::SCRIPT_SRC, $page );
+		$this->assertMovedToFooter( 'https://example.org/footer.js', $page );
+		$this->assertLessThan(
+			strpos( $page['footer'], 'https://example.org/footer.js' ),
+			strpos( $page['footer'], self::SCRIPT_SRC ),
+			'The moved head script should print before the footer script.'
+		);
 	}
 }
