@@ -18,7 +18,7 @@ import {
 	expectLeftInHead,
 } from '../../config/scripts';
 
-const SETTINGS_URL = '/wp-admin/options-general.php?page=scripts-to-footer';
+import { SETTINGS_URL, expectSettingsPageExistsForAdmin } from './settings-page';
 
 test.describe( 'Author role', () => {
 	const tracker = new ContentTracker();
@@ -49,17 +49,19 @@ test.describe( 'Author role', () => {
 	test( 'can use the meta box on their own post and it takes effect', async ( { admin, page, requestUtils, baseURL } ) => {
 		const post = await tracker.create( authorUtils, { title: 'STF Author Own Post', content: 'x' } );
 		const visitor = await visitorContext( baseURL );
-		expectMovedToFooter( await getPlacement( visitor, post.link ) );
+		try {
+			expectMovedToFooter( await getPlacement( visitor, post.link ) );
 
-		await admin.editPost( post.id );
-		await openMetaBoxes( page );
-		await page.locator( '#stf_exclude' ).check();
-		await saveWithMetaBoxes( page );
+			await admin.editPost( post.id );
+			await openMetaBoxes( page );
+			await page.locator( '#stf_exclude' ).check();
+			await saveWithMetaBoxes( page );
 
-		expect( await getExcludeMeta( requestUtils, post.id ) ).toEqual( { exists: true, value: '1' } );
-		expectLeftInHead( await getPlacement( visitor, post.link ) );
-
-		await visitor.dispose();
+			expect( await getExcludeMeta( requestUtils, post.id ) ).toEqual( { exists: true, value: '1' } );
+			expectLeftInHead( await getPlacement( visitor, post.link ) );
+		} finally {
+			await visitor.dispose();
+		}
 	} );
 
 	test( 'cannot open the editor for the administrator\'s post', async ( { admin, page, requestUtils, baseURL } ) => {
@@ -76,11 +78,17 @@ test.describe( 'Author role', () => {
 
 		expect( ( await getExcludeMeta( requestUtils, baseline.postId ) ).exists ).toBe( false );
 		const visitor = await visitorContext( baseURL );
-		expectMovedToFooter( await getPlacement( visitor, baseline.postLink ) );
-		await visitor.dispose();
+		try {
+			expectMovedToFooter( await getPlacement( visitor, baseline.postLink ) );
+		} finally {
+			await visitor.dispose();
+		}
 	} );
 
-	test( 'is denied the settings page', async ( { page } ) => {
+	test( 'is denied the settings page', async ( { page, browser, baseURL } ) => {
+		// Control, same test: the page exists for an administrator, so the denial below is the plugin's capability check.
+		await expectSettingsPageExistsForAdmin( browser, baseURL );
+
 		const response = await page.goto( SETTINGS_URL );
 
 		expect( response?.status() ).toBe( 403 );

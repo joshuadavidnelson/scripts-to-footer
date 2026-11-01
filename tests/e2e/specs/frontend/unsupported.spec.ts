@@ -35,14 +35,18 @@ test.describe( 'Unsupported post types and taxonomies', () => {
 		} );
 
 		test( 'a CPT single is left in the head', async ( { baseURL } ) => {
+			// In-test control: a supported post moves, so the plugin is live.
+			expectMovedToFooter( await fetchPlacement( baseURL, baseline.postLink ) );
 			expectLeftInHead( await fetchPlacement( baseURL, baseline.itemLink ) );
 		} );
 
 		test( 'a CPT archive is left in the head', async ( { baseURL } ) => {
+			expectMovedToFooter( await fetchPlacement( baseURL, baseline.postLink ) );
 			expectLeftInHead( await fetchPlacement( baseURL, baseline.urls.cptArchive ) );
 		} );
 
 		test( 'a custom taxonomy archive is left in the head', async ( { baseURL } ) => {
+			expectMovedToFooter( await fetchPlacement( baseURL, baseline.postLink ) );
 			expectLeftInHead( await fetchPlacement( baseURL, baseline.urls.taxArchive ) );
 		} );
 	} );

@@ -9,9 +9,10 @@ import type { Page } from '@playwright/test';
 /**
  * Internal dependencies
  */
-import { ensureBaseline, resetSite } from '../../config/seed';
+import { ensureBaseline, resetSite, CPT } from '../../config/seed';
 import type { Baseline } from '../../config/seed';
 import { getPluginState } from '../../config/plugin-state';
+import { setFilterOverrides } from '../../config/filter-overrides';
 import {
 	getPlacement,
 	visitorContext,
@@ -112,32 +113,34 @@ test.describe( 'Settings page', () => {
 	for ( const { label, key, url, status } of FRONT_END_CASES ) {
 		test( `excluding ${ label } persists and leaves only that view in the head`, async ( { page, requestUtils, baseURL } ) => {
 			const visitor = await visitorContext( baseURL );
+			try {
 
-			// Baseline: the view is moved, as is a control view.
-			expectMovedToFooter( await getPlacement( visitor, url( baseline ), status ) );
+				// Baseline: the view is moved, as is a control view.
+				expectMovedToFooter( await getPlacement( visitor, url( baseline ), status ) );
 
-			await page.goto( SETTINGS_URL );
-			await box( page, key ).check();
-			await saveSettings( page );
+				await page.goto( SETTINGS_URL );
+				await box( page, key ).check();
+				await saveSettings( page );
 
-			// Persisted in the form after a fresh load and in storage.
-			await page.reload();
-			await expect( box( page, key ) ).toBeChecked();
-			expect( await storedOption( requestUtils, key ) ).toBe( 1 );
+				// Persisted in the form after a fresh load and in storage.
+				await page.reload();
+				await expect( box( page, key ) ).toBeChecked();
+				expect( await storedOption( requestUtils, key ) ).toBe( 1 );
 
-			// Front end: that view is untouched, another view is still moved.
-			expectLeftInHead( await getPlacement( visitor, url( baseline ), status ) );
-			expectMovedToFooter( await getPlacement( visitor, baseline.postLink ) );
+				// Front end: that view is untouched, another view is still moved.
+				expectLeftInHead( await getPlacement( visitor, url( baseline ), status ) );
+				expectMovedToFooter( await getPlacement( visitor, baseline.postLink ) );
 
-			// Unchecking restores it.
-			await box( page, key ).uncheck();
-			await saveSettings( page );
-			await page.reload();
-			await expect( box( page, key ) ).not.toBeChecked();
-			expect( ( await storedOption( requestUtils, key ) ) ).toBeUndefined();
-			expectMovedToFooter( await getPlacement( visitor, url( baseline ), status ) );
-
-			await visitor.dispose();
+				// Unchecking restores it.
+				await box( page, key ).uncheck();
+				await saveSettings( page );
+				await page.reload();
+				await expect( box( page, key ) ).not.toBeChecked();
+				expect( ( await storedOption( requestUtils, key ) ) ).toBeUndefined();
+				expectMovedToFooter( await getPlacement( visitor, url( baseline ), status ) );
+			} finally {
+				await visitor.dispose();
+			}
 		} );
 	}
 
@@ -173,35 +176,65 @@ test.describe( 'Settings page', () => {
 		} );
 
 		const visitor = await visitorContext( baseURL );
-		expectLeftInHead( await getPlacement( visitor, baseline.urls.home ) );
-		expectLeftInHead( await getPlacement( visitor, baseline.urls.search ) );
-		expectMovedToFooter( await getPlacement( visitor, baseline.urls.date ) );
-		await visitor.dispose();
+		try {
+			expectLeftInHead( await getPlacement( visitor, baseline.urls.home ) );
+			expectLeftInHead( await getPlacement( visitor, baseline.urls.search ) );
+			expectMovedToFooter( await getPlacement( visitor, baseline.urls.date ) );
+		} finally {
+			await visitor.dispose();
+		}
 	} );
 
 	test( 'keep jQuery in the header leaves jQuery in head and moves the rest', async ( { page, requestUtils, baseURL } ) => {
 		const visitor = await visitorContext( baseURL );
-		expectMovedToFooter( await getPlacement( visitor, baseline.urls.home ) );
+		try {
+			expectMovedToFooter( await getPlacement( visitor, baseline.urls.home ) );
 
-		await page.goto( SETTINGS_URL );
-		await box( page, 'stf_jquery_header' ).check();
-		await saveSettings( page );
+			await page.goto( SETTINGS_URL );
+			await box( page, 'stf_jquery_header' ).check();
+			await saveSettings( page );
 
-		await page.reload();
-		await expect( box( page, 'stf_jquery_header' ) ).toBeChecked();
-		expect( ( await storedOption( requestUtils, 'stf_jquery_header' ) ) ).toBe( 1 );
+			await page.reload();
+			await expect( box( page, 'stf_jquery_header' ) ).toBeChecked();
+			expect( ( await storedOption( requestUtils, 'stf_jquery_header' ) ) ).toBe( 1 );
 
-		for ( const url of [ baseline.urls.home, baseline.postLink ] ) {
-			const placement = await getPlacement( visitor, url );
-			expectInHead( placement, [ 'jquery-core', 'jquery-migrate' ] );
-			expectInFooter( placement, [ ...FIXTURE_HEADER_HANDLES, FOOTER_HANDLE ] );
-			expectNoDuplicates( placement );
+			for ( const url of [ baseline.urls.home, baseline.postLink ] ) {
+				const placement = await getPlacement( visitor, url );
+				expectInHead( placement, [ 'jquery-core', 'jquery-migrate' ] );
+				expectInFooter( placement, [ ...FIXTURE_HEADER_HANDLES, FOOTER_HANDLE ] );
+				expectNoDuplicates( placement );
+			}
+
+			await box( page, 'stf_jquery_header' ).uncheck();
+			await saveSettings( page );
+			expectMovedToFooter( await getPlacement( visitor, baseline.urls.home ) );
+		} finally {
+			await visitor.dispose();
 		}
+	} );
 
-		await box( page, 'stf_jquery_header' ).uncheck();
-		await saveSettings( page );
-		expectMovedToFooter( await getPlacement( visitor, baseline.urls.home ) );
+	test( 'a custom post type archive checkbox saved through the form leaves only that archive in the head', async ( { page, requestUtils, baseURL } ) => {
+		await setFilterOverrides( requestUtils, { scripts_to_footer_post_types: { append: [ CPT ] } } );
+		const key = `stf_exclude_${ CPT }_archive`;
 
-		await visitor.dispose();
+		const visitor = await visitorContext( baseURL );
+		try {
+			// Control: opted in, the archive moves before the form is saved.
+			expectMovedToFooter( await getPlacement( visitor, baseline.urls.cptArchive ) );
+
+			await page.goto( SETTINGS_URL );
+			await box( page, key ).check();
+			await saveSettings( page );
+
+			await page.reload();
+			await expect( box( page, key ) ).toBeChecked();
+			expect( await storedOption( requestUtils, key ) ).toBe( 1 );
+
+			expectLeftInHead( await getPlacement( visitor, baseline.urls.cptArchive ) );
+			expectMovedToFooter( await getPlacement( visitor, baseline.postLink ) );
+		} finally {
+			await visitor.dispose();
+		}
+		await resetSite( requestUtils );
 	} );
 } );

@@ -22,6 +22,7 @@ import { ensureBaseline, resetSite } from '../../config/seed';
 import type { Baseline } from '../../config/seed';
 import { setPluginOptions } from '../../config/plugin-state';
 import { setFilterOverrides } from '../../config/filter-overrides';
+import { debugLogSize, readDebugLogSince } from '../../config/wp-cli';
 
 test.describe( 'stf_exclude_scripts filter', () => {
 	let baseline: Baseline;
@@ -66,9 +67,12 @@ test.describe( 'stf_exclude_scripts filter', () => {
 	test( 'a handle that is not enqueued causes no error and everything else moves', async ( { requestUtils, baseURL } ) => {
 		await setFilterOverrides( requestUtils, { stf_exclude_scripts: { append: [ 'stf-test-not-enqueued' ] } } );
 
+		// WP_DEBUG_DISPLAY is off, so warnings never reach the HTML; read the debug log.
+		const logOffset = await debugLogSize();
 		const placement = await fetchPlacement( baseURL, baseline.postLink );
+		const newLog = await readDebugLogSince( logOffset );
 		expectMovedToFooter( placement );
-		expect( placement.html ).not.toMatch( /fatal error|<b>(Warning|Notice|Deprecated)<\/b>/i );
+		expect( newLog.split( '\n' ).filter( ( line ) => /PHP (Warning|Notice|Deprecated|Fatal error).*scripts-to-footer/.test( line ) ) ).toEqual( [] );
 		expect( [ ...placement.headIds, ...placement.bodyIds ].some( ( id ) => id.startsWith( 'stf-test-not-enqueued' ) ) ).toBe( false );
 	} );
 
