@@ -149,11 +149,11 @@ class UninstallTest extends TestCase {
 
 		$this->run_uninstall();
 
-		// Characterizes current behavior: 'stf_previous_version' is NOT deleted (likely a bug).
 		$this->assertSame(
 			array(
 				array( 'delete_option', 'scripts-to-footer' ),
 				array( 'delete_option', 'stf_version' ),
+				array( 'delete_option', 'stf_previous_version' ),
 				array( 'delete_post_meta_by_key', 'stf_exclude' ),
 			),
 			$this->calls
@@ -180,11 +180,13 @@ class UninstallTest extends TestCase {
 				array( 'switch_to_blog', 3 ),
 				array( 'delete_option', 'scripts-to-footer' ),
 				array( 'delete_option', 'stf_version' ),
+				array( 'delete_option', 'stf_previous_version' ),
 				array( 'delete_post_meta_by_key', 'stf_exclude' ),
 				array( 'restore_current_blog' ),
 				array( 'switch_to_blog', 7 ),
 				array( 'delete_option', 'scripts-to-footer' ),
 				array( 'delete_option', 'stf_version' ),
+				array( 'delete_option', 'stf_previous_version' ),
 				array( 'delete_post_meta_by_key', 'stf_exclude' ),
 				array( 'restore_current_blog' ),
 			),
