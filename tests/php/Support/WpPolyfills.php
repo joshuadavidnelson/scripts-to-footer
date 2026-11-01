@@ -9,6 +9,8 @@
  * @package Scripts_To_Footer
  */
 
+// phpcs:disable WordPress.Files.FileName, Universal.Files.SeparateFunctionsFromOO.Mixed, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Test-only stand-ins for WordPress core.
+
 /**
  * The exception wp_die() throws in the unit suite.
  */
