@@ -40,7 +40,11 @@ class AdminIntegrationTest extends WP_UnitTestCase {
 	public function tear_down() {
 		$_POST = array();
 		wp_set_current_user( 0 );
-		unregister_setting( 'scripts-to-footer', 'scripts-to-footer' );
+		// WordPress before 6.3 warns when unregistering a setting whose group was never
+		// registered, so only unregister what a test actually registered.
+		if ( isset( get_registered_settings()['scripts-to-footer'] ) ) {
+			unregister_setting( 'scripts-to-footer', 'scripts-to-footer' );
+		}
 
 		if ( null === $this->previous_screen ) {
 			unset( $GLOBALS['current_screen'] );
@@ -232,7 +236,11 @@ class AdminIntegrationTest extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function test_admin_init_registers_setting() {
-		unregister_setting( 'scripts-to-footer', 'scripts-to-footer' );
+		// WordPress before 6.3 warns when unregistering a setting whose group was never
+		// registered, so only unregister what a test actually registered.
+		if ( isset( get_registered_settings()['scripts-to-footer'] ) ) {
+			unregister_setting( 'scripts-to-footer', 'scripts-to-footer' );
+		}
 		$this->assertArrayNotHasKey( 'scripts-to-footer', get_registered_settings() );
 
 		$found = false;

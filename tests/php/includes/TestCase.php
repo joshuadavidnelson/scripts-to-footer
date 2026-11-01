@@ -60,10 +60,14 @@ class TestCase extends \Yoast\PHPUnitPolyfills\TestCases\TestCase {
 	 */
 	private static function reset_expected_hooks() {
 		$manager = new ReflectionProperty( WP_Mock::class, 'event_manager' );
-		$manager->setAccessible( true );
+		if ( PHP_VERSION_ID < 80100 ) {
+			$manager->setAccessible( true ); // No-op since PHP 8.1, deprecated in 8.5.
+		}
 
 		$callbacks = new ReflectionProperty( WP_Mock\EventManager::class, 'callbacks' );
-		$callbacks->setAccessible( true );
+		if ( PHP_VERSION_ID < 80100 ) {
+			$callbacks->setAccessible( true ); // No-op since PHP 8.1, deprecated in 8.5.
+		}
 		$callbacks->setValue( $manager->getValue(), array() );
 	}
 
@@ -161,7 +165,9 @@ class TestCase extends \Yoast\PHPUnitPolyfills\TestCases\TestCase {
 	 */
 	protected function get_property( $instance, $property ) {
 		$ref = new ReflectionProperty( $instance, $property );
-		$ref->setAccessible( true );
+		if ( PHP_VERSION_ID < 80100 ) {
+			$ref->setAccessible( true ); // No-op since PHP 8.1, deprecated in 8.5.
+		}
 
 		return $ref->getValue( $instance );
 	}
@@ -176,7 +182,9 @@ class TestCase extends \Yoast\PHPUnitPolyfills\TestCases\TestCase {
 	 */
 	protected function set_property( $instance, $property, $value ) {
 		$ref = new ReflectionProperty( $instance, $property );
-		$ref->setAccessible( true );
+		if ( PHP_VERSION_ID < 80100 ) {
+			$ref->setAccessible( true ); // No-op since PHP 8.1, deprecated in 8.5.
+		}
 		$ref->setValue( $instance, $value );
 	}
 }

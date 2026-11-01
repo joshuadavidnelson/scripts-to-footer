@@ -42,3 +42,6 @@ define( 'WP_TESTS_TITLE', 'Test Blog' );
 define( 'WP_PHP_BINARY', 'php' );
 
 define( 'WPLANG', '' );
+
+// Older test libraries (before WordPress 6.3) require this global; newer ones default it.
+$table_prefix = 'wptests_'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Standard wp-tests-config.php global.
