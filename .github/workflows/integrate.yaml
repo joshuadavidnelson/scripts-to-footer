@@ -76,3 +76,25 @@ jobs:
 
     - name: "Run PHPStan"
       run: "composer phpstan"
+
+  npm:
+    name: "Install and audit npm packages"
+    runs-on: "ubuntu-latest"
+    steps:
+    - name: "Checkout"
+      uses: "actions/checkout@v6"
+
+    - name: "Install Node"
+      uses: "actions/setup-node@v4"
+      with:
+        node-version: "24"
+        cache: "npm"
+
+    - name: "Install npm packages"
+      run: "npm ci --ignore-scripts"
+
+    - name: "Check wp-env runs"
+      run: "npx wp-env --version"
+
+    - name: "Audit npm packages"
+      run: "npm audit --audit-level=high"
