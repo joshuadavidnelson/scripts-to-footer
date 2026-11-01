@@ -453,4 +453,70 @@ class ScriptsToFooterTest extends TestCase {
 
 		$this->assertSame( array( $this->migration_call() ), $this->wpdb->updates );
 	}
+
+	/**
+	 * A database error leaves both version options unwritten so the migration is retried.
+	 *
+	 * @covers Scripts_To_Footer::upgrade_check
+	 * @covers Scripts_To_Footer::migrate_legacy_exclude_meta
+	 *
+	 * @return void
+	 */
+	public function test_failed_migration_does_not_stamp_version() {
+		$this->wpdb->affected = false;
+		WP_Mock::userFunction( 'wp_cache_supports', array( 'times' => 0 ) );
+		WP_Mock::userFunction( 'wp_cache_flush_group', array( 'times' => 0 ) );
+
+		list( , $updates ) = $this->build_admin( '0.6.0' );
+
+		$this->assertSame( array( $this->migration_call() ), $this->wpdb->updates );
+		$this->assertSame( array(), $updates );
+	}
+
+	/**
+	 * Zero rows changed is a success: the version is still stamped.
+	 *
+	 * @covers Scripts_To_Footer::upgrade_check
+	 * @covers Scripts_To_Footer::migrate_legacy_exclude_meta
+	 *
+	 * @return void
+	 */
+	public function test_migration_with_no_rows_still_stamps_version() {
+		$this->wpdb->affected = 0;
+
+		list( , $updates ) = $this->build_admin( false );
+
+		$this->assertSame( array( array( 'stf_version', STF_VERSION, false ) ), $updates );
+	}
+
+	/**
+	 * Rows changed stamps the version and flushes the post meta cache where supported.
+	 *
+	 * @covers Scripts_To_Footer::upgrade_check
+	 * @covers Scripts_To_Footer::migrate_legacy_exclude_meta
+	 *
+	 * @return void
+	 */
+	public function test_migration_with_rows_stamps_version_and_flushes_cache() {
+		$this->wpdb->affected = 2;
+		WP_Mock::userFunction(
+			'wp_cache_supports',
+			array(
+				'times'  => 1,
+				'args'   => array( 'flush_group' ),
+				'return' => true,
+			)
+		);
+		$this->expect_function_strict( 'wp_cache_flush_group', array( 'post_meta' ), true );
+
+		list( , $updates ) = $this->build_admin( '0.6.0' );
+
+		$this->assertSame(
+			array(
+				array( 'stf_previous_version', '0.6.0', false ),
+				array( 'stf_version', STF_VERSION, false ),
+			),
+			$updates
+		);
+	}
 }
