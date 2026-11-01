@@ -606,4 +606,39 @@ class AdminTest extends TestCase {
 
 		$this->assertSame( array( array( 7, 'stf_exclude' ) ), $calls );
 	}
+
+	/**
+	 * An injected STF_Functions decides which post types get the metabox.
+	 *
+	 * @covers STF_Admin::__construct
+	 * @covers STF_Admin::metabox_register
+	 *
+	 * @return void
+	 */
+	public function test_injected_functions_instance_is_used() {
+		$functions = Mockery::mock( STF_Functions::class );
+		$functions->shouldReceive( 'post_type_supported' )->once()->with( 'secret' )->andReturn( true );
+
+		$admin = new STF_Admin( 'scripts-to-footer', STF_VERSION, '', $functions );
+		WP_Mock::userFunction( 'get_post_type', array( 'return' => 'secret' ) );
+		$calls = array();
+		$this->record( 'add_meta_box', $calls );
+
+		$admin->metabox_register();
+
+		$this->assertSame( $functions, $this->get_property( $admin, 'functions' ) );
+		$this->assertCount( 1, $calls );
+		$this->assertSame( 'secret', $calls[0][3] );
+	}
+
+	/**
+	 * Without an injected instance the constructor builds its own.
+	 *
+	 * @covers STF_Admin::__construct
+	 *
+	 * @return void
+	 */
+	public function test_functions_default_when_not_injected() {
+		$this->assertInstanceOf( STF_Functions::class, $this->get_property( $this->admin(), 'functions' ) );
+	}
 }

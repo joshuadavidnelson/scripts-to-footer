@@ -54,10 +54,11 @@ class STF_Admin_Settings {
 	 * Start up
 	 *
 	 * @since 0.6.0
+	 * @param STF_Functions|null $functions Optional shared helper instance; a new one is created when omitted.
 	 */
-	public function __construct() {
+	public function __construct( $functions = null ) {
 
-		$this->functions      = new STF_Functions();
+		$this->functions      = $functions instanceof STF_Functions ? $functions : new STF_Functions();
 		$this->settings_field = 'scripts-to-footer';
 	}
 

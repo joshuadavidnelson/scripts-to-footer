@@ -1120,4 +1120,32 @@ class PublicTest extends TestCase {
 
 		$this->assertSame( 'reply-from-filter', $this->make_public()->stf_includes() );
 	}
+
+	/**
+	 * An injected STF_Functions decides which post type archives are supported.
+	 *
+	 * @covers STF_Public::__construct
+	 * @covers STF_Public::stf_includes
+	 *
+	 * @return void
+	 */
+	public function test_injected_functions_instance_is_used() {
+		$functions = Mockery::mock( STF_Functions::class );
+		$functions->shouldReceive( 'post_type_supported' )->once()->with( 'secret' )->andReturn( true );
+
+		$this->arrange_context(
+			array(
+				'tag'        => 'is_post_type_archive',
+				'post_type'  => 'secret',
+				'post_types' => array( 'page', 'post' ),
+			)
+		);
+		$this->stub_options( array() );
+		$this->stub_filter_strict( 'stf_secret_archive', true, 'from-injected' );
+
+		$public = new STF_Public( 'scripts-to-footer', '1.2.3', $functions );
+
+		$this->assertSame( $functions, $this->get_property( $public, 'functions' ) );
+		$this->assertSame( 'from-injected', $public->stf_includes() );
+	}
 }
