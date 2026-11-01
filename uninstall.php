@@ -93,8 +93,9 @@ if ( is_multisite() ) {
 
 			// Delete all post meta.
 			delete_post_meta_by_key( 'stf_exclude' );
+
+			restore_current_blog();
 		}
-		restore_current_blog();
 	}
 } else { // Otherwise, delete options from main options table.
 	// Delete plugin options.
