@@ -2,8 +2,8 @@
 /**
  * Tests for uninstall.php.
  *
- * The branch where WP_UNINSTALL_PLUGIN is undefined calls header() and exit() and is
- * intentionally not covered.
+ * The branch where WP_UNINSTALL_PLUGIN is undefined calls header() and exit(), so it runs
+ * in a PHP subprocess (see tests/php/Support/fixtures/uninstall-direct-access.php).
  *
  * @package Scripts_To_Footer
  */
@@ -229,5 +229,34 @@ class UninstallTest extends TestCase {
 			),
 			$ids
 		);
+	}
+
+	/**
+	 * A direct request (no WP_UNINSTALL_PLUGIN) is rejected with a 403 before any WordPress code runs.
+	 *
+	 * Runs in a subprocess because the branch calls exit(). php-cli reports the status set by
+	 * header( 'HTTP/1.1 403 Forbidden' ) through http_response_code(); the 'Status:' header text
+	 * is not observable there, so it is not asserted.
+	 *
+	 * @return void
+	 */
+	public function test_direct_access_is_forbidden_and_does_nothing() {
+		$script  = __DIR__ . '/../Support/fixtures/uninstall-direct-access.php';
+		$command = array( PHP_BINARY, '-d', 'display_errors=1', $script, dirname( __DIR__, 3 ) . '/uninstall.php' );
+		$pipes   = array();
+		$spec    = array(
+			1 => array( 'pipe', 'w' ),
+			2 => array( 'pipe', 'w' ),
+		);
+		$process = proc_open( $command, $spec, $pipes );
+		$this->assertIsResource( $process );
+
+		$stdout = stream_get_contents( $pipes[1] );
+		$stderr = stream_get_contents( $pipes[2] );
+		proc_close( $process );
+
+		$this->assertSame( '', $stderr );
+		$this->assertStringNotContainsString( 'MARK:', $stdout, 'No WordPress function may run after a direct request.' );
+		$this->assertSame( "CODE:403\n", $stdout );
 	}
 }

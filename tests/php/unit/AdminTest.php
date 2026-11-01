@@ -205,6 +205,24 @@ class AdminTest extends TestCase {
 	}
 
 	/**
+	 * A null plugin file is not the "unset" default: it is used as given, so nothing is resolved and no links appear.
+	 *
+	 * Only the empty string triggers the lazy lookup; a loose comparison would treat null the same way.
+	 *
+	 * @covers STF_Admin::plugin_links
+	 *
+	 * @return void
+	 */
+	public function test_plugin_links_null_plugin_file_is_not_resolved() {
+		WP_Mock::userFunction( 'current_user_can', array( 'return' => true ) );
+		WP_Mock::userFunction( 'plugin_basename', array( 'times' => 0 ) );
+
+		$admin = new STF_Admin( 'scripts-to-footer', STF_VERSION, null );
+
+		$this->assertSame( array( 'x' ), $admin->plugin_links( array( 'x' ), 'scripts-to-footer/scripts-to-footer.php' ) );
+	}
+
+	/**
 	 * Built with two arguments, other plugins' rows are still untouched.
 	 *
 	 * @covers STF_Admin::plugin_links

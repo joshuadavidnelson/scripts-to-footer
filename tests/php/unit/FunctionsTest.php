@@ -78,6 +78,8 @@ class FunctionsTest extends TestCase {
 			'empty list'             => array( array(), 'page', false ),
 			'non-array filter'       => array( 'page', 'page', false ),
 			'case sensitive'         => array( array( 'page' ), 'Page', false ),
+			'bool in list'           => array( array( 'page', true ), 'book', false ),
+			'int in list'            => array( array( 123 ), 123, false ),
 		);
 	}
 
@@ -144,6 +146,8 @@ class FunctionsTest extends TestCase {
 			'null input'       => array( array( '' ), null, false ),
 			'true input'       => array( array( '1' ), true, false ),
 			'empty list'       => array( array(), 'category', false ),
+			'bool in list'     => array( array( 'category', true ), 'genre', false ),
+			'int in list'      => array( array( 123 ), 123, false ),
 			'non-array filter' => array( 'category', 'category', false ),
 		);
 	}
