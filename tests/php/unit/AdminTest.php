@@ -34,10 +34,11 @@ class AdminTest extends TestCase {
 	/**
 	 * Builds the admin object.
 	 *
+	 * @param string $plugin_file The plugin basename.
 	 * @return STF_Admin
 	 */
-	private function admin() {
-		return new STF_Admin( 'scripts-to-footer', STF_VERSION );
+	private function admin( $plugin_file = 'scripts-to-footer/scripts-to-footer.php' ) {
+		return new STF_Admin( 'scripts-to-footer', STF_VERSION, $plugin_file );
 	}
 
 	/**
@@ -153,11 +154,24 @@ class AdminTest extends TestCase {
 	}
 
 	/**
-	 * Other plugins' rows are untouched, including the wordpress.org slug directory.
+	 * The links show on the wordpress.org install, whose directory is 'scripts-to-footerphp'.
 	 *
-	 * Characterizes current behavior: on wordpress.org the plugin directory is
-	 * 'scripts-to-footerphp', which never equals 'scripts-to-footer', so the links
-	 * never show there.
+	 * @covers STF_Admin::plugin_links
+	 *
+	 * @return void
+	 */
+	public function test_plugin_links_show_for_wordpress_org_directory() {
+		WP_Mock::userFunction( 'current_user_can', array( 'return' => true ) );
+
+		$file  = 'scripts-to-footerphp/scripts-to-footer.php';
+		$links = $this->admin( $file )->plugin_links( array( 'x' ), $file );
+
+		$this->assertCount( 4, $links );
+		$this->assertStringContainsString( 'Support', $links[1] );
+	}
+
+	/**
+	 * Other plugins' rows are untouched, whichever directory this plugin lives in.
 	 *
 	 * @covers STF_Admin::plugin_links
 	 *
@@ -166,10 +180,23 @@ class AdminTest extends TestCase {
 	public function test_plugin_links_other_plugin_unchanged() {
 		WP_Mock::userFunction( 'current_user_can', array( 'return' => true ) );
 
-		$admin = $this->admin();
+		$admin = $this->admin( 'scripts-to-footerphp/scripts-to-footer.php' );
 
 		$this->assertSame( array( 'x' ), $admin->plugin_links( array( 'x' ), 'akismet/akismet.php' ) );
-		$this->assertSame( array( 'x' ), $admin->plugin_links( array( 'x' ), 'scripts-to-footerphp/scripts-to-footer.php' ) );
+		$this->assertSame( array( 'x' ), $admin->plugin_links( array( 'x' ), 'scripts-to-footer/scripts-to-footer.php' ) );
+	}
+
+	/**
+	 * Without a known plugin file no row matches.
+	 *
+	 * @covers STF_Admin::plugin_links
+	 *
+	 * @return void
+	 */
+	public function test_plugin_links_unchanged_without_plugin_file() {
+		WP_Mock::userFunction( 'current_user_can', array( 'return' => true ) );
+
+		$this->assertSame( array( 'x' ), $this->admin( '' )->plugin_links( array( 'x' ), '' ) );
 	}
 
 	/**
