@@ -37,15 +37,24 @@ class TestCase extends \Yoast\PHPUnitPolyfills\TestCases\TestCase {
 	 * silently. Mockery's function expectations are counted as assertions so a test
 	 * whose only checks are ->times()/->with() expectations isn't flagged as risky.
 	 *
+	 * The cleanup is nested in finally blocks so a failed verification, or Mockery::close()
+	 * throwing inside WP_Mock::tearDown() (which then skips its own handler cleanup), can't
+	 * leave mock state behind for the next test.
+	 *
 	 * @return void
 	 */
 	protected function tear_down() {
-		$this->assertConditionsMet();
-		$this->addToAssertionCount( Mockery::getContainer()->mockery_getExpectationCount() );
-
-		WP_Mock::tearDown();
-
-		parent::tear_down();
+		try {
+			$this->assertConditionsMet();
+			$this->addToAssertionCount( Mockery::getContainer()->mockery_getExpectationCount() );
+		} finally {
+			try {
+				WP_Mock::tearDown();
+			} finally {
+				WP_Mock\Functions\Handler::cleanup();
+				parent::tear_down();
+			}
+		}
 	}
 
 	/**
