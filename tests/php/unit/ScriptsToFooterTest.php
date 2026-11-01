@@ -20,10 +20,8 @@ class ScriptsToFooterTest extends TestCase {
 	 */
 	private function stub_constructor( $is_admin = false ) {
 		WP_Mock::expectAction( 'stf_init' );
-		WP_Mock::userFunction(
-			'plugin_dir_path',
-			array( 'return' => dirname( __DIR__, 3 ) . '/' )
-		);
+		// Production passes its own directory (__DIR__ of includes/), not a file path.
+		$this->expect_function_strict( 'plugin_dir_path', array( dirname( __DIR__, 3 ) . '/includes' ), dirname( __DIR__, 3 ) . '/' );
 		WP_Mock::userFunction( 'is_admin', array( 'return' => $is_admin ) );
 	}
 

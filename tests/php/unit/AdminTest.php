@@ -286,7 +286,7 @@ class AdminTest extends TestCase {
 			array(
 				'return' => function ( ...$args ) use ( &$checked ) {
 					$checked[] = $args;
-					return $args[1] ? 'checked="checked"' : '';
+					return self::core_checked( $args[0], $args[1], false );
 				},
 			)
 		);
@@ -315,7 +315,7 @@ class AdminTest extends TestCase {
 		$this->assertSame( array(), $updates );
 		$this->assertSame(
 			'[NONCE]<p style="padding-top:10px;"><label for="stf_exclude">Turn Plugin Off</label>'
-			. '<input type="checkbox" id="stf_exclude" name="stf_exclude" checked="checked" style="margin:0 20px 0 10px;">'
+			. '<input type="checkbox" id="stf_exclude" name="stf_exclude"  checked=\'checked\' style="margin:0 20px 0 10px;">'
 			. '<span style="color:#999;">By default, this plugin will run on this post type. This checkbox lets you turn it off for this specific page/post.</span></p>',
 			$out
 		);
@@ -357,11 +357,14 @@ class AdminTest extends TestCase {
 
 		$this->assertSame( array( array( 42, 'stf_exclude', 1, 'on' ) ), $updates );
 		$this->assertSame( array( array( true, 1, false ) ), $checked );
-		$this->assertStringContainsString( 'checked="checked"', $out );
+		$this->assertStringContainsString( "checked='checked'", $out );
 	}
 
 	/**
 	 * A non-'on' truthy value is not migrated.
+	 *
+	 * Characterizes current behavior: a truthy non-'1' meta value excludes the post in
+	 * stf_includes but renders the box unchecked (core's checked( true, 'yes' ) is '').
 	 *
 	 * @covers STF_Admin::metabox_render
 	 *
@@ -371,10 +374,11 @@ class AdminTest extends TestCase {
 		$updates = array();
 		$checked = array();
 		$nonces  = array();
-		$this->render( 'yes', $updates, $checked, $nonces );
+		$out     = $this->render( 'yes', $updates, $checked, $nonces );
 
 		$this->assertSame( array(), $updates );
 		$this->assertSame( array( array( true, 'yes', false ) ), $checked );
+		$this->assertStringNotContainsString( 'checked=', $out );
 	}
 
 	/**
@@ -435,6 +439,31 @@ class AdminTest extends TestCase {
 		$this->expect_no_writes();
 
 		$this->admin()->metabox_save( 7, new stdClass() );
+	}
+
+	/**
+	 * DOING_AUTOSAVE defined as false does not bail: the save goes ahead.
+	 *
+	 * @covers STF_Admin::metabox_save
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 *
+	 * @return void
+	 */
+	public function test_metabox_save_autosave_defined_false_still_saves() {
+		define( 'DOING_AUTOSAVE', false );
+		$this->valid_nonce();
+		$_POST['stf_exclude'] = 'on';
+		WP_Mock::userFunction( 'wp_doing_ajax', array( 'return' => false ) );
+		WP_Mock::userFunction( 'wp_doing_cron', array( 'return' => false ) );
+		WP_Mock::userFunction( 'current_user_can', array( 'return' => true ) );
+		WP_Mock::userFunction( 'delete_post_meta', array( 'times' => 0 ) );
+		$calls = array();
+		$this->record( 'update_post_meta', $calls );
+
+		$this->admin()->metabox_save( 7, new stdClass() );
+
+		$this->assertSame( array( array( 7, 'stf_exclude', 1 ) ), $calls );
 	}
 
 	/**
