@@ -8,7 +8,7 @@ Scripts To Footer
 **Stable version:** 0.7.3  
 **License:** GPLv2 or later  
 **Requires PHP:** 7.4  
-**Tested up to PHP:** 8.3
+**Tested up to PHP:** 8.5
 
 Move your scripts to the footer to speed up perceived page load times and improve user experience.
 
