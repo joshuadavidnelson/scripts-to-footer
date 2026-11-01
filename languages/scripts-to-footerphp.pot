@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Scripts-To-Footer 0.7.3\n"
+"Project-Id-Version: Scripts-To-Footer 0.7.4\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/scripts-to-footerphp\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-01T06:06:31+00:00\n"
+"POT-Creation-Date: 2026-11-01T06:17:56+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Domain: scripts-to-footerphp\n"
 
@@ -20,7 +20,7 @@ msgstr ""
 
 #. Plugin URI of the plugin
 #: scripts-to-footer.php
-msgid "http://wordpress.org/plugins/scripts-to-footerphp/"
+msgid "https://wordpress.org/plugins/scripts-to-footerphp/"
 msgstr ""
 
 #. Description of the plugin
@@ -35,15 +35,7 @@ msgstr ""
 
 #. Author URI of the plugin
 #: scripts-to-footer.php
-msgid "http://joshuadnelson.com"
-msgstr ""
-
-#: includes/class-stf-activator.php:43
-msgid "Scripts-to-Footer requires WordPress 4.8 or higher"
-msgstr ""
-
-#: includes/class-stf-activator.php:80
-msgid "Scripts-to-Footer requires WordPress 4.8 or higher."
+msgid "https://joshuadnelson.com"
 msgstr ""
 
 #. translators: tell the user that the options on this settings page are for selecting pages that will NOT have the scripts moved.

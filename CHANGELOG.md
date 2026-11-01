@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.4
+- Tested up to WordPress 7.1 and PHP 8.5
+- Fix translations by using the plugin slug as the text domain
+- Fix site switching during multisite uninstall
+- Remove unused code
+- Remove development files from the plugin download
+- Update development tooling and dependencies
+
 ## 0.7.3
 - Tested up to WordPress 6.8.3
 - Add composer support
