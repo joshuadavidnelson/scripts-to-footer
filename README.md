@@ -5,7 +5,7 @@ Scripts To Footer
 
 **Requires at least:** 5.3  
 **Tested up to WordPress:** 7.1  
-**Stable version:** 0.7.4  
+**Stable version:** 0.7.3  
 **License:** GPLv2 or later  
 **Requires PHP:** 7.4  
 **Tested up to PHP:** 8.3

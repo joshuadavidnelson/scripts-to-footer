@@ -5,7 +5,7 @@ Donate link: https://joshuadnelson.com/donate/
 Requires at least: 5.3
 Requires PHP: 7.4
 Tested up to: 7.1
-Stable tag: 0.7.4
+Stable tag: 0.7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -117,11 +117,6 @@ This plugin should not change your actual page _speed_ - the same scripts are be
 
 == Changelog ==
 
-= 0.7.4 =
-- Tested up to WordPress 7.1
-- Update development dependencies to resolve all open Composer and npm security advisories
-- Update @wordpress/env to version 12. Its WordPress Playground dependencies require Node 24.18 or newer and npm 11.16 or newer. Run npm install before wp-env start.
-
 = 0.7.3 =
 - Tested up to WordPress 6.8.3
 - Add composer support
@@ -188,9 +183,6 @@ Updating code to be object-oriented and added page metabox to disable plugin on 
 Initial release
 
 == Upgrade Notice ==
-
-= 0.7.4 =
-Tested up to WordPress 7.1 and updated development dependencies to clear all open security advisories.
 
 = 0.7.3 =
 - Tested up to WordPress 6.8.3, add composer support, update github actions.
