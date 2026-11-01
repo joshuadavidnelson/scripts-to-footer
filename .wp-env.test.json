@@ -11,14 +11,13 @@
 	"phpVersion": "8.3",
 	"testsEnvironment": false,
 	"port": 8889,
-	"plugins": [
-		"."
-	],
+	"plugins": [],
 	"themes": [
 		"https://downloads.wordpress.org/theme/twentytwentyone.zip",
 		"https://downloads.wordpress.org/theme/twentytwentyfive.zip"
 	],
 	"mappings": {
+		"wp-content/plugins/scripts-to-footer": ".",
 		"wp-content/mu-plugins": "./tests/e2e/fixtures"
 	}
 }
