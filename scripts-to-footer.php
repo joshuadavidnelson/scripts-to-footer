@@ -53,7 +53,7 @@ define( 'STF_VERSION', '0.7.3' );
  * The code that runs during plugin activation.
  * This action is documented in includes/class-stf-activator.php
  */
-function activate_scripts_to_footer() {
+function activate_scripts_to_footer() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Plugin boilerplate name, kept for backward compatibility.
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-stf-activator.php';
 	STF_Activator::activate();
 }
@@ -62,7 +62,7 @@ function activate_scripts_to_footer() {
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-stf-deactivator.php
  */
-function deactivate_scripts_to_footer() {
+function deactivate_scripts_to_footer() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Plugin boilerplate name, kept for backward compatibility.
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-stf-deactivator.php';
 	STF_Deactivator::deactivate();
 }
@@ -84,7 +84,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-scripts-to-footer.php';
  *
  * @since 0.7.0
  */
-function run_scripts_to_footer() {
+function run_scripts_to_footer() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Plugin boilerplate name, kept for backward compatibility.
 	$plugin = new Scripts_To_Footer();
 	$plugin->run();
 }

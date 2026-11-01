@@ -69,8 +69,8 @@ if ( ! current_user_can( 'install_plugins' ) ) {
  * @uses  switch_to_blog()
  * @uses  restore_current_blog()
  *
- * @param array $blogs
- * @param int   $blog
+ * @param array $stf_blogs
+ * @param int   $stf_blog
  *
  * @global $wpdb
  */
@@ -79,13 +79,13 @@ if ( is_multisite() ) {
 	global $wpdb;
 
 	// Get array of Site/Blog IDs from the database.
-	$blogs = $wpdb->get_results( "SELECT blog_id FROM {$wpdb->blogs}", ARRAY_A ); // phpcs:ignore
+	$stf_blogs = $wpdb->get_results( "SELECT blog_id FROM {$wpdb->blogs}", ARRAY_A ); // phpcs:ignore
 
-	if ( $blogs ) {
-		foreach ( $blogs as $blog ) {
+	if ( $stf_blogs ) {
+		foreach ( $stf_blogs as $stf_blog ) {
 
 			// Repeat for every Site ID.
-			switch_to_blog( $blog['blog_id'] );
+			switch_to_blog( $stf_blog['blog_id'] );
 
 			// Delete plugin options.
 			delete_option( 'scripts-to-footer' );
