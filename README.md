@@ -89,3 +89,34 @@ The `develop` branch is the most current working branch. _Please direct all pull
 This repo contains the files needed to boot up a local development environment using [wp-env](https://developer.wordpress.org/block-editor/reference-guides/packages/packages-env/).
 
 Run `npm install` and the `npm run env:start` to boot up a local environment. 
+
+### E2E Tests
+
+The [Playwright](https://playwright.dev/) suite in `tests/e2e/` checks the plugin from the outside: it fetches real front-end pages, splits the HTML at `</head>`, and asserts which half each `<script id="{handle}-js">` printed in. It also drives the settings page, the per-post meta box, role permissions, and activation, deactivation and uninstall.
+
+**Requirements:** Docker, Node.js 24.18+ and npm 11.16+ (see `engines` in `package.json`).
+
+```sh
+npm install
+npx playwright install chromium
+npm run test:e2e          # starts the e2e environment if needed, then runs the suite
+npm run test:e2e:ui       # same, in Playwright's UI mode
+```
+
+The suite runs against its own wp-env environment, defined in `.wp-env.test.json` on port **8889**. Your dev site from `.wp-env.json` on port 8888 is never touched. wp-env 12 deprecates the built-in `tests` environment (`testsEnvironment`, `tests-cli`) and recommends a separate config file instead, which is what this setup uses. Useful scripts:
+
+| Script | What it does |
+| --- | --- |
+| `npm run env:test:start` / `env:test:stop` | Start or stop the e2e environment. |
+| `npm run env:shell` | Open a shell in the e2e environment's `cli` container. |
+| `npm run env:debuglog` | Follow the e2e site's `wp-content/debug.log`. |
+| `npm run test:e2e:core-version -- 6.8` | Pin WordPress core for the e2e environment (writes `.wp-env.test.override.json`); pass `latest` to clear the pin. Restart the environment afterwards. |
+| `npm run typecheck` | Type-check the suite. |
+
+How it is organised:
+
+- `tests/e2e/fixtures/` holds mu-plugins mapped into the e2e site. Each one returns early unless `STF_TEST_FIXTURES` is defined, and only `.wp-env.test.json` defines it. They enqueue a known set of scripts (`stf-test-scripts.php`), register an unsupported custom post type and taxonomy (`stf-test-cpt.php`), let specs override any `stf_` / `scripts_to_footer_` filter through one JSON option (`stf-test-filters.php`), and expose plugin options and raw `stf_exclude` meta over REST (`stf-test-api.php`).
+- `tests/e2e/config/` holds global setup, per-role authentication, seeding, and the placement assertions (`scripts.ts`).
+- Projects run in order: `auth` → `smoke` (a gate that fails fast if the environment or plugin isn't up) → `chromium` (everything else) → `lifecycle` (deactivate, reactivate and uninstall, which run last because they change plugin state).
+
+CI (`.github/workflows/e2e-playwright.yml`) runs the suite across WordPress and PHP versions, and fails the run if `debug.log` contains a PHP fatal error.
