@@ -110,7 +110,7 @@ class Scripts_To_Footer {
 	 *
 	 * @access private
 	 */
-	private static function upgrade_check() {
+	private function upgrade_check() {
 
 		// let's only run these checks on the admin page load.
 		if ( ! is_admin() ) {
