@@ -3,18 +3,19 @@
  * Main Plugin File
  *
  * Plugin Name: Scripts-To-Footer
- * Plugin URI: http://wordpress.org/plugins/scripts-to-footerphp/
+ * Plugin URI: https://wordpress.org/plugins/scripts-to-footerphp/
  * Description: Move your scripts to the footer to help speed up perceived page load times and improve user experience.
  * Version: 0.7.3
  * Requires at least: 5.3
  * Requires PHP: 7.4
  * Author: Joshua David Nelson
- * Author URI: http://joshuadnelson.com
- * License: GPL2
+ * Author URI: https://joshuadnelson.com
+ * License: GPL-2.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: scripts-to-footerphp
  * Domain Path: /languages
  * GitHub Plugin URI: https://github.com/joshuadavidnelson/scripts-to-footer
- * GitHub Branch: master
+ * GitHub Branch: stable
  *
  * @package   Scripts_To_Footer
  * @author    Joshua David Nelson <josh@joshuadnelson.com>
