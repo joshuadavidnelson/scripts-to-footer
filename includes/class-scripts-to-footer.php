@@ -121,19 +121,24 @@ class Scripts_To_Footer {
 		// Get the current version option.
 		$current_version = get_option( 'stf_version', false );
 
+		// Nothing to do when the stored version is current.
+		if ( false !== $current_version && STF_VERSION === $current_version ) {
+			return;
+		}
+
+		// Run the migration first: if it fails, leave both version options untouched so
+		// it is retried on the next admin load.
+		if ( ! $this->migrate_legacy_exclude_meta() ) {
+			return;
+		}
+
 		// Update the previous version if we're upgrading.
-		if ( $current_version && STF_VERSION !== $current_version ) {
+		if ( $current_version ) {
 			update_option( 'stf_previous_version', $current_version, false );
 		}
 
-		// See if it's a previous version, which may not have set the version option.
-		if ( false === $current_version || STF_VERSION !== $current_version ) {
-			// do things on update.
-			$this->migrate_legacy_exclude_meta();
-
-			// Save current version.
-			update_option( 'stf_version', STF_VERSION, false );
-		}
+		// Save current version.
+		update_option( 'stf_version', STF_VERSION, false );
 	}
 
 	/**
@@ -145,6 +150,8 @@ class Scripts_To_Footer {
 	 * @since 0.7.0
 	 *
 	 * @access private
+	 *
+	 * @return bool True on success (including when no rows needed migrating), false on a database error.
 	 */
 	private function migrate_legacy_exclude_meta() {
 		global $wpdb;
@@ -161,9 +168,15 @@ class Scripts_To_Footer {
 		);
 		// phpcs:enable WordPress.DB.SlowDBQuery.slow_db_query_meta_key,WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 
+		if ( false === $updated ) {
+			return false;
+		}
+
 		if ( $updated && function_exists( 'wp_cache_supports' ) && function_exists( 'wp_cache_flush_group' ) && wp_cache_supports( 'flush_group' ) ) {
 			wp_cache_flush_group( 'post_meta' );
 		}
+
+		return true;
 	}
 
 	/**
