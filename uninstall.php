@@ -90,6 +90,7 @@ if ( is_multisite() ) {
 			// Delete plugin options.
 			delete_option( 'scripts-to-footer' );
 			delete_option( 'stf_version' );
+			delete_option( 'stf_previous_version' );
 
 			// Delete all post meta.
 			delete_post_meta_by_key( 'stf_exclude' );
@@ -101,6 +102,7 @@ if ( is_multisite() ) {
 	// Delete plugin options.
 	delete_option( 'scripts-to-footer' );
 	delete_option( 'stf_version' );
+	delete_option( 'stf_previous_version' );
 
 	// Delete all post meta.
 	delete_post_meta_by_key( 'stf_exclude' );
