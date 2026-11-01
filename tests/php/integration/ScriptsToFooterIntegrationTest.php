@@ -249,14 +249,40 @@ class ScriptsToFooterIntegrationTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * The plugin registers its hooks on plugins_loaded.
+	 * The plugin registers its specific callbacks at the expected priorities.
 	 *
 	 * @return void
 	 */
 	public function test_plugin_hooks_are_registered() {
-		$this->assertNotFalse( has_action( 'wp_enqueue_scripts' ) );
-		$this->assertNotFalse( has_filter( 'stf_include' ) );
+		$this->assertContains( 'clean_head', $this->get_public_methods( 'wp_enqueue_scripts', 10 ) );
+		$this->assertContains( 'stf_includes', $this->get_public_methods( 'stf_include', 10 ) );
+		$this->assertContains( 'set_header_scripts', $this->get_public_methods( 'wp_head', 1 ) );
+		$this->assertContains( 'print_head_scripts', $this->get_public_methods( 'wp_head', 10 ) );
 		$this->assertNotFalse( has_action( 'wp_head', array( $this->get_public_object( 'wp_head', 1 ), 'set_header_scripts' ) ) );
+	}
+
+	/**
+	 * Get the STF_Public method names attached to a hook at a priority.
+	 *
+	 * @param string $hook     The hook name.
+	 * @param int    $priority The callback priority.
+	 * @return string[]
+	 */
+	private function get_public_methods( $hook, $priority ) {
+		global $wp_filter;
+
+		$methods = array();
+		if ( ! isset( $wp_filter[ $hook ]->callbacks[ $priority ] ) ) {
+			return $methods;
+		}
+
+		foreach ( $wp_filter[ $hook ]->callbacks[ $priority ] as $callback ) {
+			if ( is_array( $callback['function'] ) && $callback['function'][0] instanceof STF_Public ) {
+				$methods[] = $callback['function'][1];
+			}
+		}
+
+		return $methods;
 	}
 
 	/**
@@ -565,6 +591,135 @@ class ScriptsToFooterIntegrationTest extends WP_UnitTestCase {
 		remove_filter( 'stf_home', '__return_false' );
 
 		$this->assertKeptInHead( self::SCRIPT_SRC, $page );
+	}
+
+	/**
+	 * The stf_{post_type} filter returning false keeps the script in the head.
+	 *
+	 * @return void
+	 */
+	public function test_stf_post_filter_false_keeps_script_in_head_and_receives_post_id() {
+		$post_id = self::factory()->post->create();
+		$args    = array();
+		add_filter(
+			'stf_post',
+			static function ( $included, $id = null ) use ( &$args ) {
+				$args[] = array( $included, $id );
+				return false;
+			},
+			10,
+			2
+		);
+		$this->go_to( get_permalink( $post_id ) );
+		$this->enqueue_test_script();
+
+		$page = $this->render_page();
+
+		$this->assertKeptInHead( self::SCRIPT_SRC, $page );
+		$this->assertNotEmpty( $args );
+		$this->assertSame( array( true, $post_id ), $args[0] );
+	}
+
+	/**
+	 * The deprecated scripts_to_footer_exclude_page filter keeps the script in the head.
+	 *
+	 * @dataProvider deprecated_exclude_provider
+	 *
+	 * @param mixed $return_value The filter return value.
+	 * @return void
+	 */
+	public function test_deprecated_exclude_page_filter_keeps_script_in_head( $return_value ) {
+		$post_id = self::factory()->post->create();
+		$args    = array();
+		add_filter(
+			'scripts_to_footer_exclude_page',
+			static function ( $value, $id = null ) use ( $return_value, &$args ) {
+				$args[] = array( $value, $id );
+				return $return_value;
+			},
+			10,
+			2
+		);
+		$this->go_to( get_permalink( $post_id ) );
+		$this->enqueue_test_script();
+
+		$this->assertKeptInHead( self::SCRIPT_SRC, $this->render_page() );
+		$this->assertSame( array( null, $post_id ), $args[0] );
+	}
+
+	/**
+	 * Return values of the deprecated filter that exclude a page.
+	 *
+	 * @return array<string, array{0: mixed}>
+	 */
+	public function deprecated_exclude_provider() {
+		return array(
+			'true' => array( true ),
+			'on'   => array( 'on' ),
+		);
+	}
+
+	/**
+	 * Other return values of the deprecated filter do not exclude a page.
+	 *
+	 * @return void
+	 */
+	public function test_deprecated_exclude_page_filter_other_values_do_not_exclude() {
+		add_filter( 'scripts_to_footer_exclude_page', '__return_false' );
+		$post_id = self::factory()->post->create();
+		$this->go_to( get_permalink( $post_id ) );
+		$this->enqueue_test_script();
+
+		$this->assertMovedToFooter( self::SCRIPT_SRC, $this->render_page() );
+	}
+
+	/**
+	 * Category and tag archives are left alone when their taxonomy is unsupported.
+	 *
+	 * @dataProvider core_taxonomy_provider
+	 *
+	 * @param string $scenario The page type scenario.
+	 * @param string $taxonomy The taxonomy to remove from the supported list.
+	 * @return void
+	 */
+	public function test_unsupported_core_taxonomy_archive_is_left_in_head( $scenario, $taxonomy ) {
+		add_filter(
+			'scripts_to_footer_taxonomies',
+			static function ( $taxonomies ) use ( $taxonomy ) {
+				return array_values( array_diff( $taxonomies, array( $taxonomy ) ) );
+			},
+			20
+		);
+		$this->go_to_scenario( $scenario );
+		$this->enqueue_test_script();
+
+		$this->assertKeptInHead( self::SCRIPT_SRC, $this->render_page() );
+	}
+
+	/**
+	 * Core taxonomy archive scenarios.
+	 *
+	 * @return array<string, array{0: string, 1: string}>
+	 */
+	public function core_taxonomy_provider() {
+		return array(
+			'category' => array( 'category_archive', 'category' ),
+			'post_tag' => array( 'post_tag_archive', 'post_tag' ),
+		);
+	}
+
+	/**
+	 * A post type archive for an unsupported post type is left alone.
+	 *
+	 * @return void
+	 */
+	public function test_unsupported_post_type_archive_is_left_in_head() {
+		remove_filter( 'scripts_to_footer_post_types', array( $this, 'support_book_post_type' ) );
+		$this->go_to_scenario( 'stf_book_archive' );
+		$this->assertTrue( is_post_type_archive( 'stf_book' ) );
+		$this->enqueue_test_script();
+
+		$this->assertKeptInHead( self::SCRIPT_SRC, $this->render_page() );
 	}
 
 	/**
