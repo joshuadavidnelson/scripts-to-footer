@@ -19,10 +19,10 @@ jobs:
     with:
       php-versions: '["8.1", "8.2", "8.3", "8.4", "8.5"]'
       source-paths: "scripts-to-footer.php uninstall.php includes/"
-      # No PHPUnit suite in this release yet, so the tests job runs
-      # `composer phpunit` (a no-op until phpunit.xml.dist exists) and
-      # coverage is not collected. Turn coverage on, and with it the
-      # coverage floors in quality-thresholds.json, when the test stack lands.
+      # No PHPUnit suite in this release yet. Turn tests and coverage on,
+      # and with them the coverage floors in quality-thresholds.json, when
+      # the test stack lands.
+      tests: false
       coverage: false
 
   npm:
