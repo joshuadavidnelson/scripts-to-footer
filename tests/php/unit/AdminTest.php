@@ -319,7 +319,7 @@ class AdminTest extends TestCase {
 		$out     = $this->render( '1', $updates, $checked, $nonces );
 
 		$this->assertSame( array( array( 'scripts_to_footer', 'stf_nonce' ) ), $nonces );
-		$this->assertSame( array( array( true, '1', false ) ), $checked );
+		$this->assertSame( array( array( true, true, false ) ), $checked );
 		$this->assertSame( array(), $updates );
 		$this->assertSame(
 			'[NONCE]<p style="padding-top:10px;"><label for="stf_exclude">HTML(Turn Plugin Off|scripts-to-footerphp)</label>'
@@ -342,51 +342,46 @@ class AdminTest extends TestCase {
 		$nonces  = array();
 		$out     = $this->render( '', $updates, $checked, $nonces );
 
-		$this->assertSame( array( array( true, '', false ) ), $checked );
+		$this->assertSame( array( array( true, false, false ) ), $checked );
 		$this->assertSame( array(), $updates );
 		$this->assertStringContainsString( 'name="stf_exclude"  style=', $out );
 		$this->assertStringNotContainsString( 'checked=', $out );
 	}
 
 	/**
-	 * Legacy 'on' values are migrated while rendering.
-	 *
-	 * Characterizes current behavior: rendering the metabox writes post meta.
+	 * Legacy 'on' values render checked and rendering writes nothing.
 	 *
 	 * @covers STF_Admin::metabox_render
 	 *
 	 * @return void
 	 */
-	public function test_metabox_render_migrates_legacy_on_value() {
+	public function test_metabox_render_legacy_on_value_is_checked_without_writing() {
 		$updates = array();
 		$checked = array();
 		$nonces  = array();
 		$out     = $this->render( 'on', $updates, $checked, $nonces );
 
-		$this->assertSame( array( array( 42, 'stf_exclude', 1, 'on' ) ), $updates );
-		$this->assertSame( array( array( true, 1, false ) ), $checked );
+		$this->assertSame( array(), $updates );
+		$this->assertSame( array( array( true, true, false ) ), $checked );
 		$this->assertStringContainsString( "checked='checked'", $out );
 	}
 
 	/**
-	 * A non-'on' truthy value is not migrated.
-	 *
-	 * Characterizes current behavior: a truthy non-'1' meta value excludes the post in
-	 * stf_includes but renders the box unchecked (core's checked( true, 'yes' ) is '').
+	 * Any truthy value renders checked, matching STF_Public::stf_includes().
 	 *
 	 * @covers STF_Admin::metabox_render
 	 *
 	 * @return void
 	 */
-	public function test_metabox_render_other_values_not_migrated() {
+	public function test_metabox_render_other_truthy_values_are_checked() {
 		$updates = array();
 		$checked = array();
 		$nonces  = array();
 		$out     = $this->render( 'yes', $updates, $checked, $nonces );
 
 		$this->assertSame( array(), $updates );
-		$this->assertSame( array( array( true, 'yes', false ) ), $checked );
-		$this->assertStringNotContainsString( 'checked=', $out );
+		$this->assertSame( array( array( true, true, false ) ), $checked );
+		$this->assertStringContainsString( "checked='checked'", $out );
 	}
 
 	/**
