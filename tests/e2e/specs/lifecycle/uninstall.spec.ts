@@ -90,9 +90,9 @@ test.describe( 'Plugin uninstall', () => {
 
 	// Plugin bug: uninstall.php deletes only `scripts-to-footer` and
 	// `stf_version`; the `stf_previous_version` option written on upgrade is
-	// left behind in the database. Fixed on the unit-test branch
-	// (claude/stf-unit-seams, "fix: delete stf_previous_version on
-	// uninstall"); remove the fixme once that fix is in this branch's base.
+	// left behind in the database. Fixed in #32 (claude/stf-unit-seams,
+	// c49003a "fix: delete stf_previous_version on uninstall"); remove the
+	// fixme once that fix is in this branch's base.
 	test.fixme( 'removes the stf_previous_version option', async ( { requestUtils } ) => {
 		const post = await tracker.create( requestUtils, { title: 'STF Uninstall Prev', content: 'x' } );
 		await seedStoredState( requestUtils, post.id );
