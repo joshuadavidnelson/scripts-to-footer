@@ -142,12 +142,8 @@ class STF_Admin {
 		// Grab current value.
 		$exclude = get_post_meta( get_the_ID(), 'stf_exclude', true );
 
-		// Update old 'on' values to bool values.
-		if ( 'on' === $exclude ) {
-			update_post_meta( get_the_ID(), 'stf_exclude', 1, 'on' );
-			$exclude = 1;
-		}
-
+		// Rendering never writes: legacy 'on' values are migrated on upgrade, and any
+		// truthy value is shown as checked, matching STF_Public::stf_includes().
 		// Security nonce.
 		wp_nonce_field( 'scripts_to_footer', 'stf_nonce' );
 
@@ -158,7 +154,7 @@ class STF_Admin {
 		printf( '<label for="stf_exclude">%s</label>', __( 'Turn Plugin Off', 'scripts-to-footerphp' ) );
 		// @codingStandardsIgnoreEnd
 
-		echo '<input type="checkbox" id="stf_exclude" name="stf_exclude" ' . checked( true, $exclude, false ) . ' style="margin:0 20px 0 10px;">';
+		echo '<input type="checkbox" id="stf_exclude" name="stf_exclude" ' . checked( true, (bool) $exclude, false ) . ' style="margin:0 20px 0 10px;">';
 
 		// @codingStandardsIgnoreStart
 		// translators: indicates the checkbox will turn off the plugin for a specific post/page.
