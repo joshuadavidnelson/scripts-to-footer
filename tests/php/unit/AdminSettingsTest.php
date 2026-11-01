@@ -264,6 +264,34 @@ class AdminSettingsTest extends TestCase {
 	}
 
 	/**
+	 * Every key goes through absint(): a numeric prefix is kept, never the raw string.
+	 *
+	 * @return void
+	 */
+	public function test_sanitize_casts_every_key_to_int() {
+		$this->stub_absint();
+		$this->stub_supported( array( 'page', 'book' ), array( 'category', 'genre' ) );
+		$settings = new STF_Admin_Settings();
+
+		$keys = array(
+			'stf_exclude_home',
+			'stf_exclude_search',
+			'stf_exclude_404',
+			'stf_exclude_archive',
+			'stf_exclude_author_archive',
+			'stf_exclude_page_archive',
+			'stf_exclude_book_archive',
+			'stf_exclude_category_archive',
+			'stf_exclude_genre_archive',
+			'stf_jquery_header',
+		);
+
+		foreach ( $keys as $key ) {
+			$this->assertSame( array( $key => 1 ), $settings->sanitize( array( $key => '1abc' ) ), $key );
+		}
+	}
+
+	/**
 	 * Missing keys stay absent and an empty input returns an empty array.
 	 *
 	 * @return void
