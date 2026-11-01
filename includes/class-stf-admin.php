@@ -72,16 +72,17 @@ class STF_Admin {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since  0.7.0
-	 * @param string $plugin_name The name of the plugin.
-	 * @param string $version     The version of this plugin.
-	 * @param string $plugin_file The plugin basename, e.g. 'scripts-to-footerphp/scripts-to-footer.php'.
+	 * @param string             $plugin_name The name of the plugin.
+	 * @param string             $version     The version of this plugin.
+	 * @param string             $plugin_file The plugin basename, e.g. 'scripts-to-footerphp/scripts-to-footer.php'.
+	 * @param STF_Functions|null $functions Optional shared helper instance; a new one is created when omitted.
 	 */
-	public function __construct( $plugin_name, $version, $plugin_file = '' ) {
+	public function __construct( $plugin_name, $version, $plugin_file = '', $functions = null ) {
 
 		$this->plugin_name    = $plugin_name;
 		$this->version        = $version;
 		$this->plugin_file    = $plugin_file;
-		$this->functions      = new STF_Functions();
+		$this->functions      = $functions instanceof STF_Functions ? $functions : new STF_Functions();
 		$this->settings_field = 'scripts-to-footer';
 	}
 

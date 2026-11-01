@@ -266,6 +266,37 @@ class ScriptsToFooterTest extends TestCase {
 	}
 
 	/**
+	 * One STF_Functions instance is shared by every component.
+	 *
+	 * @covers Scripts_To_Footer::load_dependencies
+	 * @covers Scripts_To_Footer::define_admin_hooks
+	 * @covers Scripts_To_Footer::define_public_hooks
+	 *
+	 * @return void
+	 */
+	public function test_components_share_one_functions_instance() {
+		$this->stub_constructor();
+
+		$plugin  = new Scripts_To_Footer();
+		$loader  = $plugin->get_loader();
+		$actions = $this->get_property( $loader, 'actions' );
+		$shared  = $this->get_property( $plugin, 'functions' );
+
+		$this->assertInstanceOf( STF_Functions::class, $shared );
+		foreach ( $actions as $hook ) {
+			if ( $hook['component'] instanceof STF_I18n ) {
+				continue;
+			}
+			$this->assertSame( $shared, $this->get_property( $hook['component'], 'functions' ), get_class( $hook['component'] ) );
+		}
+
+		$classes = array_unique( array_map( 'get_class', array_column( $actions, 'component' ) ) );
+		$this->assertContains( 'STF_Admin', $classes );
+		$this->assertContains( 'STF_Admin_Settings', $classes );
+		$this->assertContains( 'STF_Public', $classes );
+	}
+
+	/**
 	 * Run() delegates to the loader, adding every hook to WordPress.
 	 *
 	 * @covers Scripts_To_Footer::run
