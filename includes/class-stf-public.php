@@ -145,6 +145,8 @@ class STF_Public {
 
 		// Either it's turned off site wide and included for this post/page, or turned on site wide and not excluded for this post/page - also not admin.
 		if ( true === $include ) {
+			// Core hasn't hooked this since WordPress 2.8, but themes and plugins may still add it.
+			remove_action( 'wp_head', 'wp_print_scripts' );
 			remove_action( 'wp_head', 'wp_print_head_scripts', 9 );
 			remove_action( 'wp_head', 'wp_enqueue_scripts', 1 );
 		}
