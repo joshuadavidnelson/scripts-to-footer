@@ -59,7 +59,7 @@ Like this plugin and feeling generous? Please consider [donating](http://joshuad
 
 ## Security
 
-Security fixes are released against the latest version, published on [WordPress.org](https://wordpress.org/plugins/scripts-to-footerphp/) and in this repository. Please report vulnerabilities privately using **Report a vulnerability** on the [Security tab](https://github.com/joshuadavidnelson/scripts-to-footer/security/advisories/new), not through public issues or the support forum. See the [general security policy](https://github.com/joshuadavidnelson/.github/blob/main/SECURITY.md) for response times. If the plugin appears abandoned or unresponsive, the [WordPress.org plugin review team](https://developer.wordpress.org/plugins/wordpress-org/plugin-security/reporting-plugin-security-issues/) can be contacted at plugins@wordpress.org.
+Security fixes are released against the latest version, published on [WordPress.org](https://wordpress.org/plugins/scripts-to-footerphp/) and in this repository. Please report vulnerabilities privately using **Report a vulnerability** on the [Security tab](https://github.com/joshuadavidnelson/scripts-to-footer/security/advisories/new), not through public issues or the support forum. See the [general security policy](https://github.com/joshuadavidnelson/.github/blob/main/.github/SECURITY.md) for response times. If the plugin appears abandoned or unresponsive, the [WordPress.org plugin review team](https://developer.wordpress.org/plugins/wordpress-org/plugin-security/reporting-plugin-security-issues/) can be contacted at plugins@wordpress.org.
 
 ## Contributing
 
