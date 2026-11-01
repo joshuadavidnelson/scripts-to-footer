@@ -440,6 +440,38 @@ class AdminTest extends TestCase {
 	}
 
 	/**
+	 * Stored '0' and int 0 render unchecked, and checked() gets exactly (true, false, false).
+	 *
+	 * @covers STF_Admin::metabox_render
+	 * @dataProvider falsy_stored_values
+	 *
+	 * @param mixed $stored Stored meta value.
+	 * @return void
+	 */
+	public function test_metabox_render_falsy_stored_values_are_unchecked( $stored ) {
+		$updates = array();
+		$checked = array();
+		$nonces  = array();
+		$out     = $this->render( $stored, $updates, $checked, $nonces );
+
+		$this->assertSame( array( array( true, false, false ) ), $checked );
+		$this->assertSame( array(), $updates );
+		$this->assertStringNotContainsString( 'checked=', $out );
+	}
+
+	/**
+	 * Data provider of falsy stored values that are not empty strings.
+	 *
+	 * @return array
+	 */
+	public function falsy_stored_values() {
+		return array(
+			'string zero' => array( '0' ),
+			'int zero'    => array( 0 ),
+		);
+	}
+
+	/**
 	 * A missing nonce bails before verification.
 	 *
 	 * @covers STF_Admin::metabox_save
