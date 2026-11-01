@@ -187,16 +187,52 @@ class AdminTest extends TestCase {
 	}
 
 	/**
-	 * Without a known plugin file no row matches.
+	 * Built with two arguments, the plugin file is resolved lazily so the links still show.
 	 *
 	 * @covers STF_Admin::plugin_links
 	 *
 	 * @return void
 	 */
-	public function test_plugin_links_unchanged_without_plugin_file() {
+	public function test_plugin_links_two_arg_construction_shows_links() {
 		WP_Mock::userFunction( 'current_user_can', array( 'return' => true ) );
+		$this->expect_function_strict( 'plugin_basename', array( STF_DIR . '/scripts-to-footer.php' ), 'scripts-to-footerphp/scripts-to-footer.php' );
 
-		$this->assertSame( array( 'x' ), $this->admin( '' )->plugin_links( array( 'x' ), '' ) );
+		$admin = new STF_Admin( 'scripts-to-footer', STF_VERSION );
+		$links = $admin->plugin_links( array( 'x' ), 'scripts-to-footerphp/scripts-to-footer.php' );
+
+		$this->assertCount( 4, $links );
+		$this->assertStringContainsString( 'Support', $links[1] );
+	}
+
+	/**
+	 * Built with two arguments, other plugins' rows are still untouched.
+	 *
+	 * @covers STF_Admin::plugin_links
+	 *
+	 * @return void
+	 */
+	public function test_plugin_links_two_arg_construction_other_file_unchanged() {
+		WP_Mock::userFunction( 'current_user_can', array( 'return' => true ) );
+		WP_Mock::userFunction( 'plugin_basename', array( 'return' => 'scripts-to-footer/scripts-to-footer.php' ) );
+
+		$admin = new STF_Admin( 'scripts-to-footer', STF_VERSION );
+
+		$this->assertSame( array( 'x' ), $admin->plugin_links( array( 'x' ), 'akismet/akismet.php' ) );
+		$this->assertSame( array( 'x' ), $admin->plugin_links( array( 'x' ), '' ) );
+	}
+
+	/**
+	 * An explicit plugin file is used as given, without asking WordPress to resolve one.
+	 *
+	 * @covers STF_Admin::plugin_links
+	 *
+	 * @return void
+	 */
+	public function test_plugin_links_explicit_file_skips_resolution() {
+		WP_Mock::userFunction( 'current_user_can', array( 'return' => true ) );
+		WP_Mock::userFunction( 'plugin_basename', array( 'times' => 0 ) );
+
+		$this->assertSame( array( 'x' ), $this->admin()->plugin_links( array( 'x' ), 'akismet/akismet.php' ) );
 	}
 
 	/**
