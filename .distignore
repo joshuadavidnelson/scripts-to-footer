@@ -35,3 +35,13 @@
 /phpmd.baseline.xml
 /quality-thresholds.json
 /reports/
+
+# E2E (Playwright) tooling
+/artifacts/
+/playwright/
+/playwright-report/
+/playwright.config.ts
+/tsconfig.json
+/.wp-env.test.json
+/.wp-env.override.json
+/.wp-env.test.override.json
