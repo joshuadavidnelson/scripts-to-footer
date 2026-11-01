@@ -587,4 +587,21 @@ class AdminSettingsTest extends TestCase {
 
 		( new STF_Admin_Settings() )->stf_taxonomy_archives();
 	}
+
+	/**
+	 * An injected STF_Functions decides which option fields exist.
+	 *
+	 * @return void
+	 */
+	public function test_injected_functions_instance_is_used() {
+		$functions = Mockery::mock( STF_Functions::class );
+		$functions->shouldReceive( 'post_types_supported' )->once()->andReturn( array( 'secret' ) );
+		$functions->shouldReceive( 'taxonomies_supported' )->once()->andReturn( array( 'topic' ) );
+
+		$settings = new STF_Admin_Settings( $functions );
+
+		$this->assertSame( $functions, $this->get_property( $settings, 'functions' ) );
+		$this->assertSame( array( 'stf_exclude_secret_archive' ), $settings->post_type_options() );
+		$this->assertSame( array( 'stf_exclude_topic_archive' ), $settings->taxonomy_options() );
+	}
 }
