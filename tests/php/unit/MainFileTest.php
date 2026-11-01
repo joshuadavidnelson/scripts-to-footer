@@ -63,7 +63,7 @@ class MainFileTest extends TestCase {
 	 * Loading the main file when its constants already exist keeps the existing values
 	 * instead of raising "Constant already defined" warnings.
 	 *
-	 * @covers ::activate_scripts_to_footer
+	 * @coversNothing
 	 * @return void
 	 */
 	public function test_load_keeps_predefined_constants() {
