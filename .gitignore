@@ -11,3 +11,4 @@ vendor
 # PHPUnit (unit + integration suites)
 .phpunit.cache/
 /coverage/
+/reports/

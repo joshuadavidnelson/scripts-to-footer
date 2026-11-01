@@ -19,7 +19,8 @@ jobs:
     runs-on: "ubuntu-latest"
     strategy:
       matrix:
-        php: ['7.4', '8.1', '8.2', '8.3', '8.4', '8.5']
+        # Composer floor (composer.json "php": ">=8.1") through the newest supported version.
+        php: ['8.1', '8.2', '8.3', '8.4', '8.5']
     steps:
     - name: "Checkout"
       uses: "actions/checkout@v6"
@@ -83,6 +84,10 @@ jobs:
 
     - name: "Run PHPStan"
       run: "composer phpstan"
+
+    - name: "Run PHPMD"
+      # Existing findings are recorded in phpmd.baseline.xml; new ones fail.
+      run: "composer phpmd"
 
   npm:
     name: "Install and audit npm packages"
@@ -163,7 +168,7 @@ jobs:
       run: "composer install --no-interaction --no-progress"
 
     - name: "Run PHPUnit with coverage"
-      run: "composer test:coverage-clover"
+      run: "composer phpunit:coverage-clover"
 
     # The base-branch comparison and artifact come before the floor check so a
     # PR that breaks the floor still gets its comment. Until the base carries
@@ -182,7 +187,11 @@ jobs:
       continue-on-error: true
       working-directory: ".base"
       run: |
-        if [ -f phpunit.xml.dist ] && grep -q '"test:coverage-clover"' composer.json; then
+        # Older bases name the script test:coverage-clover and write coverage/clover.xml.
+        if [ -f phpunit.xml.dist ] && grep -q '"phpunit:coverage-clover"' composer.json; then
+          composer install --no-interaction --no-progress
+          composer phpunit:coverage-clover
+        elif [ -f phpunit.xml.dist ] && grep -q '"test:coverage-clover"' composer.json; then
           composer install --no-interaction --no-progress
           composer test:coverage-clover
         else
@@ -193,8 +202,9 @@ jobs:
       if: github.event_name == 'pull_request'
       run: |
         mkdir -p pr-coverage
-        cp coverage/clover.xml pr-coverage/clover.xml
-        cp .base/coverage/clover.xml pr-coverage/base-clover.xml \
+        cp coverage/php-clover.xml pr-coverage/clover.xml
+        cp .base/coverage/php-clover.xml pr-coverage/base-clover.xml \
+          || cp .base/coverage/clover.xml pr-coverage/base-clover.xml \
           || echo "::notice::No base coverage, so the report will omit the delta."
 
     - name: "Upload coverage"
@@ -207,7 +217,7 @@ jobs:
 
     - name: "Enforce the line coverage floor"
       # The floor lives in quality-thresholds.json, shared with the PR report.
-      run: "composer test:coverage-check"
+      run: "composer phpunit:coverage-check"
 
   workflow-scripts:
     name: "Workflow script tests"

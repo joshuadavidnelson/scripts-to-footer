@@ -2,7 +2,7 @@
 /**
  * Fails when line coverage in a Clover report drops below a floor.
  *
- * Usage: php tests/php/bin/check-coverage.php [<clover.xml> [<min-line-percent>]]
+ * Usage: php tests/php/bin/check-coverage.php [<php-clover.xml> [<min-line-percent>]]
  *
  * Without a floor argument the floor is coverage.php.lines in quality-thresholds.json at the
  * repository root, the single source of truth shared with the PR coverage comment.
@@ -15,7 +15,7 @@
 
 // phpcs:disable WordPress.WP.AlternativeFunctions, WordPress.Security.EscapeOutput.OutputNotEscaped -- CLI script, not WordPress.
 
-$stf_file = $argv[1] ?? 'coverage/clover.xml';
+$stf_file = $argv[1] ?? 'coverage/php-clover.xml';
 
 if ( isset( $argv[2] ) ) {
 	$stf_floor = (float) $argv[2];

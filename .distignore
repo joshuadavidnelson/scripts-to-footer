@@ -34,3 +34,8 @@
 # PHPUnit suites and the integration-test installer
 /phpunit*.xml.dist
 /bin/
+
+# Quality tooling and its output
+/phpmd.xml
+/phpmd.baseline.xml
+/reports/

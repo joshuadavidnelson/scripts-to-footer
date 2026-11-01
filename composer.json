@@ -36,14 +36,13 @@
     "yoast/phpunit-polyfills": "^4.0",
     "mockery/mockery": "^1.6",
     "phpunit/phpunit": "^9.6",
-    "wp-phpunit/wp-phpunit": "^6.8"
+    "wp-phpunit/wp-phpunit": "^6.8",
+    "phpmd/phpmd": "^2.15",
+    "phpmetrics/phpmetrics": "^2.8"
   },
   "scripts": {
     "lint": [
       "find *.php includes/ tests/ -type f -name '*.php' -print0 | xargs -0 -L1 -P4 -- php -l"
-    ],
-    "phpstan": [
-      "./vendor/bin/phpstan analyse --memory-limit=2048M"
     ],
     "phpcs": [
       "./vendor/bin/phpcs"
@@ -51,20 +50,45 @@
     "phpcbf": [
       "./vendor/bin/phpcbf"
     ],
+    "phpstan": [
+      "./vendor/bin/phpstan analyse --memory-limit=2048M"
+    ],
+    "phpmd": [
+      "php -d error_reporting='E_ALL & ~E_DEPRECATED' ./vendor/bin/phpmd scripts-to-footer.php,uninstall.php,includes/ text phpmd.xml"
+    ],
+    "phpunit": [
+      "@php ./vendor/bin/phpunit"
+    ],
+    "phpunit:coverage": [
+      "@php -dpcov.enabled=0 -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-text"
+    ],
+    "phpunit:coverage-clover": [
+      "@php -dpcov.enabled=0 -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover coverage/php-clover.xml --coverage-text"
+    ],
+    "phpunit:coverage-check": [
+      "@php tests/php/bin/check-coverage.php coverage/php-clover.xml"
+    ],
+    "phpmetrics": [
+      "php -d error_reporting='E_ALL & ~E_DEPRECATED' ./vendor/bin/phpmetrics --report-html=reports/metrics --report-json=reports/metrics.json scripts-to-footer.php,uninstall.php,includes/"
+    ],
+    "phpmetrics-summary": [
+      "@php -r \"is_dir('reports') || mkdir('reports', 0777, true);\"",
+      "php -d error_reporting='E_ALL & ~E_DEPRECATED' ./vendor/bin/phpmetrics --composer=false --report-summary-json=reports/metrics-summary.json scripts-to-footer.php,uninstall.php,includes/"
+    ],
     "test": [
-      "./vendor/bin/phpunit"
+      "@phpunit"
     ],
     "test:integration": [
       "./vendor/bin/phpunit -c phpunit-integration.xml.dist"
     ],
     "test:coverage": [
-      "@php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-text"
+      "@phpunit:coverage"
     ],
     "test:coverage-clover": [
-      "@php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover coverage/clover.xml --coverage-text"
+      "@phpunit:coverage-clover"
     ],
     "test:coverage-check": [
-      "@php tests/php/bin/check-coverage.php coverage/clover.xml"
+      "@phpunit:coverage-check"
     ]
   },
   "prefer-stable": true,
@@ -73,6 +97,9 @@
       "composer/installers": true,
       "dealerdirect/phpcodesniffer-composer-installer": true,
       "phpstan/extension-installer": true
+    },
+    "platform": {
+      "php": "8.1.99"
     }
   }
 }
