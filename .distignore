@@ -35,3 +35,7 @@
 /phpmd.baseline.xml
 /quality-thresholds.json
 /reports/
+
+# PHPUnit suites and the integration-test installer
+/phpunit*.xml.dist
+/bin/
