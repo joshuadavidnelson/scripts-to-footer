@@ -64,7 +64,7 @@
       "@php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover coverage/clover.xml --coverage-text"
     ],
     "test:coverage-check": [
-      "@php tests/php/bin/check-coverage.php coverage/clover.xml 90"
+      "@php tests/php/bin/check-coverage.php coverage/clover.xml"
     ]
   },
   "prefer-stable": true,

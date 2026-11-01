@@ -2,7 +2,10 @@
 /**
  * Fails when line coverage in a Clover report drops below a floor.
  *
- * Usage: php tests/php/bin/check-coverage.php <clover.xml> <min-line-percent>
+ * Usage: php tests/php/bin/check-coverage.php [<clover.xml> [<min-line-percent>]]
+ *
+ * Without a floor argument the floor is coverage.php.lines in quality-thresholds.json at the
+ * repository root, the single source of truth shared with the PR coverage comment.
  *
  * A missing or unreadable report is a hard failure: skipping the check would let a
  * broken coverage step report green.
@@ -12,8 +15,21 @@
 
 // phpcs:disable WordPress.WP.AlternativeFunctions, WordPress.Security.EscapeOutput.OutputNotEscaped -- CLI script, not WordPress.
 
-$stf_file  = $argv[1] ?? 'coverage/clover.xml';
-$stf_floor = isset( $argv[2] ) ? (float) $argv[2] : 90.0;
+$stf_file = $argv[1] ?? 'coverage/clover.xml';
+
+if ( isset( $argv[2] ) ) {
+	$stf_floor = (float) $argv[2];
+} else {
+	$stf_thresholds_file = dirname( __DIR__, 3 ) . '/quality-thresholds.json';
+	$stf_thresholds      = is_readable( $stf_thresholds_file ) ? json_decode( (string) file_get_contents( $stf_thresholds_file ), true ) : null;
+
+	if ( ! is_array( $stf_thresholds ) || ! isset( $stf_thresholds['coverage']['php']['lines'] ) || ! is_numeric( $stf_thresholds['coverage']['php']['lines'] ) ) {
+		fwrite( STDERR, "::error::No coverage.php.lines floor in quality-thresholds.json.\n" );
+		exit( 1 );
+	}
+
+	$stf_floor = (float) $stf_thresholds['coverage']['php']['lines'];
+}
 
 if ( ! is_readable( $stf_file ) ) {
 	fwrite( STDERR, "::error::Coverage report not found: {$stf_file}\n" );

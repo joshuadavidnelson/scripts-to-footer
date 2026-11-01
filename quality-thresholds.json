@@ -1,0 +1,8 @@
+{
+  "_comment": "Single source of truth for coverage floors. Read by tests/php/bin/check-coverage.php (the CI gate, via composer test:coverage-check) and .github/scripts/render-pr-report.js (the PR comment), so a number changes in one place. Metrics without a floor are reported in the PR comment but not gated.",
+  "coverage": {
+    "php": {
+      "lines": 90
+    }
+  }
+}

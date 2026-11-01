@@ -165,8 +165,133 @@ jobs:
     - name: "Run PHPUnit with coverage"
       run: "composer test:coverage-clover"
 
+    # The base-branch comparison and artifact come before the floor check so a
+    # PR that breaks the floor still gets its comment. Until the base carries
+    # the test suite its coverage cannot be measured, which is expected: the
+    # report then shows the PR's numbers alone.
+    - name: "Checkout base branch for comparison"
+      if: github.event_name == 'pull_request'
+      uses: "actions/checkout@v6"
+      with:
+        ref: ${{ github.event.pull_request.base.sha }}
+        path: ".base"
+        persist-credentials: false
+
+    - name: "Measure base branch coverage"
+      if: github.event_name == 'pull_request'
+      continue-on-error: true
+      working-directory: ".base"
+      run: |
+        if [ -f phpunit.xml.dist ] && grep -q '"test:coverage-clover"' composer.json; then
+          composer install --no-interaction --no-progress
+          composer test:coverage-clover
+        else
+          echo "::notice::Base branch has no coverage script, so the report will omit the delta."
+        fi
+
+    - name: "Collect coverage for the report"
+      if: github.event_name == 'pull_request'
+      run: |
+        mkdir -p pr-coverage
+        cp coverage/clover.xml pr-coverage/clover.xml
+        cp .base/coverage/clover.xml pr-coverage/base-clover.xml \
+          || echo "::notice::No base coverage, so the report will omit the delta."
+
+    - name: "Upload coverage"
+      if: github.event_name == 'pull_request'
+      uses: "actions/upload-artifact@v4"
+      with:
+        name: "pr-coverage"
+        path: "pr-coverage"
+        retention-days: 14
+
     - name: "Enforce the line coverage floor"
+      # The floor lives in quality-thresholds.json, shared with the PR report.
       run: "composer test:coverage-check"
+
+  workflow-scripts:
+    name: "Workflow script tests"
+    runs-on: "ubuntu-latest"
+    steps:
+    - name: "Checkout"
+      uses: "actions/checkout@v6"
+
+    - name: "Install Node"
+      uses: "actions/setup-node@v4"
+      with:
+        node-version: "24"
+
+    - name: "Run workflow script tests"
+      # Node built-ins only: no npm install. The glob is quoted so Node, not
+      # the shell, expands it.
+      run: 'node --test ".github/scripts/*.test.js"'
+
+  # The only job that writes to the pull request. It runs no project code
+  # beyond the renderer in .github/scripts and performs no checks: it reads
+  # the artifact the coverage job produced and posts it. It runs even when
+  # coverage failed, so a floor breach is visible in the comment.
+  #
+  # Fork PRs: the token of a pull_request run from a fork is read-only, so
+  # the posting step cannot comment there. That is a missing comment, never
+  # a failed build, and no secret or write token is exposed to fork code.
+  report:
+    name: "PR coverage report"
+    runs-on: "ubuntu-latest"
+    needs: coverage
+    if: ${{ !cancelled() && github.event_name == 'pull_request' }}
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+    - name: "Checkout"
+      uses: "actions/checkout@v6"
+      with:
+        persist-credentials: false
+
+    - name: "Install Node"
+      uses: "actions/setup-node@v4"
+      with:
+        node-version: "24"
+
+    - name: "Download coverage"
+      id: download
+      # Missing when the coverage job failed before uploading; nothing to report then.
+      continue-on-error: true
+      uses: "actions/download-artifact@v4"
+      with:
+        name: "pr-coverage"
+        path: "pr-coverage"
+
+    - name: "Render the report"
+      if: steps.download.outcome == 'success'
+      run: "node .github/scripts/render-pr-report.js"
+      env:
+        HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        RUN_URL: "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+    - name: "Post the report"
+      if: steps.download.outcome == 'success'
+      uses: "actions/github-script@v7"
+      with:
+        script: |
+          const fs = require('fs');
+          const body = fs.readFileSync('pr-coverage/pr-report.md', 'utf8');
+          // The renderer's first line is the hidden marker identifying our comment.
+          const marker = body.split('\n')[0];
+          const { owner, repo } = context.repo;
+          const issue_number = context.payload.pull_request.number;
+          try {
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number, per_page: 100 });
+            const existing = comments.find((c) => c.user && c.user.type === 'Bot' && c.body && c.body.startsWith(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
+          } catch (error) {
+            core.warning(`Could not post the coverage comment (read-only token on a fork PR?): ${error.message}`);
+          }
 
   integration:
     name: "Integration tests (WP ${{ matrix.wp }}, PHP ${{ matrix.php }})"
