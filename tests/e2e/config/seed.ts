@@ -12,7 +12,7 @@ import type { RequestUtils } from '@wordpress/e2e-test-utils-playwright';
  * Internal dependencies
  */
 import { resetFilterOverrides } from './filter-overrides';
-import { resetPluginOptions } from './plugin-state';
+import { resetPluginOptions, setExcludeMeta } from './plugin-state';
 
 interface RestPost {
 	id: number;
@@ -179,6 +179,9 @@ export async function ensureBaseline( requestUtils: RequestUtils ): Promise< Bas
  * Restore the site-wide defaults every spec assumes: latest posts on the
  * front page, no plugin options, no filter overrides.
  *
+ * Baseline `stf_exclude` meta is cleared by {@link resetBaselineMeta}, which
+ * global setup runs once per run.
+ *
  * @param requestUtils Admin request utils.
  */
 export async function resetSite( requestUtils: RequestUtils ): Promise< void > {
@@ -189,6 +192,19 @@ export async function resetSite( requestUtils: RequestUtils ): Promise< void > {
 	} );
 	await resetPluginOptions( requestUtils );
 	await resetFilterOverrides( requestUtils );
+}
+
+/**
+ * Delete `stf_exclude` meta from every baseline post, so a run killed
+ * mid-test cannot leave one excluded for the next run.
+ *
+ * @param requestUtils Admin request utils.
+ * @param baseline     Baseline content.
+ */
+export async function resetBaselineMeta( requestUtils: RequestUtils, baseline: Baseline ): Promise< void > {
+	for ( const id of [ baseline.postId, baseline.pageId, baseline.blogPageId, baseline.itemId ] ) {
+		await setExcludeMeta( requestUtils, id, null );
+	}
 }
 
 /**
@@ -256,7 +272,11 @@ export class ContentTracker {
 		for ( const { restBase, id } of posts ) {
 			await requestUtils
 				.rest( { method: 'DELETE', path: `/wp/v2/${ restBase }/${ id }`, params: { force: true } } )
-				.catch( () => undefined );
+				.catch( ( error: unknown ) => {
+					// Don't fail teardown, but don't hide a leak either: a
+					// leftover post shows up on the home page of later specs.
+					console.warn( `ContentTracker: could not delete ${ restBase }/${ id }`, error );
+				} );
 		}
 	}
 }
