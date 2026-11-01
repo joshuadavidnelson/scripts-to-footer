@@ -13,6 +13,32 @@
 class HelperFunctionsTest extends TestCase {
 
 	/**
+	 * A port of core's wp_kses_decode_entities(): only numeric entities are decoded, via chr().
+	 *
+	 * Named entities such as &amp; are left alone, exactly as in WordPress.
+	 *
+	 * @param string $content The content.
+	 * @return string
+	 */
+	private static function core_kses_decode_entities( $content ) {
+		$content = preg_replace_callback(
+			'/&#([0-9]+);/',
+			function ( $found ) {
+				return chr( $found[1] );
+			},
+			$content
+		);
+
+		return preg_replace_callback(
+			'/&#[Xx]([0-9A-Fa-f]+);/',
+			function ( $found ) {
+				return chr( hexdec( $found[1] ) );
+			},
+			$content
+		);
+	}
+
+	/**
 	 * Stubs the WordPress string helpers with real-ish behavior.
 	 *
 	 * @return void
@@ -22,7 +48,7 @@ class HelperFunctionsTest extends TestCase {
 			'wp_kses_decode_entities',
 			array(
 				'return' => function ( $value ) {
-					return html_entity_decode( $value );
+					return self::core_kses_decode_entities( $value );
 				},
 			)
 		);
@@ -43,10 +69,7 @@ class HelperFunctionsTest extends TestCase {
 	 */
 	public function test_uses_default_setting_and_default_value() {
 		$this->stub_string_helpers();
-		WP_Mock::userFunction( 'get_option' )
-			->once()
-			->with( 'scripts-to-footer', false )
-			->andReturn( array( 'k' => 'v' ) );
+		$this->expect_function_strict( 'get_option', array( 'scripts-to-footer', false ), array( 'k' => 'v' ) );
 
 		$this->assertSame( 'v', stf_get_option( 'k' ) );
 	}
@@ -58,10 +81,7 @@ class HelperFunctionsTest extends TestCase {
 	 */
 	public function test_custom_setting_and_default_value_passed_through() {
 		$this->stub_string_helpers();
-		WP_Mock::userFunction( 'get_option' )
-			->once()
-			->with( 'other-setting', 'fallback' )
-			->andReturn( array( 'k' => 'custom' ) );
+		$this->expect_function_strict( 'get_option', array( 'other-setting', 'fallback' ), array( 'k' => 'custom' ) );
 
 		$this->assertSame( 'custom', stf_get_option( 'k', 'fallback', 'other-setting' ) );
 	}
@@ -72,10 +92,7 @@ class HelperFunctionsTest extends TestCase {
 	 * @return void
 	 */
 	public function test_empty_setting_falls_back_to_default() {
-		WP_Mock::userFunction( 'get_option' )
-			->once()
-			->with( 'scripts-to-footer', 'd' )
-			->andReturn( false );
+		$this->expect_function_strict( 'get_option', array( 'scripts-to-footer', 'd' ), false );
 
 		$this->assertSame( '', stf_get_option( 'k', 'd', '' ) );
 	}
@@ -86,10 +103,7 @@ class HelperFunctionsTest extends TestCase {
 	 * @return void
 	 */
 	public function test_non_array_option_returns_empty_string() {
-		WP_Mock::userFunction( 'get_option' )
-			->once()
-			->with( 'scripts-to-footer', false )
-			->andReturn( 'not-an-array' );
+		$this->expect_function_strict( 'get_option', array( 'scripts-to-footer', false ), 'not-an-array' );
 
 		$this->assertSame( '', stf_get_option( 'k' ) );
 	}
@@ -100,10 +114,7 @@ class HelperFunctionsTest extends TestCase {
 	 * @return void
 	 */
 	public function test_missing_key_returns_empty_string() {
-		WP_Mock::userFunction( 'get_option' )
-			->once()
-			->with( 'scripts-to-footer', 'default' )
-			->andReturn( array( 'other' => 'x' ) );
+		$this->expect_function_strict( 'get_option', array( 'scripts-to-footer', 'default' ), array( 'other' => 'x' ) );
 
 		$this->assertSame( '', stf_get_option( 'k', 'default' ) );
 	}
@@ -115,11 +126,10 @@ class HelperFunctionsTest extends TestCase {
 	 */
 	public function test_string_value_is_decoded_then_unslashed() {
 		$this->stub_string_helpers();
-		WP_Mock::userFunction( 'get_option' )
-			->once()
-			->andReturn( array( 'k' => "O\\'Neil &amp;" ) );
+		$this->expect_function_strict( 'get_option', array( 'scripts-to-footer', false ), array( 'k' => "O\\'Neil &#38; &#x26; &amp;" ) );
 
-		$this->assertSame( "O'Neil &", stf_get_option( 'k' ) );
+		// Core decodes only numeric entities, so the named &amp; survives.
+		$this->assertSame( "O'Neil & & &amp;", stf_get_option( 'k' ) );
 	}
 
 	/**
@@ -129,9 +139,7 @@ class HelperFunctionsTest extends TestCase {
 	 */
 	public function test_decoding_happens_before_stripping_slashes() {
 		$this->stub_string_helpers();
-		WP_Mock::userFunction( 'get_option' )
-			->once()
-			->andReturn( array( 'k' => '&#92;n' ) );
+		$this->expect_function_strict( 'get_option', array( 'scripts-to-footer', false ), array( 'k' => '&#92;n' ) );
 
 		// Characterizes current behavior: decoded backslash is removed by stripslashes().
 		$this->assertSame( 'n', stf_get_option( 'k' ) );
@@ -143,9 +151,7 @@ class HelperFunctionsTest extends TestCase {
 	 * @return void
 	 */
 	public function test_array_value_uses_stripslashes_deep() {
-		WP_Mock::userFunction( 'get_option' )
-			->once()
-			->andReturn( array( 'k' => array( "a\\'b", 'c' ) ) );
+		$this->expect_function_strict( 'get_option', array( 'scripts-to-footer', false ), array( 'k' => array( "a\\'b", 'c' ) ) );
 		WP_Mock::userFunction( 'stripslashes_deep' )
 			->once()
 			->with( array( "a\\'b", 'c' ) )
