@@ -339,4 +339,26 @@ class AdminIntegrationTest extends WP_UnitTestCase {
 		$this->assertStringContainsString( "checked='checked'", $out );
 		$this->assertSame( 'on', get_post_meta( $post_id, 'stf_exclude', true ) );
 	}
+
+	/**
+	 * The settings action link is hooked under the plugin's real basename.
+	 *
+	 * @return void
+	 */
+	public function test_action_links_hooked_under_real_basename() {
+		$hook = 'plugin_action_links_' . plugin_basename( realpath( dirname( __DIR__, 3 ) . '/scripts-to-footer.php' ) );
+
+		$this->assertNotFalse( has_filter( $hook ) );
+
+		$found = false;
+		foreach ( $GLOBALS['wp_filter'][ $hook ]->callbacks as $callbacks ) {
+			foreach ( $callbacks as $callback ) {
+				if ( is_array( $callback['function'] ) && $callback['function'][0] instanceof STF_Admin && 'plugin_settings_link' === $callback['function'][1] ) {
+					$found = true;
+				}
+			}
+		}
+
+		$this->assertTrue( $found, 'plugin_settings_link should be hooked under the real basename.' );
+	}
 }
