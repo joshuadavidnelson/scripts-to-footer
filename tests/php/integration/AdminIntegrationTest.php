@@ -302,4 +302,41 @@ class AdminIntegrationTest extends WP_UnitTestCase {
 		$this->assertSame( '0.1.0', get_option( 'stf_version' ) );
 		$this->assertFalse( get_option( 'stf_previous_version' ) );
 	}
+
+	/**
+	 * Upgrading converts legacy 'on' exclusion values to '1'.
+	 *
+	 * @return void
+	 */
+	public function test_upgrade_migrates_legacy_on_exclude_meta() {
+		$post_id = $this->create_post();
+		update_post_meta( $post_id, 'stf_exclude', 'on' );
+		update_option( 'stf_version', '0.1.0' );
+		set_current_screen( 'dashboard' );
+		$this->assertTrue( is_admin() );
+
+		new Scripts_To_Footer();
+
+		$this->assertSame( '1', get_post_meta( $post_id, 'stf_exclude', true ) );
+	}
+
+	/**
+	 * Rendering the metabox for a legacy 'on' value checks the box without writing.
+	 *
+	 * @return void
+	 */
+	public function test_metabox_render_legacy_on_checked_without_write() {
+		$post_id = $this->create_post();
+		update_post_meta( $post_id, 'stf_exclude', 'on' );
+		$GLOBALS['post'] = get_post( $post_id );
+
+		ob_start();
+		$this->admin()->metabox_render();
+		$out = ob_get_clean();
+
+		unset( $GLOBALS['post'] );
+
+		$this->assertStringContainsString( "checked='checked'", $out );
+		$this->assertSame( 'on', get_post_meta( $post_id, 'stf_exclude', true ) );
+	}
 }
