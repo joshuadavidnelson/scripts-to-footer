@@ -41,14 +41,15 @@ class PublicTest extends TestCase {
 	}
 
 	/**
-	 * Stubs every conditional tag, returning true only for $true_tag (or none).
+	 * Stubs every conditional tag, returning true only for $true_tags (or none).
 	 *
-	 * @param string|null $true_tag The one conditional tag that returns true.
+	 * @param string|string[]|null $true_tags The conditional tag(s) that return true.
 	 * @return void
 	 */
-	private function stub_conditionals( $true_tag = null ) {
+	private function stub_conditionals( $true_tags = null ) {
+		$true_tags = (array) $true_tags;
 		foreach ( self::$conditional_tags as $tag ) {
-			WP_Mock::userFunction( $tag, array( 'return' => $tag === $true_tag ) );
+			WP_Mock::userFunction( $tag, array( 'return' => in_array( $tag, $true_tags, true ) ) );
 		}
 	}
 
@@ -745,6 +746,72 @@ class PublicTest extends TestCase {
 		$this->assertSame( $included, $this->make_public()->stf_includes() );
 	}
 
+	/**
+	 * The deprecated exclude filter logs its deprecation notice through log_me().
+	 *
+	 * Separate process because WP_DEBUG and STF_DEBUG are constants; error_log is pointed
+	 * at a temporary file so the exact logged line can be read back.
+	 *
+	 * @covers STF_Public::stf_includes
+	 * @covers STF_Functions::log_me
+	 * @runInSeparateProcess
+	 * @preserveGlobalState disabled
+	 *
+	 * @return void
+	 */
+	public function test_stf_includes_deprecated_exclude_filter_logs_deprecation() {
+		define( 'WP_DEBUG', true );
+		define( 'STF_DEBUG', true );
+		$log = tempnam( sys_get_temp_dir(), 'stf-log' );
+		ini_set( 'error_log', $log ); // phpcs:ignore WordPress.PHP.IniSet.Risky
+
+		$this->arrange_singular( 'is_singular', 42, 'post' );
+		$this->stub_post_types( array( 'page', 'post' ) );
+		WP_Mock::userFunction(
+			'get_post_meta',
+			array(
+				'args'   => array( 42, 'stf_exclude', true ),
+				'return' => '',
+			)
+		);
+		$this->stub_filter_strict( 'scripts_to_footer_exclude_page', null, true, array( 42 ) );
+
+		$result = $this->make_public()->stf_includes();
+		$logged = (string) file_get_contents( $log ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		unlink( $log ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+
+		$this->assertFalse( $result );
+		$lines = array_values( array_filter( explode( "\n", $logged ) ) );
+		$this->assertCount( 1, $lines );
+		$this->assertStringEndsWith(
+			'] Scripts-to-Footer Plugin Error: The \'scripts_to_footer_exclude_page\' is depreciated, please use \'stf_{$post_type}\' returning false to exclude the page.',
+			$lines[0]
+		);
+	}
+
+	/**
+	 * Singular requests win over every other conditional, as the first branch.
+	 *
+	 * @covers STF_Public::stf_includes
+	 *
+	 * @return void
+	 */
+	public function test_stf_includes_conditional_order_singular_wins_over_everything() {
+		$this->arrange_singular( self::$conditional_tags, 42, 'post' );
+		$this->stub_post_types( array( 'page', 'post' ) );
+		WP_Mock::userFunction(
+			'get_post_meta',
+			array(
+				'args'   => array( 42, 'stf_exclude', true ),
+				'return' => '',
+			)
+		);
+		$this->stub_filter_strict( 'scripts_to_footer_exclude_page', null, null, array( 42 ) );
+		$this->stub_filter_strict( 'stf_post', true, 'singular-wins', array( 42 ) );
+
+		$this->assertSame( 'singular-wins', $this->make_public()->stf_includes() );
+	}
+
 	// -------------------------------------------------------------------------
 	// stf_includes(): non-singular contexts.
 	// -------------------------------------------------------------------------
@@ -756,7 +823,7 @@ class PublicTest extends TestCase {
 	 * @return void
 	 */
 	private function arrange_context( array $context ) {
-		$this->stub_conditionals( $context['tag'] );
+		$this->stub_conditionals( array_merge( array( $context['tag'] ), isset( $context['also'] ) ? $context['also'] : array() ) );
 
 		if ( isset( $context['taxonomies'] ) ) {
 			$this->stub_taxonomies( $context['taxonomies'] );
@@ -1015,5 +1082,42 @@ class PublicTest extends TestCase {
 		$this->stub_filter_strict( 'stf_home', true, true );
 
 		$this->assertTrue( $this->make_public()->stf_includes() );
+	}
+
+	/**
+	 * Provides every supported context with all LATER conditional tags also true.
+	 *
+	 * Real WordPress sets is_archive() together with is_author(), is_category(), is_tag(),
+	 * is_tax() and is_post_type_archive(), so the earlier branch must win.
+	 *
+	 * @return array
+	 */
+	public function provide_contexts_with_later_tags_true() {
+		$cases = array();
+		foreach ( $this->provide_supported_contexts() as $name => $case ) {
+			$index           = array_search( $case[0]['tag'], self::$conditional_tags, true );
+			$case[0]['also'] = array_slice( self::$conditional_tags, $index + 1 );
+			$cases[ $name ]  = $case;
+		}
+
+		return $cases;
+	}
+
+	/**
+	 * The earliest matching conditional decides the type, even when later ones are true too.
+	 *
+	 * @covers STF_Public::stf_includes
+	 * @dataProvider provide_contexts_with_later_tags_true
+	 *
+	 * @param array  $context The context definition.
+	 * @param string $type    The expected type slug.
+	 * @return void
+	 */
+	public function test_stf_includes_earlier_conditional_wins_over_later_true_ones( array $context, $type ) {
+		$this->arrange_context( $context );
+		$this->stub_options( array( "stf_exclude_{$type}" => 1 ) );
+		$this->stub_filter_strict( "stf_{$type}", false, 'reply-from-filter' );
+
+		$this->assertSame( 'reply-from-filter', $this->make_public()->stf_includes() );
 	}
 }

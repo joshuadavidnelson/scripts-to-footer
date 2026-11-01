@@ -108,6 +108,51 @@ class TestCase extends \Yoast\PHPUnitPolyfills\TestCases\TestCase {
 	}
 
 	/**
+	 * Registers a function expectation that must receive exactly $exact_args.
+	 *
+	 * WP_Mock::userFunction()->with() and Mockery's with() compare loosely (array() matches
+	 * false, '' and null; true matches 1), so the 'return' closure re-checks the real
+	 * arguments with assertSame().
+	 *
+	 * @param string $name       The function name.
+	 * @param array  $exact_args The exact arguments, types included.
+	 * @param mixed  $reply      The value the function returns.
+	 * @param int    $times      How many calls are expected.
+	 * @return void
+	 */
+	protected function expect_function_strict( $name, array $exact_args, $reply, $times = 1 ) {
+		WP_Mock::userFunction(
+			$name,
+			array(
+				'times'  => $times,
+				'return' => function ( ...$args ) use ( $name, $exact_args, $reply ) {
+					$this->assertSame( $exact_args, $args, "{$name}() must receive the exact arguments." );
+
+					return $reply;
+				},
+			)
+		);
+	}
+
+	/**
+	 * A faithful port of WordPress core's checked() (via __checked_selected_helper()).
+	 *
+	 * @param mixed $checked The value to test.
+	 * @param mixed $current The value to compare against.
+	 * @param bool  $display Whether to echo the result.
+	 * @return string
+	 */
+	protected static function core_checked( $checked, $current = true, $display = true ) {
+		$result = ( (string) $checked === (string) $current ) ? " checked='checked'" : '';
+
+		if ( $display ) {
+			echo $result; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		}
+
+		return $result;
+	}
+
+	/**
 	 * Reads a non-public property, for asserting state the plugin keeps internally.
 	 *
 	 * @param object $instance The object.

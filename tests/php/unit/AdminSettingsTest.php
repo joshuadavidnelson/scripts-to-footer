@@ -86,19 +86,26 @@ class AdminSettingsTest extends TestCase {
 				'return' => function ( ...$args ) {
 					$this->checked_calls[] = $args;
 
-					return ( $args[0] == $args[1] ) ? "checked='checked'" : ''; // phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual
+					return self::core_checked( $args[0], $args[1], false );
 				},
 			)
 		);
 	}
 
 	/**
-	 * Stubs esc_attr() as a passthrough.
+	 * Stubs esc_attr() so escaped values are visibly marked as ESC(value).
 	 *
 	 * @return void
 	 */
 	private function stub_esc_attr() {
-		WP_Mock::userFunction( 'esc_attr', array( 'return_arg' => 0 ) );
+		WP_Mock::userFunction(
+			'esc_attr',
+			array(
+				'return' => function ( $value ) {
+					return 'ESC(' . $value . ')';
+				},
+			)
+		);
 	}
 
 	/**
@@ -137,7 +144,7 @@ class AdminSettingsTest extends TestCase {
 		$settings = new STF_Admin_Settings();
 		$stored   = array( 'stf_exclude_home' => 1 );
 
-		WP_Mock::userFunction( 'get_option' )->once()->with( 'scripts-to-footer', array() )->andReturn( $stored );
+		$this->expect_function_strict( 'get_option', array( 'scripts-to-footer', array() ), $stored );
 		WP_Mock::userFunction(
 			'settings_fields',
 			array(
@@ -412,7 +419,8 @@ class AdminSettingsTest extends TestCase {
 		$this->stub_checked();
 		$settings = new STF_Admin_Settings();
 
-		$this->expectOutputString( '<input type="checkbox" name="scripts-to-footer[' . $key . ']"  value="1">' );
+		$name = $escaped ? 'ESC(scripts-to-footer)' : 'scripts-to-footer';
+		$this->expectOutputString( '<input type="checkbox" name="' . $name . '[' . $key . ']"  value="1">' );
 
 		$settings->$method();
 
@@ -438,7 +446,8 @@ class AdminSettingsTest extends TestCase {
 		$settings = new STF_Admin_Settings();
 		$this->set_property( $settings, 'options', array( $key => 1 ) );
 
-		$this->expectOutputString( '<input type="checkbox" name="scripts-to-footer[' . $key . ']" checked=\'checked\' value="1">' );
+		$name = $escaped ? 'ESC(scripts-to-footer)' : 'scripts-to-footer';
+		$this->expectOutputString( '<input type="checkbox" name="' . $name . '[' . $key . ']"  checked=\'checked\' value="1">' );
 
 		$settings->$method();
 
@@ -482,7 +491,7 @@ class AdminSettingsTest extends TestCase {
 		$this->expectOutputString(
 			'<ul>'
 			. '<li><input type="checkbox" id="stf_exclude_page_archive" name="scripts-to-footer[stf_exclude_page_archive]"  value="1"><label for="stf_exclude_page_archive">Page </label></li>'
-			. '<li><input type="checkbox" id="stf_exclude_book_archive" name="scripts-to-footer[stf_exclude_book_archive]" checked=\'checked\' value="1"><label for="stf_exclude_book_archive">Book </label></li>'
+			. '<li><input type="checkbox" id="stf_exclude_book_archive" name="scripts-to-footer[stf_exclude_book_archive]"  checked=\'checked\' value="1"><label for="stf_exclude_book_archive">Book </label></li>'
 			. '</ul>'
 		);
 
@@ -526,7 +535,7 @@ class AdminSettingsTest extends TestCase {
 
 		$this->expectOutputString(
 			'<ul>'
-			. '<li><input type="checkbox" id="stf_exclude_category_archive" name="scripts-to-footer[stf_exclude_category_archive]" checked=\'checked\' value="1"><label for="stf_exclude_category_archive">Category </label></li>'
+			. '<li><input type="checkbox" id="stf_exclude_category_archive" name="scripts-to-footer[stf_exclude_category_archive]"  checked=\'checked\' value="1"><label for="stf_exclude_category_archive">Category </label></li>'
 			. '<li><input type="checkbox" id="stf_exclude_genre_archive" name="scripts-to-footer[stf_exclude_genre_archive]"  value="1"><label for="stf_exclude_genre_archive">Genre </label></li>'
 			. '</ul>'
 		);
