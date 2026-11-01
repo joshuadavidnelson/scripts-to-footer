@@ -70,7 +70,6 @@ function stf_test_filters_resolve_spec( $spec ) {
 	$priority = 10;
 
 	if ( is_array( $spec ) ) {
-
 		if ( array_key_exists( 'append', $spec ) ) {
 			$mode  = 'append';
 			$value = $spec['append'];
