@@ -47,8 +47,12 @@ if ( ! defined( 'STF_DEBUG' ) ) {
 }
 
 // Constants.
-define( 'STF_PLUGIN_NAME', 'scripts-to-footer' );
-define( 'STF_VERSION', '0.7.4' );
+if ( ! defined( 'STF_PLUGIN_NAME' ) ) {
+	define( 'STF_PLUGIN_NAME', 'scripts-to-footer' );
+}
+if ( ! defined( 'STF_VERSION' ) ) {
+	define( 'STF_VERSION', '0.7.4' );
+}
 
 /**
  * The code that runs during plugin activation.
