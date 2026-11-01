@@ -316,7 +316,7 @@ class STF_Admin_Settings {
 	public function print_exclude_options_section_info() {
 
 		// translators: tell the user that the options on this settings page are for selecting pages that will NOT have the scripts moved.
-		echo wp_kses_post( _x( 'Select which templates should <em><strong>not</strong></em> have scripts moved to the footer:', 'stf' ) );
+		echo wp_kses_post( __( 'Select which templates should <em><strong>not</strong></em> have scripts moved to the footer:', 'scripts-to-footerphp' ) );
 	}
 
 	/**
@@ -455,7 +455,7 @@ class STF_Admin_Settings {
 
 		// @codingStandardsIgnoreStart - wants to escape variables here that are entirely safe.
 		// translators: intro for the head scripts settings section and link to the documentation on Github.
-		echo sprintf( __( 'Options for keeping specific scripts in the header, if they occur. Want to exclude a different script? Check out the <a href="%s" title="On Github">documentation</a> for more information.', 'stf' ), 'https://github.com/joshuadavidnelson/scripts-to-footer/wiki' );
+		echo sprintf( __( 'Options for keeping specific scripts in the header, if they occur. Want to exclude a different script? Check out the <a href="%s" title="On Github">documentation</a> for more information.', 'scripts-to-footerphp' ), 'https://github.com/joshuadavidnelson/scripts-to-footer/wiki' );
 		// @codingStandardsIgnoreEnd
 	}
 

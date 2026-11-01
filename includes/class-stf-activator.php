@@ -40,7 +40,7 @@ class STF_Activator {
 		if ( ! self::compatible_version() ) {
 			deactivate_plugins( plugin_basename( __FILE__ ) );
 			// @codingStandardsIgnoreStart
-			wp_die( __( 'Scripts-to-Footer requires WordPress 4.8 or higher', 'stf' ) );
+			wp_die( __( 'Scripts-to-Footer requires WordPress 4.8 or higher', 'scripts-to-footerphp' ) );
 			// @codingStandardsIgnoreEnd
 		}
 	}
@@ -77,7 +77,7 @@ class STF_Activator {
 	 */
 	public function disabled_notice() {
 
-		echo '<strong>' . esc_html__( 'Scripts-to-Footer requires WordPress 4.8 or higher.', 'stf' ) . '</strong>';
+		echo '<strong>' . esc_html__( 'Scripts-to-Footer requires WordPress 4.8 or higher.', 'scripts-to-footerphp' ) . '</strong>';
 	}
 
 	/**

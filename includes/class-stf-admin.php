@@ -90,11 +90,11 @@ class STF_Admin {
 		}
 
 		if ( basename( dirname( $file ) ) === $this->plugin_name ) {
-			$links[] = '<a href="http://wordpress.org/support/plugin/scripts-to-footerphp" title="' . __( 'Support', 'stf' ) . '">' . __( 'Support', 'stf' ) . '</a>';
+			$links[] = '<a href="http://wordpress.org/support/plugin/scripts-to-footerphp" title="' . __( 'Support', 'scripts-to-footerphp' ) . '">' . __( 'Support', 'scripts-to-footerphp' ) . '</a>';
 
-			$links[] = '<a href="https://github.com/joshuadavidnelson/scripts-to-footer/wiki" title="' . __( 'Documentation', 'stf' ) . '" target="_blank">' . __( 'Documentation', 'stf' ) . '</a>';
+			$links[] = '<a href="https://github.com/joshuadavidnelson/scripts-to-footer/wiki" title="' . __( 'Documentation', 'scripts-to-footerphp' ) . '" target="_blank">' . __( 'Documentation', 'scripts-to-footerphp' ) . '</a>';
 
-			$links[] = '<a href="http://joshuadnelson.com/donate" title="' . __( 'Donate', 'stf' ) . '">' . __( 'Donate', 'stf' ) . '</a>';
+			$links[] = '<a href="http://joshuadnelson.com/donate" title="' . __( 'Donate', 'scripts-to-footerphp' ) . '">' . __( 'Donate', 'scripts-to-footerphp' ) . '</a>';
 		}
 
 		return $links;
@@ -155,14 +155,14 @@ class STF_Admin {
 
 		// Exclude.
 		// @codingStandardsIgnoreStart
-		printf( '<label for="stf_exclude">%s</label>', __( 'Turn Plugin Off', 'stf' ) );
+		printf( '<label for="stf_exclude">%s</label>', __( 'Turn Plugin Off', 'scripts-to-footerphp' ) );
 		// @codingStandardsIgnoreEnd
 
 		echo '<input type="checkbox" id="stf_exclude" name="stf_exclude" ' . checked( true, $exclude, false ) . ' style="margin:0 20px 0 10px;">';
 
 		// @codingStandardsIgnoreStart
 		// translators: indicates the checkbox will turn off the plugin for a specific post/page.
-		printf( '<span style="color:#999;">%s</span>', __( 'By default, this plugin will run on this post type. This checkbox lets you turn it off for this specific page/post.', 'stf' ) );
+		printf( '<span style="color:#999;">%s</span>', __( 'By default, this plugin will run on this post type. This checkbox lets you turn it off for this specific page/post.', 'scripts-to-footerphp' ) );
 		// @codingStandardsIgnoreEnd
 
 		echo '</p>';

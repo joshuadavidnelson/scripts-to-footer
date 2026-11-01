@@ -45,16 +45,16 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 // @codingStandardsIgnoreStart
 if ( ! is_user_logged_in() ) {
 	wp_die(
-		__( 'You must be logged in to run this script.', 'stf' ),
-		__( 'Scripts To Footer', 'stf' ),
+		__( 'You must be logged in to run this script.', 'scripts-to-footerphp' ),
+		__( 'Scripts To Footer', 'scripts-to-footerphp' ),
 		array( 'back_link' => true )
 	);
 }
 
 if ( ! current_user_can( 'install_plugins' ) ) {
 	wp_die(
-		__( 'You do not have permission to run this script.', 'stf' ),
-		__( 'Scripts To Footer', 'stf' ),
+		__( 'You do not have permission to run this script.', 'scripts-to-footerphp' ),
+		__( 'Scripts To Footer', 'scripts-to-footerphp' ),
 		array( 'back_link' => true )
 	);
 }

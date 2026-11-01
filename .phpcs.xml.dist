@@ -40,7 +40,7 @@
 		<properties>
 			<!-- Value: replace the text domain used. -->
 			<property name="text_domain">
-				<element value="stf"/>
+				<element value="scripts-to-footerphp"/>
 			</property>
 		</properties>
 	</rule>

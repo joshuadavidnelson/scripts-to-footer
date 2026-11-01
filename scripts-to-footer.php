@@ -11,6 +11,8 @@
  * Author: Joshua David Nelson
  * Author URI: http://joshuadnelson.com
  * License: GPL2
+ * Text Domain: scripts-to-footerphp
+ * Domain Path: /languages
  * GitHub Plugin URI: https://github.com/joshuadavidnelson/scripts-to-footer
  * GitHub Branch: master
  *

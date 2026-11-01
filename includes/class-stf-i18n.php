@@ -28,7 +28,7 @@ class STF_I18n {
 	public function load_plugin_textdomain() {
 
 		load_plugin_textdomain(
-			'stf',
+			'scripts-to-footerphp',
 			false,
 			dirname( plugin_basename( __FILE__ ), 2 ) . '/languages/'
 		);
