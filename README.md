@@ -7,9 +7,9 @@ Scripts To Footer
 
 **Requires at least:** 5.3  
 **Tested up to WordPress:** 7.1  
-**Stable version:** 0.7.4  
+**Stable version:** 0.7.5  
 **License:** GPLv2 or later  
-**Requires PHP:** 7.4  
+**Requires PHP:** 8.1  
 **Tested up to PHP:** 8.5
 
 Move your scripts to the footer to speed up perceived page load times and improve user experience.
