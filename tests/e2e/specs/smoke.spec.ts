@@ -46,8 +46,12 @@ test.describe( 'Harness smoke', () => {
 	test( 'the front end renders every fixture script', async ( { requestUtils, baseURL } ) => {
 		await ensureBaseline( requestUtils );
 		const visitor = await visitorContext( baseURL );
-		const placement = await getPlacement( visitor, '/' );
-		await visitor.dispose();
+		let placement;
+		try {
+			placement = await getPlacement( visitor, '/' );
+		} finally {
+			await visitor.dispose();
+		}
 
 		const all = [ ...placement.headIds, ...placement.bodyIds ];
 		for ( const handle of [ ...HEADER_HANDLES, FOOTER_HANDLE ] ) {

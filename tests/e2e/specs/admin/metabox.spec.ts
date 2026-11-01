@@ -37,59 +37,65 @@ test.describe( 'Meta box', () => {
 	test( 'checking the box and updating stores 1 and keeps scripts in the head; unchecking restores', async ( { admin, page, requestUtils, baseURL } ) => {
 		const post = await tracker.create( requestUtils, { title: 'STF Metabox Toggle', content: 'x' } );
 		const visitor = await visitorContext( baseURL );
-		expectMovedToFooter( await getPlacement( visitor, post.link ) );
+		try {
+			expectMovedToFooter( await getPlacement( visitor, post.link ) );
 
-		await admin.editPost( post.id );
-		await openMetaBoxes( page );
-		await expect( page.locator( '#scripts-to-footer .hndle, #scripts-to-footer h2' ).first() ).toContainText( 'Scripts to Footer Settings' );
-		const checkbox = page.locator( '#stf_exclude' );
-		await expect( checkbox ).not.toBeChecked();
+			await admin.editPost( post.id );
+			await openMetaBoxes( page );
+			await expect( page.locator( '#scripts-to-footer .hndle, #scripts-to-footer h2' ).first() ).toContainText( 'Scripts to Footer Settings' );
+			const checkbox = page.locator( '#stf_exclude' );
+			await expect( checkbox ).not.toBeChecked();
 
-		await checkbox.check();
-		await saveWithMetaBoxes( page );
+			await checkbox.check();
+			await saveWithMetaBoxes( page );
 
-		expect( await getExcludeMeta( requestUtils, post.id ) ).toEqual( { exists: true, value: '1' } );
-		expectLeftInHead( await getPlacement( visitor, post.link ) );
+			expect( await getExcludeMeta( requestUtils, post.id ) ).toEqual( { exists: true, value: '1' } );
+			expectLeftInHead( await getPlacement( visitor, post.link ) );
 
-		await page.reload();
-		await openMetaBoxes( page );
-		await expect( page.locator( '#stf_exclude' ) ).toBeChecked();
+			await page.reload();
+			await openMetaBoxes( page );
+			await expect( page.locator( '#stf_exclude' ) ).toBeChecked();
 
-		await page.locator( '#stf_exclude' ).uncheck();
-		await saveWithMetaBoxes( page );
+			await page.locator( '#stf_exclude' ).uncheck();
+			await saveWithMetaBoxes( page );
 
-		expect( ( await getExcludeMeta( requestUtils, post.id ) ).exists ).toBe( false );
-		expectMovedToFooter( await getPlacement( visitor, post.link ) );
-
-		await visitor.dispose();
+			expect( ( await getExcludeMeta( requestUtils, post.id ) ).exists ).toBe( false );
+			expectMovedToFooter( await getPlacement( visitor, post.link ) );
+		} finally {
+			await visitor.dispose();
+		}
 	} );
 
 	test( 'legacy "on" meta seeded through the test API is honored on the front end', async ( { requestUtils, baseURL } ) => {
 		const post = await tracker.create( requestUtils, { title: 'STF Legacy Api', content: 'x' } );
 		const visitor = await visitorContext( baseURL );
+		try {
 
-		await setExcludeMeta( requestUtils, post.id, 'on' );
-		expect( await getExcludeMeta( requestUtils, post.id ) ).toEqual( { exists: true, value: 'on' } );
-		expectLeftInHead( await getPlacement( visitor, post.link ) );
+			await setExcludeMeta( requestUtils, post.id, 'on' );
+			expect( await getExcludeMeta( requestUtils, post.id ) ).toEqual( { exists: true, value: 'on' } );
+			expectLeftInHead( await getPlacement( visitor, post.link ) );
 
-		await setExcludeMeta( requestUtils, post.id, null );
-		expectMovedToFooter( await getPlacement( visitor, post.link ) );
-
-		await visitor.dispose();
+			await setExcludeMeta( requestUtils, post.id, null );
+			expectMovedToFooter( await getPlacement( visitor, post.link ) );
+		} finally {
+			await visitor.dispose();
+		}
 	} );
 
 	test( 'legacy "on" meta seeded with WP-CLI is honored on the front end', async ( { requestUtils, baseURL } ) => {
 		const post = await tracker.create( requestUtils, { title: 'STF Legacy Cli', content: 'x' } );
 		const visitor = await visitorContext( baseURL );
+		try {
 
-		await wpCliOk( [ 'post', 'meta', 'update', String( post.id ), 'stf_exclude', 'on' ] );
-		expect( await getExcludeMeta( requestUtils, post.id ) ).toEqual( { exists: true, value: 'on' } );
-		expectLeftInHead( await getPlacement( visitor, post.link ) );
+			await wpCliOk( [ 'post', 'meta', 'update', String( post.id ), 'stf_exclude', 'on' ] );
+			expect( await getExcludeMeta( requestUtils, post.id ) ).toEqual( { exists: true, value: 'on' } );
+			expectLeftInHead( await getPlacement( visitor, post.link ) );
 
-		await setExcludeMeta( requestUtils, post.id, null );
-		expectMovedToFooter( await getPlacement( visitor, post.link ) );
-
-		await visitor.dispose();
+			await setExcludeMeta( requestUtils, post.id, null );
+			expectMovedToFooter( await getPlacement( visitor, post.link ) );
+		} finally {
+			await visitor.dispose();
+		}
 	} );
 
 	test( 'opening a legacy "on" post shows the box checked and migrates the meta to 1', async ( { admin, page, requestUtils, baseURL } ) => {
@@ -103,8 +109,11 @@ test.describe( 'Meta box', () => {
 		expect( await getExcludeMeta( requestUtils, post.id ) ).toEqual( { exists: true, value: '1' } );
 
 		const visitor = await visitorContext( baseURL );
-		expectLeftInHead( await getPlacement( visitor, post.link ) );
-		await visitor.dispose();
+		try {
+			expectLeftInHead( await getPlacement( visitor, post.link ) );
+		} finally {
+			await visitor.dispose();
+		}
 	} );
 
 	test( 'the meta box appears for posts and pages but not for the unsupported custom post type', async ( { admin, page, requestUtils } ) => {
