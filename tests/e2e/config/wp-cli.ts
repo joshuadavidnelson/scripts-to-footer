@@ -130,18 +130,35 @@ export const DEBUG_LOG = '/var/www/html/wp-content/debug.log';
 /**
  * Current size of the debug log in bytes (0 when it does not exist yet).
  * Pair with {@link readDebugLogSince} to read only what a test produced.
+ *
+ * Throws if the size cannot be read: silently falling back to 0 would make a
+ * later {@link readDebugLogSince} return the whole log, so an assertion could
+ * match a message logged by an earlier request.
  */
 export async function debugLogSize(): Promise< number > {
-	const result = await runInCli( [ 'sh', '-c', `[ -f ${ DEBUG_LOG } ] && wc -c < ${ DEBUG_LOG } || echo 0` ] );
-	return parseInt( result.stdout.trim().split( /\s+/ ).pop() ?? '0', 10 ) || 0;
+	const result = await runInCli( [ 'sh', '-c', `if [ -f ${ DEBUG_LOG } ]; then wc -c < ${ DEBUG_LOG }; else echo 0; fi` ] );
+	const size = result.stdout.trim().split( /\s+/ ).pop() ?? '';
+
+	if ( 0 !== result.exitCode || ! /^\d+$/.test( size ) ) {
+		throw new Error( `Could not read the size of ${ DEBUG_LOG } (exit ${ result.exitCode }): ${ result.stderr || result.stdout }` );
+	}
+
+	return parseInt( size, 10 );
 }
 
 /**
- * Debug log contents written after byte `offset`.
+ * Debug log contents written after byte `offset` ('' when the log does not
+ * exist). Throws if the log exists but cannot be read, so a failed read can't
+ * pass a "nothing was logged" assertion.
  *
  * @param offset Byte offset returned by {@link debugLogSize}.
  */
 export async function readDebugLogSince( offset: number ): Promise< string > {
-	const result = await runInCli( [ 'sh', '-c', `[ -f ${ DEBUG_LOG } ] && tail -c +${ offset + 1 } ${ DEBUG_LOG } || true` ] );
+	const result = await runInCli( [ 'sh', '-c', `if [ -f ${ DEBUG_LOG } ]; then tail -c +${ offset + 1 } ${ DEBUG_LOG }; fi` ] );
+
+	if ( 0 !== result.exitCode ) {
+		throw new Error( `Could not read ${ DEBUG_LOG } (exit ${ result.exitCode }): ${ result.stderr }` );
+	}
+
 	return result.stdout;
 }
