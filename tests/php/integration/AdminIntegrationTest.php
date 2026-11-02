@@ -302,4 +302,65 @@ class AdminIntegrationTest extends WP_UnitTestCase {
 		$this->assertSame( '0.1.0', get_option( 'stf_version' ) );
 		$this->assertFalse( get_option( 'stf_previous_version' ) );
 	}
+
+	/**
+	 * Saving a post that holds a legacy 'on' value converts it to '1'.
+	 *
+	 * @return void
+	 */
+	public function test_metabox_save_converts_legacy_on_to_one() {
+		$post_id = $this->create_post();
+		update_post_meta( $post_id, 'stf_exclude', 'on' );
+		$this->login_as( 'editor' );
+		$_POST = array(
+			'stf_nonce'   => wp_create_nonce( 'scripts_to_footer' ),
+			'stf_exclude' => 'on',
+		);
+
+		$this->admin()->metabox_save( $post_id );
+
+		$this->assertSame( '1', get_post_meta( $post_id, 'stf_exclude', true ) );
+	}
+
+	/**
+	 * Rendering the metabox for a legacy 'on' value checks the box without writing.
+	 *
+	 * @return void
+	 */
+	public function test_metabox_render_legacy_on_checked_without_write() {
+		$post_id = $this->create_post();
+		update_post_meta( $post_id, 'stf_exclude', 'on' );
+		$GLOBALS['post'] = get_post( $post_id );
+
+		ob_start();
+		$this->admin()->metabox_render();
+		$out = ob_get_clean();
+
+		unset( $GLOBALS['post'] );
+
+		$this->assertStringContainsString( "checked='checked'", $out );
+		$this->assertSame( 'on', get_post_meta( $post_id, 'stf_exclude', true ) );
+	}
+
+	/**
+	 * The settings action link is hooked under the plugin's real basename.
+	 *
+	 * @return void
+	 */
+	public function test_action_links_hooked_under_real_basename() {
+		$hook = 'plugin_action_links_' . plugin_basename( realpath( dirname( __DIR__, 3 ) . '/scripts-to-footer.php' ) );
+
+		$this->assertNotFalse( has_filter( $hook ) );
+
+		$found = false;
+		foreach ( $GLOBALS['wp_filter'][ $hook ]->callbacks as $callbacks ) {
+			foreach ( $callbacks as $callback ) {
+				if ( is_array( $callback['function'] ) && $callback['function'][0] instanceof STF_Admin && 'plugin_settings_link' === $callback['function'][1] ) {
+					$found = true;
+				}
+			}
+		}
+
+		$this->assertTrue( $found, 'plugin_settings_link should be hooked under the real basename.' );
+	}
 }

@@ -47,8 +47,12 @@ if ( ! defined( 'STF_DEBUG' ) ) {
 }
 
 // Constants.
-define( 'STF_PLUGIN_NAME', 'scripts-to-footer' );
-define( 'STF_VERSION', '0.7.5' );
+if ( ! defined( 'STF_PLUGIN_NAME' ) ) {
+	define( 'STF_PLUGIN_NAME', 'scripts-to-footer' );
+}
+if ( ! defined( 'STF_VERSION' ) ) {
+	define( 'STF_VERSION', '0.7.5' );
+}
 
 /**
  * The code that runs during plugin activation.
@@ -74,7 +78,7 @@ register_deactivation_hook( __FILE__, 'stf_deactivate' );
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */
-require plugin_dir_path( __FILE__ ) . 'includes/class-scripts-to-footer.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-scripts-to-footer.php';
 
 /**
  * Begins execution of the plugin.

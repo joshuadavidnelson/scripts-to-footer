@@ -54,6 +54,7 @@ class Scripts_To_Footer {
 	 * @var string $plugin_file The plugin file.
 	 */
 	protected $plugin_file;
+
 	/**
 	 * The current version of the plugin.
 	 *
@@ -92,7 +93,7 @@ class Scripts_To_Footer {
 
 		$this->plugin_name = STF_PLUGIN_NAME;
 		$this->version     = STF_VERSION;
-		$this->plugin_file = 'scripts-to-footer/scripts-to-footer.php';
+		$this->plugin_file = plugin_basename( STF_DIR . '/scripts-to-footer.php' );
 
 		do_action( 'stf_init' );
 
@@ -110,7 +111,7 @@ class Scripts_To_Footer {
 	 *
 	 * @access private
 	 */
-	private static function upgrade_check() {
+	private function upgrade_check() {
 
 		// let's only run these checks on the admin page load.
 		if ( ! is_admin() ) {
@@ -127,8 +128,6 @@ class Scripts_To_Footer {
 
 		// See if it's a previous version, which may not have set the version option.
 		if ( false === $current_version || STF_VERSION !== $current_version ) {
-			// do things on update.
-
 			// Save current version.
 			update_option( 'stf_version', STF_VERSION, false );
 		}
@@ -221,8 +220,8 @@ class Scripts_To_Footer {
 	 */
 	private function define_admin_hooks() {
 
-		$plugin_admin   = new STF_Admin( $this->get_plugin_name(), $this->get_version() );
-		$admin_settings = new STF_Admin_Settings();
+		$plugin_admin   = new STF_Admin( $this->get_plugin_name(), $this->get_version(), $this->plugin_file, $this->functions );
+		$admin_settings = new STF_Admin_Settings( $this->functions );
 
 		// Add Links to Plugin Bar.
 		$this->loader->add_filter( 'plugin_row_meta', $plugin_admin, 'plugin_links', 10, 2 );
@@ -250,7 +249,7 @@ class Scripts_To_Footer {
 	 */
 	private function define_public_hooks() {
 
-		$plugin_public = new STF_Public( $this->get_plugin_name(), $this->get_version() );
+		$plugin_public = new STF_Public( $this->get_plugin_name(), $this->get_version(), $this->functions );
 
 		// Run the plugin.
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'clean_head' );

@@ -42,6 +42,15 @@ class STF_Admin {
 	private $version;
 
 	/**
+	 * The plugin's basename (directory and main file, as WordPress lists it).
+	 *
+	 * @since  0.7.0
+	 * @access private
+	 * @var    string $plugin_file The plugin basename.
+	 */
+	private $plugin_file;
+
+	/**
 	 * The functions class contains helper functions.
 	 *
 	 * @since 0.7.0
@@ -63,14 +72,17 @@ class STF_Admin {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since  0.7.0
-	 * @param string $plugin_name The name of the plugin.
-	 * @param string $version     The version of this plugin.
+	 * @param string             $plugin_name The name of the plugin.
+	 * @param string             $version     The version of this plugin.
+	 * @param string             $plugin_file The plugin basename, e.g. 'scripts-to-footerphp/scripts-to-footer.php'.
+	 * @param STF_Functions|null $functions Optional shared helper instance; a new one is created when omitted.
 	 */
-	public function __construct( $plugin_name, $version ) {
+	public function __construct( $plugin_name, $version, $plugin_file = '', $functions = null ) {
 
 		$this->plugin_name    = $plugin_name;
 		$this->version        = $version;
-		$this->functions      = new STF_Functions();
+		$this->plugin_file    = $plugin_file;
+		$this->functions      = $functions instanceof STF_Functions ? $functions : new STF_Functions();
 		$this->settings_field = 'scripts-to-footer';
 	}
 
@@ -89,7 +101,10 @@ class STF_Admin {
 			return $links;
 		}
 
-		if ( basename( dirname( $file ) ) === $this->plugin_name ) {
+		// Third-party code may construct this class without a plugin file; resolve it lazily.
+		$plugin_file = '' === $this->plugin_file ? plugin_basename( STF_DIR . '/scripts-to-footer.php' ) : $this->plugin_file;
+
+		if ( $file === $plugin_file ) {
 			$links[] = '<a href="http://wordpress.org/support/plugin/scripts-to-footerphp" title="' . __( 'Support', 'scripts-to-footerphp' ) . '">' . __( 'Support', 'scripts-to-footerphp' ) . '</a>';
 
 			$links[] = '<a href="https://github.com/joshuadavidnelson/scripts-to-footer/wiki" title="' . __( 'Documentation', 'scripts-to-footerphp' ) . '" target="_blank">' . __( 'Documentation', 'scripts-to-footerphp' ) . '</a>';
@@ -142,12 +157,8 @@ class STF_Admin {
 		// Grab current value.
 		$exclude = get_post_meta( get_the_ID(), 'stf_exclude', true );
 
-		// Update old 'on' values to bool values.
-		if ( 'on' === $exclude ) {
-			update_post_meta( get_the_ID(), 'stf_exclude', 1, 'on' );
-			$exclude = 1;
-		}
-
+		// Rendering never writes: any truthy value, including a legacy 'on', is shown as
+		// checked (matching STF_Public::stf_includes()), and metabox_save() converts it.
 		// Security nonce.
 		wp_nonce_field( 'scripts_to_footer', 'stf_nonce' );
 
@@ -156,7 +167,7 @@ class STF_Admin {
 		// Exclude.
 		printf( '<label for="stf_exclude">%s</label>', esc_html__( 'Turn Plugin Off', 'scripts-to-footerphp' ) );
 
-		echo '<input type="checkbox" id="stf_exclude" name="stf_exclude" ' . checked( true, $exclude, false ) . ' style="margin:0 20px 0 10px;">';
+		echo '<input type="checkbox" id="stf_exclude" name="stf_exclude" ' . checked( true, (bool) $exclude, false ) . ' style="margin:0 20px 0 10px;">';
 
 		// translators: indicates the checkbox will turn off the plugin for a specific post/page.
 		printf( '<span style="color:#999;">%s</span>', esc_html__( 'By default, this plugin will run on this post type. This checkbox lets you turn it off for this specific page/post.', 'scripts-to-footerphp' ) );
