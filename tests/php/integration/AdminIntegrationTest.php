@@ -101,7 +101,7 @@ class AdminIntegrationTest extends WP_UnitTestCase {
 		$this->admin()->metabox_save( $post_id );
 
 		$this->assertSame( '1', get_post_meta( $post_id, 'stf_exclude', true ) );
-		$this->assertSame( array( '1' ), get_post_meta( $post_id, 'stf_exclude', false ) ); // phpcs:ignore WordPress.WP.GetMetaSingle.Missing -- Asserting the single stored row.
+		$this->assertSame( array( '1' ), get_post_custom_values( 'stf_exclude', $post_id ) );
 	}
 
 	/**

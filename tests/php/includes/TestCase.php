@@ -24,12 +24,28 @@ class TestCase extends \Yoast\PHPUnitPolyfills\TestCases\TestCase {
 	protected $own_i18n_stubs = array();
 
 	/**
+	 * The messages passed to error_log() since capture_error_log() was called.
+	 *
+	 * @var string[]
+	 */
+	protected $logged_errors = array();
+
+	/**
+	 * Patchwork handle of the error_log() redefinition, while one is active.
+	 *
+	 * @var string|null
+	 */
+	private $error_log_handle = null;
+
+	/**
 	 * Boots WP_Mock and registers the translation passthroughs before each test.
 	 *
 	 * @return void
 	 */
 	protected function set_up() {
 		parent::set_up();
+
+		$this->logged_errors = array();
 
 		WP_Mock::setUp();
 		self::reset_expected_hooks();
@@ -62,6 +78,7 @@ class TestCase extends \Yoast\PHPUnitPolyfills\TestCases\TestCase {
 				WP_Mock::tearDown();
 			} finally {
 				WP_Mock\Functions\Handler::cleanup();
+				$this->restore_error_log();
 				parent::tear_down();
 			}
 		}
@@ -158,6 +175,38 @@ class TestCase extends \Yoast\PHPUnitPolyfills\TestCases\TestCase {
 	}
 
 	/**
+	 * Redirects error_log() into $logged_errors, so a test can assert on what was logged.
+	 *
+	 * WP_Mock::userFunction() refuses internal functions, so this redefines error_log with
+	 * Patchwork directly; error_log must be listed in patchwork.json's redefinable-internals.
+	 * tear_down() restores it.
+	 *
+	 * @return void
+	 */
+	protected function capture_error_log() {
+		$this->error_log_handle = \Patchwork\redefine(
+			'error_log',
+			function ( $message ) {
+				$this->logged_errors[] = $message;
+
+				return true;
+			}
+		);
+	}
+
+	/**
+	 * Restores the real error_log(), if capture_error_log() redefined it.
+	 *
+	 * @return void
+	 */
+	private function restore_error_log() {
+		if ( null !== $this->error_log_handle ) {
+			\Patchwork\restore( $this->error_log_handle );
+			$this->error_log_handle = null;
+		}
+	}
+
+	/**
 	 * A faithful port of WordPress core's checked() (via __checked_selected_helper()).
 	 *
 	 * @param mixed $checked The value to test.
@@ -166,13 +215,13 @@ class TestCase extends \Yoast\PHPUnitPolyfills\TestCases\TestCase {
 	 * @return string
 	 */
 	protected static function core_checked( $checked, $current = true, $display = true ) {
-		$result = ( (string) $checked === (string) $current ) ? " checked='checked'" : '';
+		$is_checked = (string) $checked === (string) $current;
 
-		if ( $display ) {
-			echo $result; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		if ( $display && $is_checked ) {
+			echo " checked='checked'";
 		}
 
-		return $result;
+		return $is_checked ? " checked='checked'" : '';
 	}
 
 	/**

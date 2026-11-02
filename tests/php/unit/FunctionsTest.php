@@ -18,53 +18,14 @@
 class FunctionsTest extends TestCase {
 
 	/**
-	 * Original error_log ini value.
-	 *
-	 * @var string|false
-	 */
-	private $original_error_log;
-
-	/**
-	 * Temp log file path.
-	 *
-	 * @var string
-	 */
-	private $log_file;
-
-	/**
-	 * Redirects error_log() to a temp file.
+	 * Captures error_log() calls instead of writing them anywhere.
 	 *
 	 * @return void
 	 */
 	protected function set_up() {
 		parent::set_up();
 
-		$this->original_error_log = ini_get( 'error_log' );
-		$this->log_file           = tempnam( sys_get_temp_dir(), 'stf-log' );
-		ini_set( 'error_log', $this->log_file ); // phpcs:ignore WordPress.PHP.IniSet.Risky
-	}
-
-	/**
-	 * Restores error_log and removes the temp file.
-	 *
-	 * @return void
-	 */
-	protected function tear_down() {
-		ini_set( 'error_log', (string) $this->original_error_log ); // phpcs:ignore WordPress.PHP.IniSet.Risky
-		if ( file_exists( $this->log_file ) ) {
-			unlink( $this->log_file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
-		}
-
-		parent::tear_down();
-	}
-
-	/**
-	 * Returns the captured log contents.
-	 *
-	 * @return string
-	 */
-	private function read_log() {
-		return (string) file_get_contents( $this->log_file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		$this->capture_error_log();
 	}
 
 	/**
@@ -214,7 +175,7 @@ class FunctionsTest extends TestCase {
 
 		( new STF_Functions() )->log_me( 'hello' );
 
-		$this->assertSame( '', $this->read_log() );
+		$this->assertSame( array(), $this->logged_errors );
 	}
 
 	/**
@@ -231,7 +192,7 @@ class FunctionsTest extends TestCase {
 
 		( new STF_Functions() )->log_me( 'msg' );
 
-		$this->assertMatchesRegularExpression( '/^(\[[^\]]*\] )?Scripts-to-Footer Plugin Error: msg\n$/', $this->read_log() );
+		$this->assertSame( array( 'Scripts-to-Footer Plugin Error: msg' ), $this->logged_errors );
 	}
 
 	/**
@@ -248,8 +209,8 @@ class FunctionsTest extends TestCase {
 
 		( new STF_Functions() )->log_me( array( 'a' => 1 ) );
 
-		$expected = 'Scripts-to-Footer Plugin Error: ' . print_r( array( 'a' => 1 ), true ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-		$this->assertStringContainsString( $expected, $this->read_log() );
+		$expected = "Scripts-to-Footer Plugin Error: Array\n(\n    [a] => 1\n)\n";
+		$this->assertSame( array( $expected ), $this->logged_errors );
 	}
 
 	/**
@@ -268,8 +229,8 @@ class FunctionsTest extends TestCase {
 		$obj->x = 'y';
 		( new STF_Functions() )->log_me( $obj );
 
-		$expected = 'Scripts-to-Footer Plugin Error: ' . print_r( $obj, true ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_print_r
-		$this->assertStringContainsString( $expected, $this->read_log() );
+		$expected = "Scripts-to-Footer Plugin Error: stdClass Object\n(\n    [x] => y\n)\n";
+		$this->assertSame( array( $expected ), $this->logged_errors );
 	}
 
 	/**
@@ -286,7 +247,7 @@ class FunctionsTest extends TestCase {
 
 		( new STF_Functions() )->log_me( 'msg' );
 
-		$this->assertSame( '', $this->read_log() );
+		$this->assertSame( array(), $this->logged_errors );
 	}
 
 	/**
@@ -303,6 +264,6 @@ class FunctionsTest extends TestCase {
 
 		( new STF_Functions() )->log_me( 'msg' );
 
-		$this->assertSame( '', $this->read_log() );
+		$this->assertSame( array(), $this->logged_errors );
 	}
 }

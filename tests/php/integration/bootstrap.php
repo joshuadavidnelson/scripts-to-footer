@@ -15,7 +15,7 @@ require $stf_plugin_dir . '/vendor/autoload.php';
 
 // The WordPress test library needs the path to the Yoast PHPUnit Polyfills.
 if ( ! defined( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH' ) ) {
-	define( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH', $stf_plugin_dir . '/vendor/yoast/phpunit-polyfills' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- Constant required by the WordPress test library.
+	define( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH', $stf_plugin_dir . '/vendor/yoast/phpunit-polyfills' );
 }
 
 $stf_tests_dir = getenv( 'WP_TESTS_DIR' );
@@ -27,13 +27,13 @@ if ( false === $stf_tests_dir || '' === $stf_tests_dir ) {
 	}
 
 	// Point wp-phpunit at our config, unless the caller already did.
-	if ( false === getenv( 'WP_PHPUNIT__TESTS_CONFIG' ) || '' === getenv( 'WP_PHPUNIT__TESTS_CONFIG' ) ) {
-		putenv( 'WP_PHPUNIT__TESTS_CONFIG=' . __DIR__ . '/wp-tests-config.php' ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.runtime_configuration_putenv -- Test bootstrap only.
+	if ( ! defined( 'WP_TESTS_CONFIG_FILE_PATH' ) && ( false === getenv( 'WP_PHPUNIT__TESTS_CONFIG' ) || '' === getenv( 'WP_PHPUNIT__TESTS_CONFIG' ) ) ) {
+		define( 'WP_TESTS_CONFIG_FILE_PATH', __DIR__ . '/wp-tests-config.php' );
 	}
 }
 
 if ( ! file_exists( $stf_tests_dir . '/includes/functions.php' ) ) {
-	echo 'Could not find the WordPress test library at ' . $stf_tests_dir . PHP_EOL; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	echo 'Could not find the WordPress test library. Set WP_TESTS_DIR or install the wp-phpunit Composer package.' . PHP_EOL;
 	exit( 1 );
 }
 
