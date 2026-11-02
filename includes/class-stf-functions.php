@@ -112,9 +112,9 @@ class STF_Functions {
 
 		if ( $this->debug() ) {
 			if ( is_array( $message ) || is_object( $message ) ) {
-				error_log( 'Scripts-to-Footer Plugin Error: ' . print_r( $message, true ) ); // phpcs:ignore
+				error_log( 'Scripts-to-Footer Plugin Error: ' . print_r( $message, true ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log, WordPress.PHP.DevelopmentFunctions.error_log_print_r -- Opt-in logging, only runs when STF_DEBUG is enabled.
 			} else {
-				error_log( 'Scripts-to-Footer Plugin Error: ' . $message ); // phpcs:ignore
+				error_log( 'Scripts-to-Footer Plugin Error: ' . $message ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Opt-in logging, only runs when STF_DEBUG is enabled.
 			}
 		}
 	}

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Scripts To Footer</title>
+  <rect width="256" height="256" fill="#26239C"/>
+  <rect x="50" y="28" width="156" height="200" rx="16" fill="#FFFFFF"/>
+  <rect x="75" y="51" width="106" height="11" rx="5.5" fill="#26239C" fill-opacity="0.28"/>
+  <rect x="75" y="73" width="68" height="11" rx="5.5" fill="#26239C" fill-opacity="0.28"/>
+  <g fill="none" stroke="#26239C" stroke-width="13" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M128 102V144"/>
+    <path d="M108 126L128 146L148 126"/>
+  </g>
+  <rect x="66" y="160" width="124" height="54" rx="10" fill="#26239C"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M100 175L88 187L100 199"/>
+    <path d="M134 173L122 201"/>
+    <path d="M156 175L168 187L156 199"/>
+  </g>
+</svg>

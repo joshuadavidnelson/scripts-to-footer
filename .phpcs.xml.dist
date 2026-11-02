@@ -30,17 +30,18 @@
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<!-- Value: replace the function, class, and variable prefixes used. -->
-			<property name="prefixes">
+			<property name="prefixes" type="array">
 				<element value="stf_"/>
 				<element value="STF_"/>
+				<element value="scripts_to_footer"/>
 			</property>
 		</properties>
 	</rule>
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<!-- Value: replace the text domain used. -->
-			<property name="text_domain">
-				<element value="stf"/>
+			<property name="text_domain" type="array">
+				<element value="scripts-to-footerphp"/>
 			</property>
 		</properties>
 	</rule>

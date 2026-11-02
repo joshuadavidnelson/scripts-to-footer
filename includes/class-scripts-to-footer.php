@@ -209,7 +209,7 @@ class Scripts_To_Footer {
 
 		$plugin_i18n = new STF_I18n();
 
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
+		$this->loader->add_action( 'init', $plugin_i18n, 'load_plugin_textdomain' );
 	}
 
 	/**
@@ -232,7 +232,7 @@ class Scripts_To_Footer {
 
 		// Metabox on Edit screen, for Page/Post Override.
 		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'metabox_register' );
-		$this->loader->add_action( 'save_post', $plugin_admin, 'metabox_save', 1, 2 );
+		$this->loader->add_action( 'save_post', $plugin_admin, 'metabox_save', 1, 1 );
 
 		// Add the page to the menu.
 		$this->loader->add_action( 'admin_menu', $admin_settings, 'add_plugin_page' );

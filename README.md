@@ -3,12 +3,14 @@ Scripts To Footer
 
 [![WordPress Plugin Version](https://img.shields.io/wordpress/plugin/v/scripts-to-footerphp)](https://wordpress.org/plugins/scripts-to-footerphp/) ![Downloads](https://img.shields.io/wordpress/plugin/dt/scripts-to-footerphp.svg) ![Rating](https://img.shields.io/wordpress/plugin/r/scripts-to-footerphp.svg)
 
+[![WP compatibility](https://plugintests.com/plugins/wporg/scripts-to-footerphp/wp-badge.svg)](https://plugintests.com/plugins/wporg/scripts-to-footerphp/latest) [![PHP compatibility](https://plugintests.com/plugins/wporg/scripts-to-footerphp/php-badge.svg)](https://plugintests.com/plugins/wporg/scripts-to-footerphp/latest)
+
 **Requires at least:** 5.3  
-**Tested up to WordPress:** 6.8.3  
-**Stable version:** 0.7.3  
+**Tested up to WordPress:** 7.1  
+**Stable version:** 0.7.4  
 **License:** GPLv2 or later  
 **Requires PHP:** 7.4  
-**Tested up to PHP:** 8.3
+**Tested up to PHP:** 8.5
 
 Move your scripts to the footer to speed up perceived page load times and improve user experience.
 
