@@ -16,15 +16,28 @@
 	"scripts": {
 		"env": "wp-env",
 		"env:start": "wp-env start",
-		"env:stop": "wp-env stop"
+		"env:stop": "wp-env stop",
+		"env:test:start": "wp-env --config=.wp-env.test.json start",
+		"env:test:stop": "wp-env --config=.wp-env.test.json stop",
+		"env:shell": "wp-env --config=.wp-env.test.json run cli /bin/bash",
+		"env:debuglog": "wp-env --config=.wp-env.test.json run cli tail -f /var/www/html/wp-content/debug.log",
+		"test:e2e": "wp-scripts test-playwright --wp-env-config=.wp-env.test.json --config playwright.config.ts",
+		"test:e2e:ui": "wp-scripts test-playwright --wp-env-config=.wp-env.test.json --config playwright.config.ts --ui",
+		"test:e2e:core-version": "node ./tests/bin/set-core-version.js",
+		"typecheck": "tsc --noEmit"
 	},
 	"overrides": {
 		"qs": "~6.16.2",
 		"glob": "^14.0.3",
-		"minimatch": "^11.0.3"
+		"minimatch": "^11.0.3",
+		"serialize-javascript": "^7.1.4"
 	},
 	"devDependencies": {
+		"@playwright/test": "^1.64.1",
 		"@types/node": "^24.19.2",
-		"@wordpress/env": "^12.0.0"
+		"@wordpress/e2e-test-utils-playwright": "^3.1.0",
+		"@wordpress/env": "^12.0.0",
+		"@wordpress/scripts": "^37.0.0",
+		"typescript": "^6.0.3"
 	}
 }
