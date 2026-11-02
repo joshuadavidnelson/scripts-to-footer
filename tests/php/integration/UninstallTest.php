@@ -20,7 +20,7 @@ class UninstallTest extends WP_UnitTestCase {
 	public function test_uninstall_removes_options_and_post_meta() {
 		$post_ids = self::factory()->post->create_many( 2 );
 		update_option( 'scripts-to-footer', array( 'stf_exclude_home' => '1' ) );
-		update_option( 'stf_version', '0.7.4' );
+		update_option( 'stf_version', '0.7.5' );
 		update_post_meta( $post_ids[0], 'stf_exclude', '1' );
 		update_post_meta( $post_ids[1], 'stf_exclude', 'on' );
 		update_post_meta( $post_ids[1], 'unrelated_key', 'keep' );
@@ -68,7 +68,7 @@ class UninstallTest extends WP_UnitTestCase {
 		$this->define_uninstall_constant();
 		$post_id = self::factory()->post->create();
 		update_option( 'scripts-to-footer', array( 'stf_exclude_home' => '1' ) );
-		update_option( 'stf_version', '0.7.4' );
+		update_option( 'stf_version', '0.7.5' );
 		update_post_meta( $post_id, 'stf_exclude', '1' );
 
 		wp_set_current_user( null === $role ? 0 : self::factory()->user->create( array( 'role' => $role ) ) );
@@ -79,7 +79,7 @@ class UninstallTest extends WP_UnitTestCase {
 		} finally {
 			wp_set_current_user( 0 );
 			$this->assertSame( array( 'stf_exclude_home' => '1' ), get_option( 'scripts-to-footer' ) );
-			$this->assertSame( '0.7.4', get_option( 'stf_version' ) );
+			$this->assertSame( '0.7.5', get_option( 'stf_version' ) );
 			$this->assertSame( '1', get_post_meta( $post_id, 'stf_exclude', true ) );
 		}
 	}

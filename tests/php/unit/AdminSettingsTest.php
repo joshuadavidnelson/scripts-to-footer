@@ -109,6 +109,22 @@ class AdminSettingsTest extends TestCase {
 	}
 
 	/**
+	 * Stubs esc_html() so escaped values are visibly marked as HTML(value).
+	 *
+	 * @return void
+	 */
+	private function stub_esc_html() {
+		WP_Mock::userFunction(
+			'esc_html',
+			array(
+				'return' => function ( $value ) {
+					return 'HTML(' . $value . ')';
+				},
+			)
+		);
+	}
+
+	/**
 	 * The constructor sets the settings field and a functions helper.
 	 *
 	 * @return void
@@ -376,12 +392,30 @@ class AdminSettingsTest extends TestCase {
 	}
 
 	/**
-	 * The header scripts intro links to the documentation.
+	 * The header scripts intro is passed through wp_kses() with only the link allowed, and
+	 * the documentation URL through esc_url(), before being substituted into the string.
 	 *
 	 * @return void
 	 */
 	public function test_print_header_script_section_info() {
-		$this->expectOutputString( 'Options for keeping specific scripts in the header, if they occur. Want to exclude a different script? Check out the <a href="https://github.com/joshuadavidnelson/scripts-to-footer/wiki" title="On Github">documentation</a> for more information.' );
+		$template = 'Options for keeping specific scripts in the header, if they occur. Want to exclude a different script? Check out the <a href="%s" title="On Github">documentation</a> for more information.';
+
+		$this->expect_function_strict(
+			'wp_kses',
+			array(
+				$template,
+				array(
+					'a' => array(
+						'href'  => array(),
+						'title' => array(),
+					),
+				),
+			),
+			'KSES(' . $template . ')'
+		);
+		$this->expect_function_strict( 'esc_url', array( 'https://github.com/joshuadavidnelson/scripts-to-footer/wiki' ), 'URL(https://github.com/joshuadavidnelson/scripts-to-footer/wiki)' );
+
+		$this->expectOutputString( 'KSES(Options for keeping specific scripts in the header, if they occur. Want to exclude a different script? Check out the <a href="URL(https://github.com/joshuadavidnelson/scripts-to-footer/wiki)" title="On Github">documentation</a> for more information.)' );
 
 		( new STF_Admin_Settings() )->print_header_script_section_info();
 	}
@@ -393,12 +427,12 @@ class AdminSettingsTest extends TestCase {
 	 */
 	public function provide_checkbox_fields() {
 		return array(
-			'home'           => array( 'stf_home', 'stf_exclude_home', true ),
-			'search'         => array( 'stf_search', 'stf_exclude_search', true ),
-			'404'            => array( 'stf_404', 'stf_exclude_404', true ),
-			'author archive' => array( 'stf_author_archive', 'stf_exclude_author_archive', false ),
-			'archive'        => array( 'stf_archive', 'stf_exclude_archive', false ),
-			'jquery header'  => array( 'stf_jquery_header', 'stf_jquery_header', false ),
+			'home'           => array( 'stf_home', 'stf_exclude_home' ),
+			'search'         => array( 'stf_search', 'stf_exclude_search' ),
+			'404'            => array( 'stf_404', 'stf_exclude_404' ),
+			'author archive' => array( 'stf_author_archive', 'stf_exclude_author_archive' ),
+			'archive'        => array( 'stf_archive', 'stf_exclude_archive' ),
+			'jquery header'  => array( 'stf_jquery_header', 'stf_jquery_header' ),
 		);
 	}
 
@@ -407,20 +441,16 @@ class AdminSettingsTest extends TestCase {
 	 *
 	 * @dataProvider provide_checkbox_fields
 	 *
-	 * @param string $method  The field method.
-	 * @param string $key     The option key.
-	 * @param bool   $escaped Whether the field name goes through esc_attr().
+	 * @param string $method The field method.
+	 * @param string $key    The option key.
 	 * @return void
 	 */
-	public function test_checkbox_field_unset( $method, $key, $escaped ) {
-		if ( $escaped ) {
-			$this->stub_esc_attr();
-		}
+	public function test_checkbox_field_unset( $method, $key ) {
+		$this->stub_esc_attr();
 		$this->stub_checked();
 		$settings = new STF_Admin_Settings();
 
-		$name = $escaped ? 'ESC(scripts-to-footer)' : 'scripts-to-footer';
-		$this->expectOutputString( '<input type="checkbox" name="' . $name . '[' . $key . ']"  value="1">' );
+		$this->expectOutputString( '<input type="checkbox" name="ESC(scripts-to-footer)[' . $key . ']"  value="1">' );
 
 		$settings->$method();
 
@@ -433,21 +463,17 @@ class AdminSettingsTest extends TestCase {
 	 *
 	 * @dataProvider provide_checkbox_fields
 	 *
-	 * @param string $method  The field method.
-	 * @param string $key     The option key.
-	 * @param bool   $escaped Whether the field name goes through esc_attr().
+	 * @param string $method The field method.
+	 * @param string $key    The option key.
 	 * @return void
 	 */
-	public function test_checkbox_field_set( $method, $key, $escaped ) {
-		if ( $escaped ) {
-			$this->stub_esc_attr();
-		}
+	public function test_checkbox_field_set( $method, $key ) {
+		$this->stub_esc_attr();
 		$this->stub_checked();
 		$settings = new STF_Admin_Settings();
 		$this->set_property( $settings, 'options', array( $key => 1 ) );
 
-		$name = $escaped ? 'ESC(scripts-to-footer)' : 'scripts-to-footer';
-		$this->expectOutputString( '<input type="checkbox" name="' . $name . '[' . $key . ']"  checked=\'checked\' value="1">' );
+		$this->expectOutputString( '<input type="checkbox" name="ESC(scripts-to-footer)[' . $key . ']"  checked=\'checked\' value="1">' );
 
 		$settings->$method();
 
@@ -455,12 +481,12 @@ class AdminSettingsTest extends TestCase {
 	}
 
 	/**
-	 * Escaped fields run the settings field name through esc_attr().
+	 * Only the settings field name goes through esc_attr(), not the bracketed key.
 	 *
 	 * @return void
 	 */
 	public function test_home_field_escapes_name() {
-		WP_Mock::userFunction( 'esc_attr' )->once()->with( 'scripts-to-footer' )->andReturn( 'ESC' );
+		$this->expect_function_strict( 'esc_attr', array( 'scripts-to-footer' ), 'ESC' );
 		$this->stub_checked();
 
 		$this->expectOutputString( '<input type="checkbox" name="ESC[stf_exclude_home]"  value="1">' );
@@ -476,6 +502,8 @@ class AdminSettingsTest extends TestCase {
 	public function test_post_type_archives_field() {
 		$this->stub_filter_strict( 'scripts_to_footer_post_types', array( 'page', 'post' ), array( 'page', 'book' ) );
 		$this->stub_checked();
+		$this->stub_esc_attr();
+		$this->stub_esc_html();
 		WP_Mock::userFunction( 'get_post_type_object' )
 			->once()
 			->with( 'page' )
@@ -490,8 +518,8 @@ class AdminSettingsTest extends TestCase {
 
 		$this->expectOutputString(
 			'<ul>'
-			. '<li><input type="checkbox" id="stf_exclude_page_archive" name="scripts-to-footer[stf_exclude_page_archive]"  value="1"><label for="stf_exclude_page_archive">Page </label></li>'
-			. '<li><input type="checkbox" id="stf_exclude_book_archive" name="scripts-to-footer[stf_exclude_book_archive]"  checked=\'checked\' value="1"><label for="stf_exclude_book_archive">Book </label></li>'
+			. '<li><input type="checkbox" id="ESC(stf_exclude_page_archive)" name="ESC(scripts-to-footer[stf_exclude_page_archive])"  value="1"><label for="ESC(stf_exclude_page_archive)">HTML(Page) </label></li>'
+			. '<li><input type="checkbox" id="ESC(stf_exclude_book_archive)" name="ESC(scripts-to-footer[stf_exclude_book_archive])"  checked=\'checked\' value="1"><label for="ESC(stf_exclude_book_archive)">HTML(Book) </label></li>'
 			. '</ul>'
 		);
 
@@ -521,6 +549,8 @@ class AdminSettingsTest extends TestCase {
 	public function test_taxonomy_archives_field() {
 		$this->stub_filter_strict( 'scripts_to_footer_taxonomies', array( 'category', 'post_tag' ), array( 'category', 'genre' ) );
 		$this->stub_checked();
+		$this->stub_esc_attr();
+		$this->stub_esc_html();
 		WP_Mock::userFunction( 'get_taxonomy' )
 			->once()
 			->with( 'category' )
@@ -535,8 +565,8 @@ class AdminSettingsTest extends TestCase {
 
 		$this->expectOutputString(
 			'<ul>'
-			. '<li><input type="checkbox" id="stf_exclude_category_archive" name="scripts-to-footer[stf_exclude_category_archive]"  checked=\'checked\' value="1"><label for="stf_exclude_category_archive">Category </label></li>'
-			. '<li><input type="checkbox" id="stf_exclude_genre_archive" name="scripts-to-footer[stf_exclude_genre_archive]"  value="1"><label for="stf_exclude_genre_archive">Genre </label></li>'
+			. '<li><input type="checkbox" id="ESC(stf_exclude_category_archive)" name="ESC(scripts-to-footer[stf_exclude_category_archive])"  checked=\'checked\' value="1"><label for="ESC(stf_exclude_category_archive)">HTML(Category) </label></li>'
+			. '<li><input type="checkbox" id="ESC(stf_exclude_genre_archive)" name="ESC(scripts-to-footer[stf_exclude_genre_archive])"  value="1"><label for="ESC(stf_exclude_genre_archive)">HTML(Genre) </label></li>'
 			. '</ul>'
 		);
 

@@ -14,6 +14,16 @@
 class TestCase extends \Yoast\PHPUnitPolyfills\TestCases\TestCase {
 
 	/**
+	 * Translation functions a test class stubs itself, so the passthrough is not registered.
+	 *
+	 * A passthrough esc_html__() cannot tell esc_html__() from __(). A class that must prove
+	 * the escaping variant is used lists it here and registers a marking stub.
+	 *
+	 * @var string[]
+	 */
+	protected $own_i18n_stubs = array();
+
+	/**
 	 * Boots WP_Mock and registers the translation passthroughs before each test.
 	 *
 	 * @return void
@@ -24,7 +34,7 @@ class TestCase extends \Yoast\PHPUnitPolyfills\TestCases\TestCase {
 		WP_Mock::setUp();
 		self::reset_expected_hooks();
 
-		foreach ( array( '__', '_e', 'esc_html__', 'esc_html_e', 'esc_attr__', 'esc_attr_e' ) as $i18n ) {
+		foreach ( array_diff( array( '__', '_e', 'esc_html__', 'esc_html_e', 'esc_attr__', 'esc_attr_e' ), $this->own_i18n_stubs ) as $i18n ) {
 			WP_Mock::userFunction( $i18n, array( 'return_arg' => 0 ) );
 		}
 	}

@@ -11,9 +11,6 @@
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	define( 'WP_UNINSTALL_PLUGIN', 'scripts-to-footer/scripts-to-footer.php' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
 }
-if ( ! defined( 'ARRAY_A' ) ) {
-	define( 'ARRAY_A', 'ARRAY_A' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound
-}
 
 /**
  * Covers the procedural uninstall.php file.
@@ -21,11 +18,11 @@ if ( ! defined( 'ARRAY_A' ) ) {
 class UninstallTest extends TestCase {
 
 	/**
-	 * Original $wpdb global.
+	 * The wp_die() messages must go through esc_html__(), so it is stubbed with a marker.
 	 *
-	 * @var mixed
+	 * @var string[]
 	 */
-	private $original_wpdb;
+	protected $own_i18n_stubs = array( 'esc_html__' );
 
 	/**
 	 * Ordered record of WordPress calls.
@@ -35,30 +32,23 @@ class UninstallTest extends TestCase {
 	private $calls = array();
 
 	/**
-	 * Saves $wpdb.
+	 * Resets the call record and marks esc_html__() output as HTML(text).
 	 *
 	 * @return void
 	 */
 	protected function set_up() {
 		parent::set_up();
 
-		$this->original_wpdb = isset( $GLOBALS['wpdb'] ) ? $GLOBALS['wpdb'] : null;
-		$this->calls         = array();
-	}
+		$this->calls = array();
 
-	/**
-	 * Restores $wpdb.
-	 *
-	 * @return void
-	 */
-	protected function tear_down() {
-		if ( null === $this->original_wpdb ) {
-			unset( $GLOBALS['wpdb'] );
-		} else {
-			$GLOBALS['wpdb'] = $this->original_wpdb; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-		}
-
-		parent::tear_down();
+		WP_Mock::userFunction(
+			'esc_html__',
+			array(
+				'return' => function ( $text, $domain ) {
+					return 'HTML(' . $text . '|' . $domain . ')';
+				},
+			)
+		);
 	}
 
 	/**
@@ -98,7 +88,7 @@ class UninstallTest extends TestCase {
 		WP_Mock::userFunction( 'is_user_logged_in' )->once()->andReturn( false );
 
 		$this->expectException( STF_Test_Wp_Die_Exception::class );
-		$this->expectExceptionMessage( 'You must be logged in to run this script.' );
+		$this->expectExceptionMessage( 'HTML(You must be logged in to run this script.|scripts-to-footerphp)' );
 
 		try {
 			$this->run_uninstall();
@@ -121,8 +111,8 @@ class UninstallTest extends TestCase {
 			$this->run_uninstall();
 			$this->fail( 'wp_die() should have been called.' );
 		} catch ( STF_Test_Wp_Die_Exception $e ) {
-			$this->assertSame( 'You do not have permission to run this script.', $e->getMessage() );
-			$this->assertSame( 'Scripts To Footer', $e->title );
+			$this->assertSame( 'HTML(You do not have permission to run this script.|scripts-to-footerphp)', $e->getMessage() );
+			$this->assertSame( 'HTML(Scripts To Footer|scripts-to-footerphp)', $e->title );
 			$this->assertSame( array( 'back_link' => true ), $e->args );
 		} finally {
 			$this->assertSame( array(), $this->calls );
@@ -141,7 +131,7 @@ class UninstallTest extends TestCase {
 			$this->run_uninstall();
 			$this->fail( 'wp_die() should have been called.' );
 		} catch ( STF_Test_Wp_Die_Exception $e ) {
-			$this->assertSame( 'Scripts To Footer', $e->title );
+			$this->assertSame( 'HTML(Scripts To Footer|scripts-to-footerphp)', $e->title );
 			$this->assertSame( array( 'back_link' => true ), $e->args );
 		}
 	}
@@ -171,21 +161,20 @@ class UninstallTest extends TestCase {
 	}
 
 	/**
-	 * Multisite runs the deletions for each blog, switching in order.
+	 * Multisite runs the deletions for each site, switching in order.
 	 *
 	 * @return void
 	 */
-	public function test_multisite_deletes_per_blog() {
+	public function test_multisite_deletes_per_site() {
 		$this->stub_recorders();
 		WP_Mock::userFunction( 'is_user_logged_in' )->once()->andReturn( true );
 		$this->expect_function_strict( 'current_user_can', array( 'install_plugins' ), true );
 		WP_Mock::userFunction( 'is_multisite' )->once()->andReturn( true );
 
-		$GLOBALS['wpdb'] = $this->make_wpdb( array( array( 'blog_id' => 3 ), array( 'blog_id' => 7 ) ) ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$this->expect_get_sites( array( 3, 7 ) );
 
 		$this->run_uninstall();
 
-		$this->assertSame( array( array( 'SELECT blog_id FROM wp_blogs', ARRAY_A ) ), $GLOBALS['wpdb']->queries );
 		$this->assertSame(
 			array(
 				array( 'switch_to_blog', 3 ),
@@ -204,108 +193,39 @@ class UninstallTest extends TestCase {
 	}
 
 	/**
-	 * Multisite with no blogs does nothing.
+	 * Multisite with no sites does nothing.
 	 *
 	 * @return void
 	 */
-	public function test_multisite_without_blogs_does_nothing() {
+	public function test_multisite_without_sites_does_nothing() {
 		$this->stub_recorders();
 		WP_Mock::userFunction( 'is_user_logged_in' )->once()->andReturn( true );
 		$this->expect_function_strict( 'current_user_can', array( 'install_plugins' ), true );
 		WP_Mock::userFunction( 'is_multisite' )->once()->andReturn( true );
 
-		$GLOBALS['wpdb'] = $this->make_wpdb( array() ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		$this->expect_get_sites( array() );
 
 		$this->run_uninstall();
 
-		$this->assertSame( array( array( 'SELECT blog_id FROM wp_blogs', ARRAY_A ) ), $GLOBALS['wpdb']->queries );
 		$this->assertSame( array(), $this->calls );
 	}
 
 	/**
-	 * Provides the non-array results get_results() can return (wpdb returns null on error).
+	 * Expects get_sites() to be asked for every site ID, exactly once.
 	 *
-	 * @return array
+	 * @param int[] $ids The site IDs it returns.
+	 * @return void
 	 */
-	public function provide_empty_blog_results() {
-		return array(
-			'null'  => array( null ),
-			'false' => array( false ),
+	private function expect_get_sites( array $ids ) {
+		$this->expect_function_strict(
+			'get_sites',
+			array(
+				array(
+					'fields' => 'ids',
+					'number' => 0,
+				),
+			),
+			$ids
 		);
-	}
-
-	/**
-	 * Multisite where the blog query yields no usable rows touches nothing, without warnings.
-	 *
-	 * @dataProvider provide_empty_blog_results
-	 *
-	 * @param mixed $result The get_results() return value.
-	 * @return void
-	 */
-	public function test_multisite_with_empty_query_result_does_nothing( $result ) {
-		$this->stub_recorders();
-		WP_Mock::userFunction( 'is_user_logged_in' )->once()->andReturn( true );
-		$this->expect_function_strict( 'current_user_can', array( 'install_plugins' ), true );
-		WP_Mock::userFunction( 'is_multisite' )->once()->andReturn( true );
-
-		$GLOBALS['wpdb'] = $this->make_wpdb( $result ); // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
-
-		$this->run_uninstall();
-
-		$this->assertSame( array( array( 'SELECT blog_id FROM wp_blogs', ARRAY_A ) ), $GLOBALS['wpdb']->queries );
-		$this->assertSame( array(), $this->calls );
-	}
-
-	/**
-	 * Builds a $wpdb double that records queries and returns the given rows.
-	 *
-	 * @param array|null|false $rows Rows to return from get_results().
-	 * @return object
-	 */
-	private function make_wpdb( $rows ) {
-		return new class( $rows ) {
-			/**
-			 * Blogs table.
-			 *
-			 * @var string
-			 */
-			public $blogs = 'wp_blogs';
-
-			/**
-			 * Recorded queries.
-			 *
-			 * @var array
-			 */
-			public $queries = array();
-
-			/**
-			 * Rows to return.
-			 *
-			 * @var array|null|false
-			 */
-			private $rows;
-
-			/**
-			 * Constructor.
-			 *
-			 * @param mixed $rows Rows.
-			 */
-			public function __construct( $rows ) {
-				$this->rows = $rows;
-			}
-
-			/**
-			 * Records and answers a query.
-			 *
-			 * @param string $query  SQL.
-			 * @param string $output Output type.
-			 * @return mixed
-			 */
-			public function get_results( $query, $output ) {
-				$this->queries[] = array( $query, $output );
-
-				return $this->rows;
-			}
-		};
 	}
 }

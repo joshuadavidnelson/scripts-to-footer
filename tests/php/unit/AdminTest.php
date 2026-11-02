@@ -13,6 +13,13 @@
 class AdminTest extends TestCase {
 
 	/**
+	 * The metabox render tests stub esc_html__() with a marker, so it has no passthrough.
+	 *
+	 * @var string[]
+	 */
+	protected $own_i18n_stubs = array( 'esc_html__' );
+
+	/**
 	 * Saved $_POST.
 	 *
 	 * @var array
@@ -79,20 +86,28 @@ class AdminTest extends TestCase {
 	}
 
 	/**
+	 * Arranges a posted nonce that is read the way WordPress requires.
+	 *
+	 * The nonce must be unslashed, then sanitized, then verified. Each step returns a
+	 * distinct value, so a skipped or reordered step fails the exact-args assertions.
+	 *
+	 * @param bool|int $verified What wp_verify_nonce() returns.
+	 * @return void
+	 */
+	private function posted_nonce( $verified ) {
+		$_POST['stf_nonce'] = 'posted\\-nonce';
+		$this->expect_function_strict( 'wp_unslash', array( 'posted\\-nonce' ), 'unslashed-nonce' );
+		$this->expect_function_strict( 'sanitize_text_field', array( 'unslashed-nonce' ), 'clean-nonce' );
+		$this->expect_function_strict( 'wp_verify_nonce', array( 'clean-nonce', 'scripts_to_footer' ), $verified );
+	}
+
+	/**
 	 * Arranges a valid save request up to the point of the given guard.
 	 *
 	 * @return void
 	 */
 	private function valid_nonce() {
-		$_POST['stf_nonce'] = 'abc123';
-		WP_Mock::userFunction(
-			'wp_verify_nonce',
-			array(
-				'times'  => 1,
-				'args'   => array( 'abc123', 'scripts_to_footer' ),
-				'return' => 1,
-			)
-		);
+		$this->posted_nonce( 1 );
 	}
 
 	/**
@@ -273,6 +288,14 @@ class AdminTest extends TestCase {
 		);
 		$this->record( 'update_post_meta', $updates );
 		WP_Mock::userFunction(
+			'esc_html__',
+			array(
+				'return' => function ( ...$args ) {
+					return 'HTML(' . implode( '|', $args ) . ')';
+				},
+			)
+		);
+		WP_Mock::userFunction(
 			'wp_nonce_field',
 			array(
 				'return' => function ( ...$args ) use ( &$nonces ) {
@@ -314,9 +337,9 @@ class AdminTest extends TestCase {
 		$this->assertSame( array( array( true, '1', false ) ), $checked );
 		$this->assertSame( array(), $updates );
 		$this->assertSame(
-			'[NONCE]<p style="padding-top:10px;"><label for="stf_exclude">Turn Plugin Off</label>'
+			'[NONCE]<p style="padding-top:10px;"><label for="stf_exclude">HTML(Turn Plugin Off|scripts-to-footerphp)</label>'
 			. '<input type="checkbox" id="stf_exclude" name="stf_exclude"  checked=\'checked\' style="margin:0 20px 0 10px;">'
-			. '<span style="color:#999;">By default, this plugin will run on this post type. This checkbox lets you turn it off for this specific page/post.</span></p>',
+			. '<span style="color:#999;">HTML(By default, this plugin will run on this post type. This checkbox lets you turn it off for this specific page/post.|scripts-to-footerphp)</span></p>',
 			$out
 		);
 	}
@@ -391,10 +414,12 @@ class AdminTest extends TestCase {
 	public function test_metabox_save_missing_nonce() {
 		unset( $_POST['stf_nonce'] );
 		$_POST['stf_exclude'] = 'on';
+		WP_Mock::userFunction( 'wp_unslash', array( 'times' => 0 ) );
+		WP_Mock::userFunction( 'sanitize_text_field', array( 'times' => 0 ) );
 		WP_Mock::userFunction( 'wp_verify_nonce', array( 'times' => 0 ) );
 		$this->expect_no_writes();
 
-		$this->admin()->metabox_save( 7, new stdClass() );
+		$this->admin()->metabox_save( 7 );
 	}
 
 	/**
@@ -405,19 +430,11 @@ class AdminTest extends TestCase {
 	 * @return void
 	 */
 	public function test_metabox_save_invalid_nonce() {
-		$_POST['stf_nonce']   = 'bad';
+		$this->posted_nonce( false );
 		$_POST['stf_exclude'] = 'on';
-		WP_Mock::userFunction(
-			'wp_verify_nonce',
-			array(
-				'times'  => 1,
-				'args'   => array( 'bad', 'scripts_to_footer' ),
-				'return' => false,
-			)
-		);
 		$this->expect_no_writes();
 
-		$this->admin()->metabox_save( 7, new stdClass() );
+		$this->admin()->metabox_save( 7 );
 	}
 
 	/**
@@ -438,7 +455,7 @@ class AdminTest extends TestCase {
 		WP_Mock::userFunction( 'wp_doing_ajax', array( 'times' => 0 ) );
 		$this->expect_no_writes();
 
-		$this->admin()->metabox_save( 7, new stdClass() );
+		$this->admin()->metabox_save( 7 );
 	}
 
 	/**
@@ -461,7 +478,7 @@ class AdminTest extends TestCase {
 		$calls = array();
 		$this->record( 'update_post_meta', $calls );
 
-		$this->admin()->metabox_save( 7, new stdClass() );
+		$this->admin()->metabox_save( 7 );
 
 		$this->assertSame( array( array( 7, 'stf_exclude', 1 ) ), $calls );
 	}
@@ -480,7 +497,7 @@ class AdminTest extends TestCase {
 		WP_Mock::userFunction( 'wp_doing_cron', array( 'times' => 0 ) );
 		$this->expect_no_writes();
 
-		$this->admin()->metabox_save( 7, new stdClass() );
+		$this->admin()->metabox_save( 7 );
 	}
 
 	/**
@@ -498,7 +515,7 @@ class AdminTest extends TestCase {
 		WP_Mock::userFunction( 'current_user_can', array( 'times' => 0 ) );
 		$this->expect_no_writes();
 
-		$this->admin()->metabox_save( 7, new stdClass() );
+		$this->admin()->metabox_save( 7 );
 	}
 
 	/**
@@ -523,7 +540,7 @@ class AdminTest extends TestCase {
 		);
 		$this->expect_no_writes();
 
-		$this->admin()->metabox_save( 7, new stdClass() );
+		$this->admin()->metabox_save( 7 );
 	}
 
 	/**
@@ -558,7 +575,7 @@ class AdminTest extends TestCase {
 		$calls = array();
 		$this->record( 'update_post_meta', $calls );
 
-		$this->admin()->metabox_save( 7, new stdClass() );
+		$this->admin()->metabox_save( 7 );
 
 		$this->assertSame( array( array( 7, 'stf_exclude', $expected ) ), $calls );
 	}
@@ -580,7 +597,7 @@ class AdminTest extends TestCase {
 		$calls = array();
 		$this->record( 'delete_post_meta', $calls );
 
-		$this->admin()->metabox_save( 7, new stdClass() );
+		$this->admin()->metabox_save( 7 );
 
 		$this->assertSame( array( array( 7, 'stf_exclude' ) ), $calls );
 	}
