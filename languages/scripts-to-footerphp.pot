@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-01T06:17:56+00:00\n"
+"POT-Creation-Date: 2026-11-02T05:30:05+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Domain: scripts-to-footerphp\n"
 
@@ -43,8 +43,8 @@ msgstr ""
 msgid "Select which templates should <em><strong>not</strong></em> have scripts moved to the footer:"
 msgstr ""
 
-#. translators: intro for the head scripts settings section and link to the documentation on Github.
-#: includes/class-stf-admin-settings.php:458
+#. translators: %s: URL of the plugin documentation on GitHub.
+#: includes/class-stf-admin-settings.php:453
 #, php-format
 msgid "Options for keeping specific scripts in the header, if they occur. Want to exclude a different script? Check out the <a href=\"%s\" title=\"On Github\">documentation</a> for more information."
 msgstr ""
@@ -61,23 +61,23 @@ msgstr ""
 msgid "Donate"
 msgstr ""
 
-#: includes/class-stf-admin.php:158
+#: includes/class-stf-admin.php:157
 msgid "Turn Plugin Off"
 msgstr ""
 
 #. translators: indicates the checkbox will turn off the plugin for a specific post/page.
-#: includes/class-stf-admin.php:165
+#: includes/class-stf-admin.php:162
 msgid "By default, this plugin will run on this post type. This checkbox lets you turn it off for this specific page/post."
 msgstr ""
 
-#: uninstall.php:48
+#: uninstall.php:47
 msgid "You must be logged in to run this script."
 msgstr ""
 
-#: uninstall.php:49 uninstall.php:57
+#: uninstall.php:48 uninstall.php:56
 msgid "Scripts To Footer"
 msgstr ""
 
-#: uninstall.php:56
+#: uninstall.php:55
 msgid "You do not have permission to run this script."
 msgstr ""
