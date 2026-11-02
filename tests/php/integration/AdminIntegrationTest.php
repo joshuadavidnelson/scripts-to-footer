@@ -304,18 +304,20 @@ class AdminIntegrationTest extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Upgrading converts legacy 'on' exclusion values to '1'.
+	 * Saving a post that holds a legacy 'on' value converts it to '1'.
 	 *
 	 * @return void
 	 */
-	public function test_upgrade_migrates_legacy_on_exclude_meta() {
+	public function test_metabox_save_converts_legacy_on_to_one() {
 		$post_id = $this->create_post();
 		update_post_meta( $post_id, 'stf_exclude', 'on' );
-		update_option( 'stf_version', '0.1.0' );
-		set_current_screen( 'dashboard' );
-		$this->assertTrue( is_admin() );
+		$this->login_as( 'editor' );
+		$_POST = array(
+			'stf_nonce'   => wp_create_nonce( 'scripts_to_footer' ),
+			'stf_exclude' => 'on',
+		);
 
-		new Scripts_To_Footer();
+		$this->admin()->metabox_save( $post_id );
 
 		$this->assertSame( '1', get_post_meta( $post_id, 'stf_exclude', true ) );
 	}

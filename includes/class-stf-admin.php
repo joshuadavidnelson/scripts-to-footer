@@ -157,8 +157,8 @@ class STF_Admin {
 		// Grab current value.
 		$exclude = get_post_meta( get_the_ID(), 'stf_exclude', true );
 
-		// Rendering never writes: legacy 'on' values are migrated on upgrade, and any
-		// truthy value is shown as checked, matching STF_Public::stf_includes().
+		// Rendering never writes: any truthy value, including a legacy 'on', is shown as
+		// checked (matching STF_Public::stf_includes()), and metabox_save() converts it.
 		// Security nonce.
 		wp_nonce_field( 'scripts_to_footer', 'stf_nonce' );
 
