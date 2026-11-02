@@ -20,29 +20,14 @@ class AdminTest extends TestCase {
 	protected $own_i18n_stubs = array( 'esc_html__' );
 
 	/**
-	 * Saved $_POST.
+	 * Clears $_POST after each test, so submitted data never leaks into the next one.
 	 *
-	 * @var array
-	 */
-	private $post_backup;
-
-	/**
-	 * Saves $_POST.
-	 *
-	 * @return void
-	 */
-	protected function set_up() {
-		parent::set_up();
-		$this->post_backup = $_POST; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-	}
-
-	/**
-	 * Restores $_POST.
+	 * $_POST is empty at the start of every run, so resetting is the same as restoring.
 	 *
 	 * @return void
 	 */
 	protected function tear_down() {
-		$_POST = $this->post_backup;
+		$_POST = array();
 		parent::tear_down();
 	}
 

@@ -749,8 +749,8 @@ class PublicTest extends TestCase {
 	/**
 	 * The deprecated exclude filter logs its deprecation notice through log_me().
 	 *
-	 * Separate process because WP_DEBUG and STF_DEBUG are constants; error_log is pointed
-	 * at a temporary file so the exact logged line can be read back.
+	 * Separate process because WP_DEBUG and STF_DEBUG are constants; error_log is captured
+	 * so the exact logged message can be asserted.
 	 *
 	 * @covers STF_Public::stf_includes
 	 * @covers STF_Functions::log_me
@@ -762,8 +762,7 @@ class PublicTest extends TestCase {
 	public function test_stf_includes_deprecated_exclude_filter_logs_deprecation() {
 		define( 'WP_DEBUG', true );
 		define( 'STF_DEBUG', true );
-		$log = tempnam( sys_get_temp_dir(), 'stf-log' );
-		ini_set( 'error_log', $log ); // phpcs:ignore WordPress.PHP.IniSet.Risky
+		$this->capture_error_log();
 
 		$this->arrange_singular( 'is_singular', 42, 'post' );
 		$this->stub_post_types( array( 'page', 'post' ) );
@@ -777,15 +776,11 @@ class PublicTest extends TestCase {
 		$this->stub_filter_strict( 'scripts_to_footer_exclude_page', null, true, array( 42 ) );
 
 		$result = $this->make_public()->stf_includes();
-		$logged = (string) file_get_contents( $log ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
-		unlink( $log ); // phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
 
 		$this->assertFalse( $result );
-		$lines = array_values( array_filter( explode( "\n", $logged ) ) );
-		$this->assertCount( 1, $lines );
-		$this->assertStringEndsWith(
-			'] Scripts-to-Footer Plugin Error: The \'scripts_to_footer_exclude_page\' is depreciated, please use \'stf_{$post_type}\' returning false to exclude the page.',
-			$lines[0]
+		$this->assertSame(
+			array( 'Scripts-to-Footer Plugin Error: The \'scripts_to_footer_exclude_page\' is depreciated, please use \'stf_{$post_type}\' returning false to exclude the page.' ),
+			$this->logged_errors
 		);
 	}
 

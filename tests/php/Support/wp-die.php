@@ -6,30 +6,10 @@
  * behavior (control flow via an exception) rather than a per-test return value.
  * Everything else is stubbed per test with WP_Mock::userFunction().
  *
+ * The exception class lives in class-stf-test-wp-die-exception.php.
+ *
  * @package Scripts_To_Footer
  */
-
-// phpcs:disable WordPress.Files.FileName, Universal.Files.SeparateFunctionsFromOO.Mixed, WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Test-only stand-ins for WordPress core.
-
-/**
- * The exception wp_die() throws in the unit suite.
- */
-class STF_Test_Wp_Die_Exception extends Exception {
-
-	/**
-	 * The title passed to wp_die().
-	 *
-	 * @var mixed
-	 */
-	public $title;
-
-	/**
-	 * The args passed to wp_die().
-	 *
-	 * @var mixed
-	 */
-	public $args;
-}
 
 /**
  * Wp_die() terminates the request with exit() in WordPress. Tests can't survive exit(),
@@ -43,9 +23,6 @@ class STF_Test_Wp_Die_Exception extends Exception {
  * @throws STF_Test_Wp_Die_Exception Always, carrying $message, $title and $args.
  */
 function wp_die( $message = '', $title = '', $args = array() ) {
-	// $message only carries the string a test asserts against, inside the same process.
-	$e        = new STF_Test_Wp_Die_Exception( $message ); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
-	$e->title = $title;
-	$e->args  = $args;
-	throw $e;
+	$exception = STF_Test_Wp_Die_Exception::from_wp_die( $message, $title, $args );
+	throw $exception;
 }

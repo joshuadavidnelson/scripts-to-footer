@@ -33,7 +33,7 @@ class UninstallTest extends WP_UnitTestCase {
 		$this->assertTrue( current_user_can( 'install_plugins' ) );
 
 		if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-			define( 'WP_UNINSTALL_PLUGIN', 'scripts-to-footer/scripts-to-footer.php' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- WordPress core constant.
+			define( 'WP_UNINSTALL_PLUGIN', 'scripts-to-footer/scripts-to-footer.php' );
 		}
 
 		include dirname( __DIR__, 3 ) . '/uninstall.php';
@@ -52,7 +52,7 @@ class UninstallTest extends WP_UnitTestCase {
 	 */
 	private function define_uninstall_constant() {
 		if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-			define( 'WP_UNINSTALL_PLUGIN', 'scripts-to-footer/scripts-to-footer.php' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- WordPress core constant.
+			define( 'WP_UNINSTALL_PLUGIN', 'scripts-to-footer/scripts-to-footer.php' );
 		}
 	}
 

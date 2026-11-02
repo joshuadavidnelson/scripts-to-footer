@@ -13,7 +13,7 @@ require dirname( __DIR__, 3 ) . '/vendor/autoload.php';
  * defines STF_PLUGIN_NAME and STF_VERSION without defined() guards and registers
  * WordPress hooks at file scope, so the classes under test are loaded directly instead.
  */
-define( 'ABSPATH', dirname( __DIR__, 3 ) . '/' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- WordPress core constant.
+define( 'ABSPATH', dirname( __DIR__, 3 ) . '/' );
 define( 'STF_PLUGIN_NAME', 'scripts-to-footer' );
 define( 'STF_VERSION', '0.7.5' );
 define( 'STF_DIR', dirname( __DIR__, 3 ) );
@@ -29,7 +29,8 @@ WP_Mock::setUsePatchwork( true );
 WP_Mock::activateStrictMode();
 WP_Mock::bootstrap();
 
-require __DIR__ . '/../Support/WpPolyfills.php';
+require __DIR__ . '/../Support/class-stf-test-wp-die-exception.php';
+require __DIR__ . '/../Support/wp-die.php';
 require __DIR__ . '/../includes/TestCase.php';
 
 // Plugin files under test. uninstall.php is procedural and is included per test.
