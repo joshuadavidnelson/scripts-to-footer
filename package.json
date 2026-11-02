@@ -19,7 +19,7 @@
 		"env:stop": "wp-env stop"
 	},
 	"overrides": {
-		"qs": "^6.16.1",
+		"qs": "~6.16.2",
 		"glob": "^14.0.3",
 		"minimatch": "^11.0.3"
 	},
