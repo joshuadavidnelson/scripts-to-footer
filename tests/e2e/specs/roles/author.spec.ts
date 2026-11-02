@@ -72,7 +72,9 @@ test.describe( 'Author role', () => {
 		await expect( page.locator( '#stf_exclude' ) ).toHaveCount( 1 );
 
 		const response = await page.goto( `/wp-admin/post.php?post=${ baseline.postId }&action=edit` );
-		expect( response?.status() ).toBe( 403 );
+		// Core's wp_die() status varies by version: 403 on current WordPress,
+		// 500 on the 6.2 floor. The denial itself is asserted by the message.
+		expect( response?.status() ).toBeGreaterThanOrEqual( 400 );
 		await expect( page.locator( 'body' ) ).toContainText( /not allowed to edit/i );
 		await expect( page.locator( '#stf_exclude' ) ).toHaveCount( 0 );
 
