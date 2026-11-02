@@ -5,11 +5,11 @@ Scripts To Footer
 
 [![WP compatibility](https://plugintests.com/plugins/wporg/scripts-to-footerphp/wp-badge.svg)](https://plugintests.com/plugins/wporg/scripts-to-footerphp/latest) [![PHP compatibility](https://plugintests.com/plugins/wporg/scripts-to-footerphp/php-badge.svg)](https://plugintests.com/plugins/wporg/scripts-to-footerphp/latest)
 
-**Requires at least:** 5.3  
+**Requires at least:** 6.2  
 **Tested up to WordPress:** 7.1  
-**Stable version:** 0.7.4  
+**Stable version:** 0.7.5  
 **License:** GPLv2 or later  
-**Requires PHP:** 7.4  
+**Requires PHP:** 8.1  
 **Tested up to PHP:** 8.5
 
 Move your scripts to the footer to speed up perceived page load times and improve user experience.

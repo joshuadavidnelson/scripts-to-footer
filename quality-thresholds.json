@@ -1,0 +1,21 @@
+{
+  "_comment": "Single source of truth for coverage floors and code-metric ceilings, read by the shared CI (joshuadavidnelson/ci), so a number changes in one place. This release has no PHPUnit suite, so Integrate calls the shared workflow with coverage: false and the coverage floors below are not enforced yet; the coverage gate turns on when the test stack lands. Metric ceilings sit a little above current values: enough slack for changes that legitimately add complexity, tight enough that a real regression shows. The PR report shows the delta against the base branch, so a small dip is visible to a reviewer without failing the build.",
+  "coverage": {
+    "php": {
+      "lines": 90,
+      "methods": 90
+    }
+  },
+  "metrics": {
+    "_comment": "Only metrics listed in max are reported in the PR comment. Every one is a ceiling, so worse always means higher. Keys in gate fail CI; the rest annotate the comment. error is held at its current count of 2 (PHPMetrics 'too complex method code' on the STF_Public and STF_Admin_Settings classes) so no new ones can land; lower it when those are refactored.",
+    "max": {
+      "critical": 0,
+      "error": 2,
+      "avgCyclomaticComplexityByClass": 14,
+      "logicalLinesByMethod": 14,
+      "lackCohesionOfMethods": 2.5,
+      "avgEfferentCoupling": 2
+    },
+    "gate": [ "critical", "error" ]
+  }
+}
