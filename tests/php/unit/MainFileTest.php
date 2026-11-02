@@ -52,9 +52,9 @@ class MainFileTest extends TestCase {
 	 * @return void
 	 */
 	private function load_main_file() {
-		$this->expect_function_strict( 'register_activation_hook', array( $this->main_file, 'activate_scripts_to_footer' ), null );
-		$this->expect_function_strict( 'register_deactivation_hook', array( $this->main_file, 'deactivate_scripts_to_footer' ), null );
-		WP_Mock::expectActionAdded( 'plugins_loaded', 'run_scripts_to_footer', 10, 0 );
+		$this->expect_function_strict( 'register_activation_hook', array( $this->main_file, 'stf_activate' ), null );
+		$this->expect_function_strict( 'register_deactivation_hook', array( $this->main_file, 'stf_deactivate' ), null );
+		WP_Mock::expectActionAdded( 'plugins_loaded', 'stf_run', 10, 0 );
 
 		require $this->main_file;
 	}
@@ -70,14 +70,14 @@ class MainFileTest extends TestCase {
 		$this->load_main_file();
 
 		$this->assertSame( 'scripts-to-footer', STF_PLUGIN_NAME );
-		$this->assertSame( '0.7.4', STF_VERSION );
+		$this->assertSame( '0.7.5', STF_VERSION );
 		$this->assertFalse( STF_DEBUG );
 	}
 
 	/**
 	 * The activation callback runs STF_Activator::activate().
 	 *
-	 * @covers ::activate_scripts_to_footer
+	 * @covers ::stf_activate
 	 * @return void
 	 */
 	public function test_activation_callback_activates() {
@@ -85,13 +85,13 @@ class MainFileTest extends TestCase {
 
 		WP_Mock::userFunction( 'flush_rewrite_rules', array( 'times' => 1 ) );
 
-		activate_scripts_to_footer();
+		stf_activate();
 	}
 
 	/**
 	 * The deactivation callback runs STF_Deactivator::deactivate().
 	 *
-	 * @covers ::deactivate_scripts_to_footer
+	 * @covers ::stf_deactivate
 	 * @return void
 	 */
 	public function test_deactivation_callback_deactivates() {
@@ -99,6 +99,6 @@ class MainFileTest extends TestCase {
 
 		WP_Mock::userFunction( 'flush_rewrite_rules', array( 'times' => 1 ) );
 
-		deactivate_scripts_to_footer();
+		stf_deactivate();
 	}
 }
