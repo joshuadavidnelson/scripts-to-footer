@@ -1,7 +1,7 @@
 # Changelog
 
 ## 0.7.5
-- Require PHP 8.1 or newer
+- Require PHP 8.1 or newer and WordPress 6.2 or newer
 - Update development tooling and continuous integration
 
 ## 0.7.4
