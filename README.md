@@ -97,10 +97,9 @@ The PHP test suites need Composer dependencies (`composer install`).
 **Unit tests** use PHPUnit with [WP_Mock](https://github.com/10up/wp_mock), so WordPress and a database aren't needed:
 
 ```sh
-composer test                  # unit suite
-composer test:coverage         # unit suite with a text coverage report (needs Xdebug)
-composer test:coverage-clover  # writes coverage/clover.xml
-composer test:coverage-check   # fails if line coverage in coverage/clover.xml is under 90%
+composer phpunit                  # unit suite (`composer test` is an alias)
+composer phpunit:coverage         # unit suite with a text coverage report (needs Xdebug)
+composer phpunit:coverage-clover  # writes coverage/php-clover.xml, which CI checks against quality-thresholds.json
 ```
 
 WP_Mock runs in strict mode, so every WordPress function, filter and action a test reaches must be stubbed in that test. Plugin-owned `stf_*` functions are never stubbed.
@@ -109,7 +108,7 @@ WP_Mock runs in strict mode, so every WordPress function, filter and action a te
 
 ```sh
 bin/install-wp-tests.sh wordpress_test root '' 127.0.0.1 latest
-composer test:integration
+composer phpunit:integration    # `composer test:integration` is an alias
 ```
 
 `bin/install-wp-tests.sh` exports nothing, so pass `WP_TESTS_DIR` (default `/tmp/wordpress-tests-lib`) if you installed the library elsewhere. Without `WP_TESTS_DIR`, the bootstrap falls back to the bundled `wp-phpunit/wp-phpunit` library and `tests/php/integration/wp-tests-config.php`, which reads `WP_CORE_DIR`, `WP_DB_NAME`, `WP_DB_USER`, `WP_DB_PASSWORD` and `WP_DB_HOST` from the environment.
