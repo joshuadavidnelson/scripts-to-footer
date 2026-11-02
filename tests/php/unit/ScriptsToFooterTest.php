@@ -100,7 +100,7 @@ class ScriptsToFooterTest extends TestCase {
 			array(
 				array( 'init', 'STF_I18n', 'load_plugin_textdomain', 10, 1 ),
 				array( 'add_meta_boxes', 'STF_Admin', 'metabox_register', 10, 1 ),
-				array( 'save_post', 'STF_Admin', 'metabox_save', 1, 2 ),
+				array( 'save_post', 'STF_Admin', 'metabox_save', 1, 1 ),
 				array( 'admin_menu', 'STF_Admin_Settings', 'add_plugin_page', 10, 1 ),
 				array( 'admin_init', 'STF_Admin_Settings', 'page_init', 10, 1 ),
 				array( 'wp_enqueue_scripts', 'STF_Public', 'clean_head', 10, 1 ),

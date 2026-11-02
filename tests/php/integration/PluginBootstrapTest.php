@@ -27,7 +27,7 @@ class PluginBootstrapTest extends WP_UnitTestCase {
 	 * @return void
 	 */
 	public function test_plugin_runs_on_plugins_loaded() {
-		$this->assertSame( 10, has_action( 'plugins_loaded', 'run_scripts_to_footer' ) );
+		$this->assertSame( 10, has_action( 'plugins_loaded', 'stf_run' ) );
 	}
 
 	/**
@@ -38,7 +38,7 @@ class PluginBootstrapTest extends WP_UnitTestCase {
 	public function test_activation_hook_is_registered() {
 		$hook = 'activate_' . plugin_basename( $this->main_file() );
 
-		$this->assertSame( 10, has_action( $hook, 'activate_scripts_to_footer' ) );
+		$this->assertSame( 10, has_action( $hook, 'stf_activate' ) );
 	}
 
 	/**
@@ -49,7 +49,7 @@ class PluginBootstrapTest extends WP_UnitTestCase {
 	public function test_deactivation_hook_is_registered() {
 		$hook = 'deactivate_' . plugin_basename( $this->main_file() );
 
-		$this->assertSame( 10, has_action( $hook, 'deactivate_scripts_to_footer' ) );
+		$this->assertSame( 10, has_action( $hook, 'stf_deactivate' ) );
 	}
 
 	/**

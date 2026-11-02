@@ -98,7 +98,7 @@ class AdminIntegrationTest extends WP_UnitTestCase {
 			'stf_exclude' => 'on',
 		);
 
-		$this->admin()->metabox_save( $post_id, get_post( $post_id ) );
+		$this->admin()->metabox_save( $post_id );
 
 		$this->assertSame( '1', get_post_meta( $post_id, 'stf_exclude', true ) );
 		$this->assertSame( array( '1' ), get_post_meta( $post_id, 'stf_exclude', false ) ); // phpcs:ignore WordPress.WP.GetMetaSingle.Missing -- Asserting the single stored row.
@@ -115,7 +115,7 @@ class AdminIntegrationTest extends WP_UnitTestCase {
 		$this->login_as( 'editor' );
 		$_POST = array( 'stf_nonce' => wp_create_nonce( 'scripts_to_footer' ) );
 
-		$this->admin()->metabox_save( $post_id, get_post( $post_id ) );
+		$this->admin()->metabox_save( $post_id );
 
 		$this->assertFalse( metadata_exists( 'post', $post_id, 'stf_exclude' ) );
 	}
@@ -133,12 +133,12 @@ class AdminIntegrationTest extends WP_UnitTestCase {
 			'stf_exclude' => '1',
 		);
 
-		$this->admin()->metabox_save( $post_id, get_post( $post_id ) );
+		$this->admin()->metabox_save( $post_id );
 		$this->assertFalse( metadata_exists( 'post', $post_id, 'stf_exclude' ) );
 
 		update_post_meta( $post_id, 'stf_exclude', 1 );
 		unset( $_POST['stf_exclude'] );
-		$this->admin()->metabox_save( $post_id, get_post( $post_id ) );
+		$this->admin()->metabox_save( $post_id );
 		$this->assertSame( '1', get_post_meta( $post_id, 'stf_exclude', true ), 'A subscriber must not delete the flag.' );
 	}
 
@@ -155,12 +155,12 @@ class AdminIntegrationTest extends WP_UnitTestCase {
 		$this->login_as( 'administrator' );
 		$_POST = $post;
 
-		$this->admin()->metabox_save( $post_id, get_post( $post_id ) );
+		$this->admin()->metabox_save( $post_id );
 		$this->assertFalse( metadata_exists( 'post', $post_id, 'stf_exclude' ) );
 
 		update_post_meta( $post_id, 'stf_exclude', 1 );
 		unset( $_POST['stf_exclude'] );
-		$this->admin()->metabox_save( $post_id, get_post( $post_id ) );
+		$this->admin()->metabox_save( $post_id );
 		$this->assertSame( '1', get_post_meta( $post_id, 'stf_exclude', true ), 'A bad nonce must not delete the flag.' );
 	}
 

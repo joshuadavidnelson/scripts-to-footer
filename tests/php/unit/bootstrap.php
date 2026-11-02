@@ -15,7 +15,7 @@ require dirname( __DIR__, 3 ) . '/vendor/autoload.php';
  */
 define( 'ABSPATH', dirname( __DIR__, 3 ) . '/' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- WordPress core constant.
 define( 'STF_PLUGIN_NAME', 'scripts-to-footer' );
-define( 'STF_VERSION', '0.7.4' );
+define( 'STF_VERSION', '0.7.5' );
 define( 'STF_DIR', dirname( __DIR__, 3 ) );
 define( 'STF_URL', 'https://example.org/wp-content/plugins/scripts-to-footer/' );
 
