@@ -54,7 +54,7 @@ define( 'STF_VERSION', '0.7.4' );
  * The code that runs during plugin activation.
  * This action is documented in includes/class-stf-activator.php
  */
-function activate_scripts_to_footer() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Plugin boilerplate name, kept for backward compatibility.
+function stf_activate() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-stf-activator.php';
 	STF_Activator::activate();
 }
@@ -63,12 +63,12 @@ function activate_scripts_to_footer() { // phpcs:ignore WordPress.NamingConventi
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-stf-deactivator.php
  */
-function deactivate_scripts_to_footer() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Plugin boilerplate name, kept for backward compatibility.
+function stf_deactivate() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-stf-deactivator.php';
 	STF_Deactivator::deactivate();
 }
-register_activation_hook( __FILE__, 'activate_scripts_to_footer' );
-register_deactivation_hook( __FILE__, 'deactivate_scripts_to_footer' );
+register_activation_hook( __FILE__, 'stf_activate' );
+register_deactivation_hook( __FILE__, 'stf_deactivate' );
 
 /**
  * The core plugin class that is used to define internationalization,
@@ -85,8 +85,8 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-scripts-to-footer.php';
  *
  * @since 0.7.0
  */
-function run_scripts_to_footer() { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound -- Plugin boilerplate name, kept for backward compatibility.
+function stf_run() {
 	$plugin = new Scripts_To_Footer();
 	$plugin->run();
 }
-add_action( 'plugins_loaded', 'run_scripts_to_footer', 10, 0 );
+add_action( 'plugins_loaded', 'stf_run', 10, 0 );

@@ -42,23 +42,21 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
  * @uses  current_user_can()
  * @uses  wp_die()
  */
-// @codingStandardsIgnoreStart
 if ( ! is_user_logged_in() ) {
 	wp_die(
-		__( 'You must be logged in to run this script.', 'scripts-to-footerphp' ),
-		__( 'Scripts To Footer', 'scripts-to-footerphp' ),
+		esc_html__( 'You must be logged in to run this script.', 'scripts-to-footerphp' ),
+		esc_html__( 'Scripts To Footer', 'scripts-to-footerphp' ),
 		array( 'back_link' => true )
 	);
 }
 
 if ( ! current_user_can( 'install_plugins' ) ) {
 	wp_die(
-		__( 'You do not have permission to run this script.', 'scripts-to-footerphp' ),
-		__( 'Scripts To Footer', 'scripts-to-footerphp' ),
+		esc_html__( 'You do not have permission to run this script.', 'scripts-to-footerphp' ),
+		esc_html__( 'Scripts To Footer', 'scripts-to-footerphp' ),
 		array( 'back_link' => true )
 	);
 }
-// @codingStandardsIgnoreEnd
 
 /**
  * Delete options array (settings field) from the database.
@@ -69,23 +67,23 @@ if ( ! current_user_can( 'install_plugins' ) ) {
  * @uses  switch_to_blog()
  * @uses  restore_current_blog()
  *
- * @param array $stf_blogs
- * @param int   $stf_blog
- *
- * @global $wpdb
+ * @uses  get_sites()
  */
 // First, check for Multisite, if yes, delete options on a per site basis.
 if ( is_multisite() ) {
-	global $wpdb;
+	// Get every site ID in the network.
+	$stf_site_ids = get_sites(
+		array(
+			'fields' => 'ids',
+			'number' => 0,
+		)
+	);
 
-	// Get array of Site/Blog IDs from the database.
-	$stf_blogs = $wpdb->get_results( "SELECT blog_id FROM {$wpdb->blogs}", ARRAY_A ); // phpcs:ignore
-
-	if ( $stf_blogs ) {
-		foreach ( $stf_blogs as $stf_blog ) {
+	if ( $stf_site_ids ) {
+		foreach ( $stf_site_ids as $stf_site_id ) {
 
 			// Repeat for every Site ID.
-			switch_to_blog( $stf_blog['blog_id'] );
+			switch_to_blog( $stf_site_id );
 
 			// Delete plugin options.
 			delete_option( 'scripts-to-footer' );

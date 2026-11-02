@@ -154,16 +154,12 @@ class STF_Admin {
 		echo '<p style="padding-top:10px;">';
 
 		// Exclude.
-		// @codingStandardsIgnoreStart
-		printf( '<label for="stf_exclude">%s</label>', __( 'Turn Plugin Off', 'scripts-to-footerphp' ) );
-		// @codingStandardsIgnoreEnd
+		printf( '<label for="stf_exclude">%s</label>', esc_html__( 'Turn Plugin Off', 'scripts-to-footerphp' ) );
 
 		echo '<input type="checkbox" id="stf_exclude" name="stf_exclude" ' . checked( true, $exclude, false ) . ' style="margin:0 20px 0 10px;">';
 
-		// @codingStandardsIgnoreStart
 		// translators: indicates the checkbox will turn off the plugin for a specific post/page.
-		printf( '<span style="color:#999;">%s</span>', __( 'By default, this plugin will run on this post type. This checkbox lets you turn it off for this specific page/post.', 'scripts-to-footerphp' ) );
-		// @codingStandardsIgnoreEnd
+		printf( '<span style="color:#999;">%s</span>', esc_html__( 'By default, this plugin will run on this post type. This checkbox lets you turn it off for this specific page/post.', 'scripts-to-footerphp' ) );
 
 		echo '</p>';
 	}
@@ -172,18 +168,15 @@ class STF_Admin {
 	 * Handle metabox saves
 	 *
 	 * @since 0.6.0
-	 * @param int    $post_id the post id.
-	 * @param object $post    the post object.
+	 * @param int $post_id the post id.
 	 * @return void
 	 */
-	public function metabox_save( $post_id, $post ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.FoundAfterLastUsed
+	public function metabox_save( $post_id ) {
 
 		// Security check.
-		// @codingStandardsIgnoreStart
-		if ( ! isset( $_POST['stf_nonce'] ) || ! wp_verify_nonce( $_POST['stf_nonce'], 'scripts_to_footer' ) ) {
+		if ( ! isset( $_POST['stf_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['stf_nonce'] ) ), 'scripts_to_footer' ) ) {
 			return;
 		}
-		// @codingStandardsIgnoreEnd
 
 		// Bail out if running an autosave, ajax, cron.
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {

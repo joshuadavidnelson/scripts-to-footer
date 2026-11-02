@@ -380,9 +380,8 @@ class STF_Admin_Settings {
 
 				$obj = get_post_type_object( $post_type );
 
-				// @codingStandardsIgnoreStart - wants to escape variables here that are entirely safe.
-				echo "<li><input type=\"checkbox\" id=\"stf_exclude_{$post_type}_archive\" name=\"" . $this->settings_field . "[stf_exclude_{$post_type}_archive]\" " . checked( $this->options[ "stf_exclude_{$post_type}_archive" ], 1, false ) . " value=\"1\"><label for=\"stf_exclude_{$post_type}_archive\">" . $obj->labels->singular_name . ' </label></li>';
-				// @codingStandardsIgnoreEnd
+				$field_id = "stf_exclude_{$post_type}_archive";
+				echo '<li><input type="checkbox" id="' . esc_attr( $field_id ) . '" name="' . esc_attr( $this->settings_field . "[{$field_id}]" ) . '" ' . checked( $this->options[ $field_id ], 1, false ) . ' value="1"><label for="' . esc_attr( $field_id ) . '">' . esc_html( $obj->labels->singular_name ) . ' </label></li>';
 			}
 			echo '</ul>';
 		}
@@ -406,9 +405,8 @@ class STF_Admin_Settings {
 
 				$obj = get_taxonomy( $taxonomy );
 
-				// @codingStandardsIgnoreStart - wants to escape variables here that are entirely safe.
-				echo "<li><input type=\"checkbox\" id=\"stf_exclude_{$taxonomy}_archive\" name=\"" . $this->settings_field . "[stf_exclude_{$taxonomy}_archive]\" " . checked( $this->options["stf_exclude_{$taxonomy}_archive"], 1, false ) . " value=\"1\"><label for=\"stf_exclude_{$taxonomy}_archive\">" . $obj->labels->singular_name . ' </label></li>';
-				// @codingStandardsIgnoreEnd
+				$field_id = "stf_exclude_{$taxonomy}_archive";
+				echo '<li><input type="checkbox" id="' . esc_attr( $field_id ) . '" name="' . esc_attr( $this->settings_field . "[{$field_id}]" ) . '" ' . checked( $this->options[ $field_id ], 1, false ) . ' value="1"><label for="' . esc_attr( $field_id ) . '">' . esc_html( $obj->labels->singular_name ) . ' </label></li>';
 			}
 			echo '</ul>';
 		}
@@ -425,9 +423,7 @@ class STF_Admin_Settings {
 			$this->options['stf_exclude_author_archive'] = 0;
 		}
 
-		// @codingStandardsIgnoreStart - wants to escape variables here that are entirely safe.
-		echo '<input type="checkbox" name="' . $this->settings_field . '[stf_exclude_author_archive]" ' . checked( $this->options['stf_exclude_author_archive'], 1, false ) . ' value="1">';
-		// @codingStandardsIgnoreEnd
+		echo '<input type="checkbox" name="' . esc_attr( $this->settings_field ) . '[stf_exclude_author_archive]" ' . checked( $this->options['stf_exclude_author_archive'], 1, false ) . ' value="1">';
 	}
 
 	/**
@@ -441,9 +437,7 @@ class STF_Admin_Settings {
 			$this->options['stf_exclude_archive'] = 0;
 		}
 
-		// @codingStandardsIgnoreStart - wants to escape variables here that are entirely safe.
-		echo '<input type="checkbox" name="' . $this->settings_field . '[stf_exclude_archive]" ' . checked( $this->options['stf_exclude_archive'], 1, false ) . ' value="1">';
-		// @codingStandardsIgnoreEnd
+		echo '<input type="checkbox" name="' . esc_attr( $this->settings_field ) . '[stf_exclude_archive]" ' . checked( $this->options['stf_exclude_archive'], 1, false ) . ' value="1">';
 	}
 
 	/**
@@ -453,10 +447,19 @@ class STF_Admin_Settings {
 	 */
 	public function print_header_script_section_info() {
 
-		// @codingStandardsIgnoreStart - wants to escape variables here that are entirely safe.
-		// translators: intro for the head scripts settings section and link to the documentation on Github.
-		echo sprintf( __( 'Options for keeping specific scripts in the header, if they occur. Want to exclude a different script? Check out the <a href="%s" title="On Github">documentation</a> for more information.', 'scripts-to-footerphp' ), 'https://github.com/joshuadavidnelson/scripts-to-footer/wiki' );
-		// @codingStandardsIgnoreEnd
+		printf(
+			wp_kses(
+				// translators: %s: URL of the plugin documentation on GitHub.
+				__( 'Options for keeping specific scripts in the header, if they occur. Want to exclude a different script? Check out the <a href="%s" title="On Github">documentation</a> for more information.', 'scripts-to-footerphp' ),
+				array(
+					'a' => array(
+						'href'  => array(),
+						'title' => array(),
+					),
+				)
+			),
+			esc_url( 'https://github.com/joshuadavidnelson/scripts-to-footer/wiki' )
+		);
 	}
 
 	/**
@@ -470,8 +473,6 @@ class STF_Admin_Settings {
 			$this->options['stf_jquery_header'] = 0;
 		}
 
-		// @codingStandardsIgnoreStart - wants to escape variables here that are entirely safe.
-		echo '<input type="checkbox" name="' . $this->settings_field . '[stf_jquery_header]" ' . checked( $this->options['stf_jquery_header'], 1, false ) . ' value="1">';
-		// @codingStandardsIgnoreEnd
+		echo '<input type="checkbox" name="' . esc_attr( $this->settings_field ) . '[stf_jquery_header]" ' . checked( $this->options['stf_jquery_header'], 1, false ) . ' value="1">';
 	}
 }
