@@ -4,8 +4,6 @@ parameters:
 	level: 5
 	inferPrivatePropertyTypeFromConstructor: true
 	treatPhpDocTypesAsCertain: false
-	bootstrapFiles:
-		- tests/bootstrap.php
 	paths:
 		- scripts-to-footer.php
 		- includes/

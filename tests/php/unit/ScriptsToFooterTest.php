@@ -1,0 +1,241 @@
+<?php
+/**
+ * Tests for Scripts_To_Footer.
+ *
+ * @package Scripts_To_Footer
+ */
+
+/**
+ * Unit tests for Scripts_To_Footer.
+ *
+ * @covers Scripts_To_Footer
+ */
+class ScriptsToFooterTest extends TestCase {
+
+	/**
+	 * Stubs what the constructor reaches.
+	 *
+	 * @param bool $is_admin Whether is_admin() is true.
+	 * @return void
+	 */
+	private function stub_constructor( $is_admin = false ) {
+		WP_Mock::expectAction( 'stf_init' );
+		// Production passes its own directory (__DIR__ of includes/), not a file path.
+		$this->expect_function_strict( 'plugin_dir_path', array( dirname( __DIR__, 3 ) . '/includes' ), dirname( __DIR__, 3 ) . '/' );
+		WP_Mock::userFunction( 'is_admin', array( 'return' => $is_admin ) );
+	}
+
+	/**
+	 * Records calls to a write function.
+	 *
+	 * @param string $func Function name.
+	 * @param array  $calls    Reference receiving the argument lists.
+	 * @return void
+	 */
+	private function record( $func, array &$calls ) {
+		WP_Mock::userFunction(
+			$func,
+			array(
+				'return' => function ( ...$args ) use ( &$calls ) {
+					$calls[] = $args;
+					return true;
+				},
+			)
+		);
+	}
+
+	/**
+	 * Builds the plugin with the upgrade check driven by the given stored version.
+	 *
+	 * @param mixed $stored Stored stf_version, or false when unset.
+	 * @return array{0: Scripts_To_Footer, 1: array, 2: array} Plugin, update_option calls, get_option calls.
+	 */
+	private function build_admin( $stored ) {
+		$this->stub_constructor( true );
+		$updates = array();
+		$gets    = array();
+		$this->record( 'update_option', $updates );
+		WP_Mock::userFunction(
+			'get_option',
+			array(
+				'return' => function ( ...$args ) use ( &$gets, $stored ) {
+					$gets[] = $args;
+					return $stored;
+				},
+			)
+		);
+
+		$plugin = new Scripts_To_Footer();
+
+		return array( $plugin, $updates, $gets );
+	}
+
+	/**
+	 * Construction queues exactly the documented hooks.
+	 *
+	 * @covers Scripts_To_Footer::__construct
+	 * @covers Scripts_To_Footer::define_admin_hooks
+	 * @covers Scripts_To_Footer::define_public_hooks
+	 * @covers Scripts_To_Footer::set_locale
+	 * @covers Scripts_To_Footer::load_dependencies
+	 *
+	 * @return void
+	 */
+	public function test_constructor_queues_exact_hooks() {
+		$this->stub_constructor();
+
+		$plugin = new Scripts_To_Footer();
+		$loader = $plugin->get_loader();
+
+		$summarize = function ( array $hooks ) {
+			return array_map(
+				function ( $h ) {
+					return array( $h['hook'], get_class( $h['component'] ), $h['callback'], $h['priority'], $h['accepted_args'] );
+				},
+				$hooks
+			);
+		};
+
+		$this->assertSame(
+			array(
+				array( 'init', 'STF_I18n', 'load_plugin_textdomain', 10, 1 ),
+				array( 'add_meta_boxes', 'STF_Admin', 'metabox_register', 10, 1 ),
+				array( 'save_post', 'STF_Admin', 'metabox_save', 1, 1 ),
+				array( 'admin_menu', 'STF_Admin_Settings', 'add_plugin_page', 10, 1 ),
+				array( 'admin_init', 'STF_Admin_Settings', 'page_init', 10, 1 ),
+				array( 'wp_enqueue_scripts', 'STF_Public', 'clean_head', 10, 1 ),
+				array( 'wp_head', 'STF_Public', 'set_header_scripts', 1, 1 ),
+				array( 'wp_head', 'STF_Public', 'print_head_scripts', 10, 1 ),
+			),
+			$summarize( $this->get_property( $loader, 'actions' ) )
+		);
+		$this->assertSame(
+			array(
+				array( 'plugin_row_meta', 'STF_Admin', 'plugin_links', 10, 2 ),
+				array( 'plugin_action_links_scripts-to-footer/scripts-to-footer.php', 'STF_Admin', 'plugin_settings_link', 10, 1 ),
+				array( 'stf_include', 'STF_Public', 'stf_includes', 10, 1 ),
+			),
+			$summarize( $this->get_property( $loader, 'filters' ) )
+		);
+
+		// The same Admin instance serves all of its hooks.
+		$actions = $this->get_property( $loader, 'actions' );
+		$filters = $this->get_property( $loader, 'filters' );
+		$this->assertSame( $actions[1]['component'], $actions[2]['component'] );
+		$this->assertSame( $actions[1]['component'], $filters[0]['component'] );
+		$this->assertSame( $actions[1]['component'], $filters[1]['component'] );
+	}
+
+	/**
+	 * Run() delegates to the loader, adding every hook to WordPress.
+	 *
+	 * @covers Scripts_To_Footer::run
+	 *
+	 * @return void
+	 */
+	public function test_run_registers_hooks_with_wordpress() {
+		$this->stub_constructor();
+
+		$plugin = new Scripts_To_Footer();
+		$loader = $plugin->get_loader();
+
+		$by_hook = array();
+		foreach ( array_merge( $this->get_property( $loader, 'actions' ), $this->get_property( $loader, 'filters' ) ) as $h ) {
+			$by_hook[] = $h;
+		}
+
+		foreach ( $by_hook as $h ) {
+			$is_filter = in_array( $h['hook'], array( 'plugin_row_meta', 'stf_include' ), true ) || 0 === strpos( $h['hook'], 'plugin_action_links_' );
+			if ( $is_filter ) {
+				WP_Mock::expectFilterAdded( $h['hook'], array( $h['component'], $h['callback'] ), $h['priority'], $h['accepted_args'] );
+			} else {
+				WP_Mock::expectActionAdded( $h['hook'], array( $h['component'], $h['callback'] ), $h['priority'], $h['accepted_args'] );
+			}
+		}
+
+		$plugin->run();
+
+		$this->assertCount( 11, $by_hook );
+	}
+
+	/**
+	 * The getters expose the plugin name, version and loader.
+	 *
+	 * @covers Scripts_To_Footer::get_plugin_name
+	 * @covers Scripts_To_Footer::get_version
+	 * @covers Scripts_To_Footer::get_loader
+	 *
+	 * @return void
+	 */
+	public function test_getters() {
+		$this->stub_constructor();
+
+		$plugin = new Scripts_To_Footer();
+
+		$this->assertSame( 'scripts-to-footer', $plugin->get_plugin_name() );
+		$this->assertSame( STF_VERSION, $plugin->get_version() );
+		$this->assertInstanceOf( STF_Loader::class, $plugin->get_loader() );
+	}
+
+	/**
+	 * Outside the admin the upgrade check touches no options.
+	 *
+	 * @covers Scripts_To_Footer::upgrade_check
+	 *
+	 * @return void
+	 */
+	public function test_upgrade_check_skipped_outside_admin() {
+		$this->stub_constructor( false );
+		WP_Mock::userFunction( 'get_option', array( 'times' => 0 ) );
+		WP_Mock::userFunction( 'update_option', array( 'times' => 0 ) );
+
+		new Scripts_To_Footer();
+	}
+
+	/**
+	 * With no stored version only the current version is saved.
+	 *
+	 * @covers Scripts_To_Footer::upgrade_check
+	 *
+	 * @return void
+	 */
+	public function test_upgrade_check_first_install_saves_version_only() {
+		list( , $updates, $gets ) = $this->build_admin( false );
+
+		$this->assertSame( array( array( 'stf_version', false ) ), $gets );
+		$this->assertSame( array( array( 'stf_version', STF_VERSION, false ) ), $updates );
+	}
+
+	/**
+	 * An older stored version is recorded as previous, then replaced.
+	 *
+	 * @covers Scripts_To_Footer::upgrade_check
+	 *
+	 * @return void
+	 */
+	public function test_upgrade_check_older_version_records_previous() {
+		list( , $updates ) = $this->build_admin( '0.6.0' );
+
+		$this->assertSame(
+			array(
+				array( 'stf_previous_version', '0.6.0', false ),
+				array( 'stf_version', STF_VERSION, false ),
+			),
+			$updates
+		);
+	}
+
+	/**
+	 * The same stored version writes nothing.
+	 *
+	 * @covers Scripts_To_Footer::upgrade_check
+	 *
+	 * @return void
+	 */
+	public function test_upgrade_check_same_version_writes_nothing() {
+		list( , $updates, $gets ) = $this->build_admin( STF_VERSION );
+
+		$this->assertSame( array(), $updates );
+		$this->assertSame( array( array( 'stf_version', false ) ), $gets );
+	}
+}

@@ -1,5 +1,5 @@
 {
-  "_comment": "Single source of truth for coverage floors and code-metric ceilings, read by the shared CI (joshuadavidnelson/ci), so a number changes in one place. This release has no PHPUnit suite, so Integrate calls the shared workflow with coverage: false and the coverage floors below are not enforced yet; the coverage gate turns on when the test stack lands. Metric ceilings sit a little above current values: enough slack for changes that legitimately add complexity, tight enough that a real regression shows. The PR report shows the delta against the base branch, so a small dip is visible to a reviewer without failing the build.",
+  "_comment": "Single source of truth for coverage floors and code-metric ceilings, read by the shared CI (joshuadavidnelson/ci), so a number changes in one place. The coverage floors are enforced on the WP_Mock unit suite (composer phpunit:coverage-clover). Metric ceilings sit a little above current values: enough slack for changes that legitimately add complexity, tight enough that a real regression shows. The PR report shows the delta against the base branch, so a small dip is visible to a reviewer without failing the build.",
   "coverage": {
     "php": {
       "lines": 90,

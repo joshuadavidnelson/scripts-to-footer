@@ -36,7 +36,9 @@
     "squizlabs/php_codesniffer": "^3.7",
     "php-stubs/wordpress-stubs": "^7.1",
     "phpmd/phpmd": "^2.15",
-    "phpmetrics/phpmetrics": "^2.8"
+    "phpmetrics/phpmetrics": "^2.8",
+    "mockery/mockery": "^1.6",
+    "wp-phpunit/wp-phpunit": "^6.8"
   },
   "scripts": {
     "lint": [
@@ -49,10 +51,22 @@
       "./vendor/bin/phpunit"
     ],
     "phpunit:coverage": [
-      "./vendor/bin/phpunit --coverage-text"
+      "@php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-text"
     ],
     "phpunit:coverage-html": [
-      "./vendor/bin/phpunit --coverage-html coverage"
+      "@php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-html coverage"
+    ],
+    "phpunit:coverage-clover": [
+      "@php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover coverage/php-clover.xml --coverage-text"
+    ],
+    "phpunit:integration": [
+      "./vendor/bin/phpunit -c phpunit-integration.xml.dist"
+    ],
+    "test": [
+      "@phpunit"
+    ],
+    "test:integration": [
+      "@phpunit:integration"
     ],
     "phpcs": [
       "./vendor/bin/phpcs"

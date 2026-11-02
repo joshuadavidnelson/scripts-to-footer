@@ -19,11 +19,112 @@ jobs:
     with:
       php-versions: '["8.1", "8.2", "8.3", "8.4", "8.5"]'
       source-paths: "scripts-to-footer.php uninstall.php includes/"
-      # No PHPUnit suite in this release yet. Turn tests and coverage on,
-      # and with them the coverage floors in quality-thresholds.json, when
-      # the test stack lands.
-      tests: false
-      coverage: false
+      # Runs the WP_Mock unit suite once on the shared PHP version with
+      # Xdebug (composer phpunit:coverage-clover), enforces the coverage
+      # floors in quality-thresholds.json and measures the base branch for
+      # the PR report. The jobs below cover what the shared workflow does not.
+      tests: true
+      coverage: true
+
+  phpunit:
+    # The shared tests job runs on one PHP version; this runs the unit suite on
+    # the composer floor (composer.json "php": ">=8.1") and the newest version.
+    name: "PHPUnit unit tests (PHP ${{ matrix.php }})"
+    runs-on: "ubuntu-latest"
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.1', '8.5']
+    steps:
+    - name: "Checkout"
+      uses: "actions/checkout@v6"
+
+    - name: "Install PHP"
+      uses: "shivammathur/setup-php@v2"
+      with:
+        php-version: ${{ matrix.php }}
+        coverage: "none"
+
+    - name: "Cache Composer dependencies"
+      uses: "actions/cache@v4"
+      with:
+        path: vendor
+        key: composer-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
+        restore-keys: |
+          composer-${{ matrix.php }}-
+
+    - name: "Install Composer packages"
+      run: "composer install --no-interaction --no-progress"
+
+    - name: "Run PHPUnit"
+      run: "composer phpunit"
+
+  integration:
+    # The shared workflow has no database service, so the real-WordPress suite
+    # runs here against MySQL.
+    name: "Integration tests (WP ${{ matrix.wp }}, PHP ${{ matrix.php }})"
+    runs-on: "ubuntu-latest"
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - wp: "latest"
+            php: "8.3"
+            experimental: false
+          # The WordPress minimum ("Requires at least: 6.2") on the PHP floor.
+          - wp: "6.2"
+            php: "8.1"
+            experimental: false
+          - wp: "trunk"
+            php: "8.4"
+            experimental: true
+    services:
+      mysql:
+        image: "mysql:8"
+        env:
+          MYSQL_ROOT_PASSWORD: "root"
+          MYSQL_DATABASE: "wordpress_test"
+        ports:
+          - "3306:3306"
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      WP_CORE_DIR: "/tmp/wordpress/"
+      WP_TESTS_DIR: "/tmp/wordpress-tests-lib"
+    steps:
+    - name: "Checkout"
+      uses: "actions/checkout@v6"
+
+    - name: "Install PHP"
+      uses: "shivammathur/setup-php@v2"
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: "mysqli"
+        coverage: "none"
+
+    - name: "Install Subversion"
+      run: "sudo apt-get update -q && sudo apt-get install -y -q subversion"
+
+    - name: "Cache Composer dependencies"
+      uses: "actions/cache@v4"
+      with:
+        path: vendor
+        key: composer-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
+        restore-keys: |
+          composer-${{ matrix.php }}-
+
+    - name: "Install Composer packages"
+      run: "composer install --no-interaction --no-progress"
+
+    - name: "Install WordPress and the test library"
+      run: "bash bin/install-wp-tests.sh wordpress_test root root 127.0.0.1:3306 ${{ matrix.wp }} true"
+
+    - name: "Run integration tests"
+      run: "composer phpunit:integration"
 
   npm:
     name: "Install and audit npm packages"
