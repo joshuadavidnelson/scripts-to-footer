@@ -20,9 +20,8 @@ jobs:
     name: "WP ${{ matrix.wp }} / PHP ${{ matrix.php }} E2E"
     runs-on: "ubuntu-latest"
     timeout-minutes: 60
-    # Legs marked `experimental` report but never block: development
-    # WordPress (master) is upstream code, and the floor leg is documented in
-    # the README's E2E section.
+    # Development WordPress (master) is upstream code, so its leg reports
+    # but never blocks.
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       fail-fast: false
@@ -40,12 +39,10 @@ jobs:
         - wp: "7.1"
           php: "8.4"
           experimental: false
-        # Plugin header floor: "Requires at least: 5.3", "Requires PHP: 8.1".
-        # WordPress 5.3 predates PHP 8.1 support, so this leg may surface core
-        # deprecations; it stays experimental.
-        - wp: "5.3"
+        # Plugin header floor: "Requires at least: 6.2", "Requires PHP: 8.1".
+        - wp: "6.2"
           php: "8.1"
-          experimental: true
+          experimental: false
         # Development WordPress, for early warning on upstream core changes.
         - wp: "master"
           php: "8.4"
