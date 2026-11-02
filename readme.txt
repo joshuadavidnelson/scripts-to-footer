@@ -2,7 +2,7 @@
 Contributors: joshuadnelson
 Tags: javascript, footer, speed, head, performance
 Donate link: https://joshuadnelson.com/donate/
-Requires at least: 5.3
+Requires at least: 6.2
 Requires PHP: 8.1
 Tested up to: 7.1
 Stable tag: 0.7.5
@@ -118,7 +118,7 @@ This plugin should not change your actual page _speed_ - the same scripts are be
 == Changelog ==
 
 = 0.7.5 =
-- Require PHP 8.1 or newer
+- Require PHP 8.1 or newer and WordPress 6.2 or newer
 - Update development tooling and continuous integration
 
 = 0.7.4 =
@@ -197,7 +197,7 @@ Initial release
 == Upgrade Notice ==
 
 = 0.7.5 =
-Requires PHP 8.1 or newer. Sites on older PHP versions should stay on 0.7.4 until they upgrade PHP.
+Requires PHP 8.1 and WordPress 6.2 or newer. Sites on older versions should stay on 0.7.4 until they upgrade.
 
 = 0.7.4 =
 Fixes translations and multisite uninstall. Tested up to WordPress 7.1.
