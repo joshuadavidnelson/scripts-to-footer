@@ -19,6 +19,10 @@ updates:
       npm:
         patterns:
           - "*"
+    ignore:
+      # Keep @types/node on the major matching the Node engine (>=24) in package.json.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "github-actions"
     directory: "/"
