@@ -13,109 +13,6 @@
 class ScriptsToFooterTest extends TestCase {
 
 	/**
-	 * The $wpdb global before the test.
-	 *
-	 * @var mixed
-	 */
-	private $wpdb_backup;
-
-	/**
-	 * Whether $wpdb was set before the test.
-	 *
-	 * @var bool
-	 */
-	private $had_wpdb;
-
-	/**
-	 * The $wpdb double installed for the test.
-	 *
-	 * @var object
-	 */
-	private $wpdb;
-
-	/**
-	 * Installs a recording $wpdb double.
-	 *
-	 * @return void
-	 */
-	protected function set_up() {
-		parent::set_up();
-
-		$this->had_wpdb    = array_key_exists( 'wpdb', $GLOBALS );
-		$this->wpdb_backup = $this->had_wpdb ? $GLOBALS['wpdb'] : null;
-
-		$this->wpdb = new class() {
-			/**
-			 * Postmeta table name.
-			 *
-			 * @var string
-			 */
-			public $postmeta = 'wp_postmeta';
-
-			/**
-			 * Recorded update() argument lists.
-			 *
-			 * @var array
-			 */
-			public $updates = array();
-
-			/**
-			 * Rows update() reports as changed.
-			 *
-			 * @var int
-			 */
-			public $affected = 0;
-
-			/**
-			 * Records the call.
-			 *
-			 * @param mixed ...$args Table, data and where.
-			 * @return int
-			 */
-			public function update( ...$args ) {
-				$this->updates[] = $args;
-
-				return $this->affected;
-			}
-		};
-
-		$GLOBALS['wpdb'] = $this->wpdb;
-	}
-
-	/**
-	 * Restores $wpdb.
-	 *
-	 * @return void
-	 */
-	protected function tear_down() {
-		if ( $this->had_wpdb ) {
-			$GLOBALS['wpdb'] = $this->wpdb_backup;
-		} else {
-			unset( $GLOBALS['wpdb'] );
-		}
-
-		parent::tear_down();
-	}
-
-	/**
-	 * The exact migration call.
-	 *
-	 * @return array
-	 */
-	private function migration_call() {
-		// phpcs:disable WordPress.DB.SlowDBQuery -- Asserting the arguments of the migration query.
-		return array(
-			'wp_postmeta',
-			array( 'meta_value' => '1' ),
-			array(
-				'meta_key'   => 'stf_exclude',
-				'meta_value' => 'on',
-			),
-		);
-		// phpcs:enable WordPress.DB.SlowDBQuery
-	}
-
-	/**
 	 * Stubs what the constructor reaches.
 	 *
 	 * @param bool   $is_admin Whether is_admin() is true.
@@ -360,8 +257,6 @@ class ScriptsToFooterTest extends TestCase {
 		WP_Mock::userFunction( 'update_option', array( 'times' => 0 ) );
 
 		new Scripts_To_Footer();
-
-		$this->assertSame( array(), $this->wpdb->updates );
 	}
 
 	/**
@@ -376,7 +271,6 @@ class ScriptsToFooterTest extends TestCase {
 
 		$this->assertSame( array( array( 'stf_version', false ) ), $gets );
 		$this->assertSame( array( array( 'stf_version', STF_VERSION, false ) ), $updates );
-		$this->assertSame( array( $this->migration_call() ), $this->wpdb->updates );
 	}
 
 	/**
@@ -396,7 +290,6 @@ class ScriptsToFooterTest extends TestCase {
 			),
 			$updates
 		);
-		$this->assertSame( array( $this->migration_call() ), $this->wpdb->updates );
 	}
 
 	/**
@@ -411,112 +304,5 @@ class ScriptsToFooterTest extends TestCase {
 
 		$this->assertSame( array(), $updates );
 		$this->assertSame( array( array( 'stf_version', false ) ), $gets );
-		$this->assertSame( array(), $this->wpdb->updates );
-	}
-
-	/**
-	 * The post meta cache group is flushed only when rows changed and the cache supports it.
-	 *
-	 * @covers Scripts_To_Footer::migrate_legacy_exclude_meta
-	 *
-	 * @return void
-	 */
-	public function test_migration_flushes_post_meta_cache_when_rows_changed() {
-		$this->wpdb->affected = 3;
-		WP_Mock::userFunction(
-			'wp_cache_supports',
-			array(
-				'times'  => 1,
-				'args'   => array( 'flush_group' ),
-				'return' => true,
-			)
-		);
-		$this->expect_function_strict( 'wp_cache_flush_group', array( 'post_meta' ), true );
-
-		$this->build_admin( false );
-
-		$this->assertSame( array( $this->migration_call() ), $this->wpdb->updates );
-	}
-
-	/**
-	 * No cache flush when nothing was migrated.
-	 *
-	 * @covers Scripts_To_Footer::migrate_legacy_exclude_meta
-	 *
-	 * @return void
-	 */
-	public function test_migration_does_not_flush_cache_when_no_rows_changed() {
-		WP_Mock::userFunction( 'wp_cache_supports', array( 'times' => 0 ) );
-		WP_Mock::userFunction( 'wp_cache_flush_group', array( 'times' => 0 ) );
-
-		$this->build_admin( '0.6.0' );
-
-		$this->assertSame( array( $this->migration_call() ), $this->wpdb->updates );
-	}
-
-	/**
-	 * A database error leaves both version options unwritten so the migration is retried.
-	 *
-	 * @covers Scripts_To_Footer::upgrade_check
-	 * @covers Scripts_To_Footer::migrate_legacy_exclude_meta
-	 *
-	 * @return void
-	 */
-	public function test_failed_migration_does_not_stamp_version() {
-		$this->wpdb->affected = false;
-		WP_Mock::userFunction( 'wp_cache_supports', array( 'times' => 0 ) );
-		WP_Mock::userFunction( 'wp_cache_flush_group', array( 'times' => 0 ) );
-
-		list( , $updates ) = $this->build_admin( '0.6.0' );
-
-		$this->assertSame( array( $this->migration_call() ), $this->wpdb->updates );
-		$this->assertSame( array(), $updates );
-	}
-
-	/**
-	 * Zero rows changed is a success: the version is still stamped.
-	 *
-	 * @covers Scripts_To_Footer::upgrade_check
-	 * @covers Scripts_To_Footer::migrate_legacy_exclude_meta
-	 *
-	 * @return void
-	 */
-	public function test_migration_with_no_rows_still_stamps_version() {
-		$this->wpdb->affected = 0;
-
-		list( , $updates ) = $this->build_admin( false );
-
-		$this->assertSame( array( array( 'stf_version', STF_VERSION, false ) ), $updates );
-	}
-
-	/**
-	 * Rows changed stamps the version and flushes the post meta cache where supported.
-	 *
-	 * @covers Scripts_To_Footer::upgrade_check
-	 * @covers Scripts_To_Footer::migrate_legacy_exclude_meta
-	 *
-	 * @return void
-	 */
-	public function test_migration_with_rows_stamps_version_and_flushes_cache() {
-		$this->wpdb->affected = 2;
-		WP_Mock::userFunction(
-			'wp_cache_supports',
-			array(
-				'times'  => 1,
-				'args'   => array( 'flush_group' ),
-				'return' => true,
-			)
-		);
-		$this->expect_function_strict( 'wp_cache_flush_group', array( 'post_meta' ), true );
-
-		list( , $updates ) = $this->build_admin( '0.6.0' );
-
-		$this->assertSame(
-			array(
-				array( 'stf_previous_version', '0.6.0', false ),
-				array( 'stf_version', STF_VERSION, false ),
-			),
-			$updates
-		);
 	}
 }

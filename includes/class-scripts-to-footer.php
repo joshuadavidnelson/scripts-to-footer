@@ -121,62 +121,16 @@ class Scripts_To_Footer {
 		// Get the current version option.
 		$current_version = get_option( 'stf_version', false );
 
-		// Nothing to do when the stored version is current.
-		if ( false !== $current_version && STF_VERSION === $current_version ) {
-			return;
-		}
-
-		// Run the migration first: if it fails, leave both version options untouched so
-		// it is retried on the next admin load.
-		if ( ! $this->migrate_legacy_exclude_meta() ) {
-			return;
-		}
-
 		// Update the previous version if we're upgrading.
-		if ( $current_version ) {
+		if ( $current_version && STF_VERSION !== $current_version ) {
 			update_option( 'stf_previous_version', $current_version, false );
 		}
 
-		// Save current version.
-		update_option( 'stf_version', STF_VERSION, false );
-	}
-
-	/**
-	 * Convert legacy 'on' stf_exclude values to '1'.
-	 *
-	 * Older versions stored 'on'; this runs once per version change so rendering the
-	 * metabox no longer has to write post meta.
-	 *
-	 * @since 0.7.0
-	 *
-	 * @access private
-	 *
-	 * @return bool True on success (including when no rows needed migrating), false on a database error.
-	 */
-	private function migrate_legacy_exclude_meta() {
-		global $wpdb;
-
-		// A one-off bulk update of a legacy value on version change; the meta API has no bulk equivalent.
-		// phpcs:disable WordPress.DB.SlowDBQuery.slow_db_query_meta_key,WordPress.DB.SlowDBQuery.slow_db_query_meta_value -- Runs once per version change, not per request.
-		$updated = $wpdb->update( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Cache flushed below.
-			$wpdb->postmeta,
-			array( 'meta_value' => '1' ),
-			array(
-				'meta_key'   => 'stf_exclude',
-				'meta_value' => 'on',
-			)
-		);
-		// phpcs:enable WordPress.DB.SlowDBQuery.slow_db_query_meta_key,WordPress.DB.SlowDBQuery.slow_db_query_meta_value
-
-		if ( false === $updated ) {
-			return false;
+		// See if it's a previous version, which may not have set the version option.
+		if ( false === $current_version || STF_VERSION !== $current_version ) {
+			// Save current version.
+			update_option( 'stf_version', STF_VERSION, false );
 		}
-
-		if ( $updated && function_exists( 'wp_cache_supports' ) && function_exists( 'wp_cache_flush_group' ) && wp_cache_supports( 'flush_group' ) ) {
-			wp_cache_flush_group( 'post_meta' );
-		}
-
-		return true;
 	}
 
 	/**
