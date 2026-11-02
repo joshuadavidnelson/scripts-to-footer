@@ -21,6 +21,7 @@
 /package.json
 /package-lock.json
 /phpstan.neon.dist
+/patchwork.json
 /phpunit.xml.dist
 /tests/
 

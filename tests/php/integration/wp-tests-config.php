@@ -8,8 +8,6 @@
  * @package Scripts_To_Footer
  */
 
-// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- WordPress test configuration constants.
-
 $stf_core_dir = getenv( 'WP_CORE_DIR' );
 if ( false === $stf_core_dir || '' === $stf_core_dir ) {
 	$stf_core_dir = '/tmp/wordpress/';
@@ -44,4 +42,4 @@ define( 'WP_PHP_BINARY', 'php' );
 define( 'WPLANG', '' );
 
 // Older test libraries (before WordPress 6.3) require this global; newer ones default it.
-$table_prefix = 'wptests_'; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Standard wp-tests-config.php global.
+$table_prefix = 'wptests_';

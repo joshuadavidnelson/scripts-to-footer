@@ -50,4 +50,30 @@
 			<property name="blank_line_check" value="true"/>
 		</properties>
 	</rule>
+
+	<!--
+	Rules: test stack exceptions.
+	Each one is scoped to the single file that needs it and to the single sniff code that
+	fires there. Test code must define WordPress core constants and functions, which cannot
+	carry the plugin prefix.
+	-->
+
+	<!-- Bootstraps and test fixtures must define WordPress core constants (ABSPATH, WP_UNINSTALL_PLUGIN, WP_TESTS_PHPUNIT_POLYFILLS_PATH, WP_TESTS_CONFIG_FILE_PATH, DB_*, ...) by their exact core names, so they cannot be prefixed. -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound">
+		<exclude-pattern>/tests/php/unit/bootstrap\.php$</exclude-pattern>
+		<exclude-pattern>/tests/php/unit/UninstallTest\.php$</exclude-pattern>
+		<exclude-pattern>/tests/php/integration/bootstrap\.php$</exclude-pattern>
+		<exclude-pattern>/tests/php/integration/UninstallTest\.php$</exclude-pattern>
+		<exclude-pattern>/tests/php/integration/wp-tests-config\.php$</exclude-pattern>
+	</rule>
+
+	<!-- The unit suite's wp_die() stand-in must be named exactly wp_die(), because that is the function uninstall.php calls, so it cannot be prefixed. -->
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound">
+		<exclude-pattern>/tests/php/Support/wp-die\.php$</exclude-pattern>
+	</rule>
+
+	<!-- wp-tests-config.php must set $table_prefix: the WordPress test library before 6.3 reads that global, and the file is loaded inside a function scope by the library. -->
+	<rule ref="WordPress.WP.GlobalVariablesOverride.Prohibited">
+		<exclude-pattern>/tests/php/integration/wp-tests-config\.php$</exclude-pattern>
+	</rule>
 </ruleset>
