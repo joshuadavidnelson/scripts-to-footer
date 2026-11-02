@@ -5,6 +5,7 @@ on:
     branches:
     - stable
     - develop
+    - "release/**"
   workflow_dispatch: null
 
 permissions:
@@ -31,7 +32,7 @@ jobs:
         - wp: "latest"
           php: "8.3"
           experimental: false
-        # Top of the supported PHP range (readme.txt changelog, integrate.yaml).
+        # Top of the supported PHP range (readme.txt changelog, integrate.yml).
         - wp: "latest"
           php: "8.5"
           experimental: false
@@ -39,9 +40,11 @@ jobs:
         - wp: "7.1"
           php: "8.4"
           experimental: false
-        # Plugin header floor: "Requires at least: 5.3", "Requires PHP: 7.4".
+        # Plugin header floor: "Requires at least: 5.3", "Requires PHP: 8.1".
+        # WordPress 5.3 predates PHP 8.1 support, so this leg may surface core
+        # deprecations; it stays experimental.
         - wp: "5.3"
-          php: "7.4"
+          php: "8.1"
           experimental: true
         # Development WordPress, for early warning on upstream core changes.
         - wp: "master"
