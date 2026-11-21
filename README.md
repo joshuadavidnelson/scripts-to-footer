@@ -97,8 +97,11 @@ The PHP test suites need Composer dependencies (`composer install`).
 ```sh
 composer phpunit                  # unit suite (`composer test` is an alias)
 composer phpunit:coverage         # unit suite with a text coverage report (needs Xdebug)
-composer phpunit:coverage-clover  # writes coverage/php-clover.xml, which CI checks against quality-thresholds.json
+composer phpunit:coverage-clover  # writes coverage/php-clover.xml (needs Xdebug)
+node .github/scripts/check-coverage.js  # fails if line or method coverage is under the floors in quality-thresholds.json
 ```
+
+CI's Tests workflow runs the unit suite, writes the clover report and enforces the same floors with `check-coverage.js`. On pull requests it also measures the base branch, and CI's combined PR report shows the coverage and how it changed.
 
 WP_Mock runs in strict mode, so every WordPress function, filter and action a test reaches must be stubbed in that test. Plugin-owned `stf_*` functions are never stubbed.
 
