@@ -8,3 +8,11 @@ dist
 vendor
 *.cache
 /reports/
+
+# E2E (Playwright) — Session B
+/artifacts/
+/playwright/
+/playwright-report/
+/test-results/
+.wp-env.override.json
+.wp-env.test.override.json
