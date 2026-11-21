@@ -1,5 +1,13 @@
-name: "Deploy to WordPress.org"
+name: "Deploy"
 
+# Three gates stand between a tag push and the public SVN repo:
+#   1. Only semver-shaped tags trigger the workflow at all.
+#   2. The verify job requires the tagged commit to have green runs of the
+#      Integrate, Tests and E2E Tests workflows.
+#   3. The deploy job runs in the "wordpress-org" environment, which should
+#      have a required reviewer configured in the repository settings.
+#      The deploy waits for a manual approval before touching SVN.
+# The files shipped to WordPress.org are filtered by .distignore.
 on:
   push:
     tags:
@@ -10,13 +18,67 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
-    uses: joshuadavidnelson/ci/.github/workflows/wp-deploy.yml@v1
+  verify:
+    name: "Verify CI passed for the tagged commit"
+    runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
-    with:
-      slug: "scripts-to-footerphp"
-      required-workflows: |
-        Integrate
-    secrets: inherit
+    steps:
+      - name: "Require the CI workflows to have passed on the tagged SHA"
+        uses: actions/github-script@v9
+        with:
+          script: |
+            // Named workflows rather than a check-run count: the count
+            // changes every time a matrix leg is added, and a stale
+            // threshold silently lets a tag through on partial CI.
+            const REQUIRED = [ 'Integrate', 'Tests', 'E2E Tests' ];
+
+            const runs = await github.paginate(
+              github.rest.actions.listWorkflowRunsForRepo,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                head_sha: context.sha,
+                per_page: 100,
+              }
+            );
+
+            const problems = [];
+
+            for ( const name of REQUIRED ) {
+              // The API returns newest first, so the first match is the
+              // latest run, and a re-run updates that run in place.
+              const run = runs.find( ( candidate ) => candidate.name === name );
+
+              if ( ! run ) {
+                problems.push( `${ name }: never ran on this commit` );
+              } else if ( 'completed' !== run.status ) {
+                problems.push( `${ name }: still ${ run.status }` );
+              } else if ( 'success' !== run.conclusion ) {
+                problems.push( `${ name }: ${ run.conclusion }` );
+              }
+            }
+
+            if ( problems.length ) {
+              core.setFailed(
+                `CI is not green on the tagged commit. Push the branch, let CI finish, then tag.\n` +
+                problems.map( ( problem ) => `  - ${ problem }` ).join( '\n' )
+              );
+            }
+
+  deploy:
+    name: "Deploy to WordPress.org"
+    needs: verify
+    environment: wordpress-org
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v7
+
+      - name: "WordPress Plugin Deploy"
+        uses: 10up/action-wordpress-plugin-deploy@2.3.0
+        env:
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SLUG: scripts-to-footerphp

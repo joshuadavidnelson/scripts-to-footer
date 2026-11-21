@@ -61,7 +61,7 @@
       "./vendor/bin/phpcbf"
     ],
     "phpmd": [
-      "php -d error_reporting='E_ALL & ~E_DEPRECATED' ./vendor/bin/phpmd scripts-to-footer.php,uninstall.php,includes/ text phpmd.xml"
+      "php -d error_reporting='E_ALL & ~E_DEPRECATED' ./vendor/bin/phpmd scripts-to-footer.php,uninstall.php,includes/ text phpmd.xml --baseline-file phpmd.baseline.xml"
     ],
     "phpmetrics": [
       "php -d error_reporting='E_ALL & ~E_DEPRECATED' ./vendor/bin/phpmetrics --report-html=reports/metrics --report-json=reports/metrics.json scripts-to-footer.php,uninstall.php,includes/"

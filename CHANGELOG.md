@@ -2,7 +2,7 @@
 
 ## 0.7.5
 - Require PHP 8.1 or newer and WordPress 6.2 or newer
-- Update development tooling and continuous integration
+- Update development tooling and replace the shared CI with self-contained GitHub Actions workflows
 
 ## 0.7.4
 - Tested up to WordPress 7.1 and PHP 8.5
