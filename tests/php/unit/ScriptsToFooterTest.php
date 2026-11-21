@@ -15,11 +15,13 @@ class ScriptsToFooterTest extends TestCase {
 	/**
 	 * Stubs what the constructor reaches.
 	 *
-	 * @param bool $is_admin Whether is_admin() is true.
+	 * @param bool   $is_admin Whether is_admin() is true.
+	 * @param string $basename What plugin_basename() reports for the main file.
 	 * @return void
 	 */
-	private function stub_constructor( $is_admin = false ) {
+	private function stub_constructor( $is_admin = false, $basename = 'scripts-to-footer/scripts-to-footer.php' ) {
 		WP_Mock::expectAction( 'stf_init' );
+		$this->expect_function_strict( 'plugin_basename', array( dirname( __DIR__, 3 ) . '/scripts-to-footer.php' ), $basename );
 		// Production passes its own directory (__DIR__ of includes/), not a file path.
 		$this->expect_function_strict( 'plugin_dir_path', array( dirname( __DIR__, 3 ) . '/includes' ), dirname( __DIR__, 3 ) . '/' );
 		WP_Mock::userFunction( 'is_admin', array( 'return' => $is_admin ) );
@@ -124,6 +126,71 @@ class ScriptsToFooterTest extends TestCase {
 		$this->assertSame( $actions[1]['component'], $actions[2]['component'] );
 		$this->assertSame( $actions[1]['component'], $filters[0]['component'] );
 		$this->assertSame( $actions[1]['component'], $filters[1]['component'] );
+	}
+
+	/**
+	 * The action-links hook and the Admin's plugin file follow the real install directory.
+	 *
+	 * @covers Scripts_To_Footer::__construct
+	 * @covers Scripts_To_Footer::define_admin_hooks
+	 *
+	 * @dataProvider plugin_basenames
+	 *
+	 * @param string $basename What plugin_basename() reports.
+	 * @return void
+	 */
+	public function test_action_links_hook_uses_plugin_basename( $basename ) {
+		$this->stub_constructor( false, $basename );
+
+		$plugin  = new Scripts_To_Footer();
+		$filters = $this->get_property( $plugin->get_loader(), 'filters' );
+
+		$this->assertSame( 'plugin_action_links_' . $basename, $filters[1]['hook'] );
+		$this->assertSame( 'plugin_settings_link', $filters[1]['callback'] );
+		$this->assertSame( $basename, $this->get_property( $filters[1]['component'], 'plugin_file' ) );
+	}
+
+	/**
+	 * Install directories to cover.
+	 *
+	 * @return array
+	 */
+	public static function plugin_basenames() {
+		return array(
+			'manual install' => array( 'scripts-to-footer/scripts-to-footer.php' ),
+			'wordpress.org'  => array( 'scripts-to-footerphp/scripts-to-footer.php' ),
+		);
+	}
+
+	/**
+	 * One STF_Functions instance is shared by every component.
+	 *
+	 * @covers Scripts_To_Footer::load_dependencies
+	 * @covers Scripts_To_Footer::define_admin_hooks
+	 * @covers Scripts_To_Footer::define_public_hooks
+	 *
+	 * @return void
+	 */
+	public function test_components_share_one_functions_instance() {
+		$this->stub_constructor();
+
+		$plugin  = new Scripts_To_Footer();
+		$loader  = $plugin->get_loader();
+		$actions = $this->get_property( $loader, 'actions' );
+		$shared  = $this->get_property( $plugin, 'functions' );
+
+		$this->assertInstanceOf( STF_Functions::class, $shared );
+		foreach ( $actions as $hook ) {
+			if ( $hook['component'] instanceof STF_I18n ) {
+				continue;
+			}
+			$this->assertSame( $shared, $this->get_property( $hook['component'], 'functions' ), get_class( $hook['component'] ) );
+		}
+
+		$classes = array_unique( array_map( 'get_class', array_column( $actions, 'component' ) ) );
+		$this->assertContains( 'STF_Admin', $classes );
+		$this->assertContains( 'STF_Admin_Settings', $classes );
+		$this->assertContains( 'STF_Public', $classes );
 	}
 
 	/**
