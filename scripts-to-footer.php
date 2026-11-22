@@ -2,7 +2,7 @@
 /**
  * Main Plugin File
  *
- * Plugin Name: Scripts-To-Footer
+ * Plugin Name: Scripts To Footer
  * Plugin URI: https://wordpress.org/plugins/scripts-to-footerphp/
  * Description: Move your scripts to the footer to help speed up perceived page load times and improve user experience.
  * Version: 0.7.5
