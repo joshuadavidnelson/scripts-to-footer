@@ -60,7 +60,7 @@
       "@php -dxdebug.mode=coverage ./vendor/bin/phpunit --coverage-clover coverage/php-clover.xml --coverage-text"
     ],
     "phpunit:integration": [
-      "./vendor/bin/phpunit -c phpunit-integration.xml.dist"
+      "./vendor/bin/phpunit -c tests/php/integration/phpunit.xml.dist"
     ],
     "test": [
       "@phpunit"
