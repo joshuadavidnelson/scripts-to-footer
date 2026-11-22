@@ -32,7 +32,7 @@ jobs:
             // Named workflows rather than a check-run count: the count
             // changes every time a matrix leg is added, and a stale
             // threshold silently lets a tag through on partial CI.
-            const REQUIRED = [ 'Integrate', 'Tests', 'E2E Tests' ];
+            const REQUIRED = [ 'CI', 'E2E Tests', 'WP Plugin Check' ];
 
             const runs = await github.paginate(
               github.rest.actions.listWorkflowRunsForRepo,

@@ -1,0 +1,258 @@
+name: "Quality"
+
+on: workflow_call
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: "Lint (PHP ${{ matrix.php }})"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.1", "8.2", "8.3", "8.4", "8.5"]
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v7
+
+      - name: "Install PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+          tools: composer
+
+      - name: "Get Composer cache directory"
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: "Cache Composer packages"
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-php${{ matrix.php }}-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            composer-${{ runner.os }}-php${{ matrix.php }}-
+
+      - name: "Install Composer packages"
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: "Lint PHP files"
+        run: composer lint
+
+  standards:
+    name: "Coding standards and static analysis"
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v7
+
+      - name: "Install PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          coverage: none
+          tools: composer
+
+      - name: "Get Composer cache directory"
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: "Cache Composer packages"
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-php8.4-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            composer-${{ runner.os }}-php8.4-
+
+      - name: "Install Composer packages"
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      # Each tool runs even when an earlier one failed, so the report shows
+      # every result; the last step fails the job if any of them did.
+      - name: "PHP_CodeSniffer"
+        id: phpcs
+        continue-on-error: true
+        run: composer phpcs
+
+      - name: "PHPStan"
+        id: phpstan
+        continue-on-error: true
+        run: composer phpstan
+
+      - name: "PHPMD"
+        id: phpmd
+        continue-on-error: true
+        run: composer phpmd
+
+      - name: "Write the report section"
+        if: always()
+        env:
+          PHPCS: ${{ steps.phpcs.outcome }}
+          PHPSTAN: ${{ steps.phpstan.outcome }}
+          PHPMD: ${{ steps.phpmd.outcome }}
+        run: |
+          mkdir -p reports
+          jq -n \
+            --arg phpcs "$PHPCS" --arg phpstan "$PHPSTAN" --arg phpmd "$PHPMD" \
+            '{ phpcs: { outcome: $phpcs }, phpstan: { outcome: $phpstan }, phpmd: { outcome: $phpmd } }' \
+            > reports/quality.json
+
+      - name: "Upload the report section"
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: report-quality
+          path: reports/quality.json
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: "Fail if any check failed"
+        if: steps.phpcs.outcome == 'failure' || steps.phpstan.outcome == 'failure' || steps.phpmd.outcome == 'failure'
+        run: |
+          echo "::error::PHPCS: ${{ steps.phpcs.outcome }}, PHPStan: ${{ steps.phpstan.outcome }}, PHPMD: ${{ steps.phpmd.outcome }}"
+          exit 1
+
+  metrics:
+    name: "Code metrics"
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v7
+
+      - name: "Checkout the base branch for comparison"
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: .base
+          persist-credentials: false
+
+      - name: "Install PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          coverage: none
+          tools: composer
+
+      - name: "Get Composer cache directory"
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> "$GITHUB_OUTPUT"
+
+      - name: "Cache Composer packages"
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-php8.4-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            composer-${{ runner.os }}-php8.4-
+
+      - name: "Install Composer packages"
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: "Generate the metrics summary"
+        run: |
+          composer run phpmetrics-summary
+          test -s reports/metrics-summary.json || {
+            echo "::error::PHPMetrics produced no summary for this branch."
+            exit 1
+          }
+
+      # The PR's own phpmetrics binary measures the base sources, so both
+      # sides are measured by the same tool and the base never runs code.
+      # Paths missing from the base (a file the PR adds) are skipped.
+      - name: "Generate the metrics summary for the base branch"
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: |
+          paths=""
+          for p in scripts-to-footer.php uninstall.php includes; do
+            if [ -e ".base/$p" ]; then
+              paths="${paths:+$paths,}.base/$p"
+            fi
+          done
+          if [ -z "$paths" ]; then
+            echo "::notice::The base branch has no plugin sources to measure; the report will omit the comparison."
+            exit 0
+          fi
+          php -d error_reporting='E_ALL & ~E_DEPRECATED' ./vendor/bin/phpmetrics \
+            --composer=false --report-summary-json=reports/base-summary.json "$paths"
+
+      - name: "Upload the report section"
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: report-metrics
+          path: |
+            reports/metrics-summary.json
+            reports/base-summary.json
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: "Enforce the metric gates"
+        run: node .github/scripts/check-metrics.js
+
+  npm:
+    name: "Install and audit npm packages"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v7
+
+      - name: "Install Node"
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: "Install npm packages"
+        run: npm ci --ignore-scripts
+
+      - name: "Audit npm packages"
+        run: npm audit --audit-level=high
+
+  pot:
+    name: "Translation template freshness"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v7
+
+      - name: "Install PHP"
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          coverage: none
+
+      - name: "Regenerate the pot and compare source strings"
+        run: |
+          # -f so an HTTP error page fails the step here, rather than
+          # reaching php and surfacing as a baffling parse error.
+          curl -fsSL -o "$RUNNER_TEMP/wp-cli.phar" https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          php "$RUNNER_TEMP/wp-cli.phar" i18n make-pot . "$RUNNER_TEMP/fresh.pot" --slug=scripts-to-footerphp
+          grep '^msgid ' languages/scripts-to-footerphp.pot | sort -u > "$RUNNER_TEMP/committed-msgids"
+          grep '^msgid ' "$RUNNER_TEMP/fresh.pot" | sort -u > "$RUNNER_TEMP/fresh-msgids"
+          diff -u "$RUNNER_TEMP/committed-msgids" "$RUNNER_TEMP/fresh-msgids" || {
+            echo '::error::languages/scripts-to-footerphp.pot is stale. Run `wp i18n make-pot . languages/scripts-to-footerphp.pot --slug=scripts-to-footerphp` and commit the result.'
+            exit 1
+          }
+
+  scripts:
+    name: "CI script tests"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v7
+
+      - name: "Install Node"
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+
+      - name: "Run the script tests"
+        run: node --test .github/scripts/*.test.js
