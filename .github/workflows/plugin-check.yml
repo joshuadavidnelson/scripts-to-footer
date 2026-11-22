@@ -21,6 +21,8 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@v7
 
+      # The action takes the slug from the checkout directory (scripts-to-footer),
+      # but the WordPress.org slug and text domain are scripts-to-footerphp.
       # Plugin Check scans the checkout, not the WordPress.org zip, so the
       # exclusions mirror what .distignore keeps out of the zip. The
       # PrefixAllGlobals codes are ignored because Plugin Check derives the
@@ -29,6 +31,7 @@ jobs:
       - name: "Run Plugin Check"
         uses: wordpress/plugin-check-action@v1
         with:
+          slug: scripts-to-footerphp
           exclude-directories: "vendor,node_modules,tests,.github,.git,.wordpress-org,bin,reports"
           exclude-files: "package.json,package-lock.json,composer.json,composer.lock,contributing.md,code-of-conduct.md,phpstan.neon.dist,phpunit.xml.dist,phpmd.xml,phpmd.baseline.xml,quality-thresholds.json,readme.md,changelog.md,.phpcs.xml.dist,.wp-env.json,.distignore,.gitattributes,.editorconfig,LICENSE.txt"
           ignore-codes: "hidden_files,WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound,WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound,WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound"
