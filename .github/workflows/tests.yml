@@ -11,4 +11,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Note"
-        run: echo "PHPUnit unit, integration and coverage arrive with #30"
+        run: |
+          echo "PHPUnit unit, integration and coverage arrive with #30"
