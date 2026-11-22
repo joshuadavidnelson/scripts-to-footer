@@ -7,6 +7,10 @@
  * @subpackage STF_Loader
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit( 'You are not allowed to access this file directly.' );
+}
+
 /**
  * Register all actions and filters for the plugin.
  *

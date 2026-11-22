@@ -7,6 +7,10 @@
  * @subpackage Scripts_To_Footer_Activator
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit( 'You are not allowed to access this file directly.' );
+}
+
 /**
  * Fired during plugin activation.
  *
