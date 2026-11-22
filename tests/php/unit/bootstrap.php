@@ -36,7 +36,6 @@ require __DIR__ . '/../includes/TestCase.php';
 // Plugin files under test. uninstall.php is procedural and is included per test.
 $stf_includes = dirname( __DIR__, 3 ) . '/includes/';
 require $stf_includes . 'class-stf-loader.php';
-require $stf_includes . 'class-stf-i18n.php';
 require $stf_includes . 'class-stf-functions.php';
 require $stf_includes . 'functions.php';
 require $stf_includes . 'class-stf-admin.php';

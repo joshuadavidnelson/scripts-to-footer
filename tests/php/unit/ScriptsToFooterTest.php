@@ -76,7 +76,6 @@ class ScriptsToFooterTest extends TestCase {
 	 * @covers Scripts_To_Footer::__construct
 	 * @covers Scripts_To_Footer::define_admin_hooks
 	 * @covers Scripts_To_Footer::define_public_hooks
-	 * @covers Scripts_To_Footer::set_locale
 	 * @covers Scripts_To_Footer::load_dependencies
 	 *
 	 * @return void
@@ -98,7 +97,6 @@ class ScriptsToFooterTest extends TestCase {
 
 		$this->assertSame(
 			array(
-				array( 'init', 'STF_I18n', 'load_plugin_textdomain', 10, 1 ),
 				array( 'add_meta_boxes', 'STF_Admin', 'metabox_register', 10, 1 ),
 				array( 'save_post', 'STF_Admin', 'metabox_save', 1, 1 ),
 				array( 'admin_menu', 'STF_Admin_Settings', 'add_plugin_page', 10, 1 ),
@@ -121,9 +119,9 @@ class ScriptsToFooterTest extends TestCase {
 		// The same Admin instance serves all of its hooks.
 		$actions = $this->get_property( $loader, 'actions' );
 		$filters = $this->get_property( $loader, 'filters' );
-		$this->assertSame( $actions[1]['component'], $actions[2]['component'] );
-		$this->assertSame( $actions[1]['component'], $filters[0]['component'] );
-		$this->assertSame( $actions[1]['component'], $filters[1]['component'] );
+		$this->assertSame( $actions[0]['component'], $actions[1]['component'] );
+		$this->assertSame( $actions[0]['component'], $filters[0]['component'] );
+		$this->assertSame( $actions[0]['component'], $filters[1]['component'] );
 	}
 
 	/**
@@ -155,7 +153,7 @@ class ScriptsToFooterTest extends TestCase {
 
 		$plugin->run();
 
-		$this->assertCount( 11, $by_hook );
+		$this->assertCount( 10, $by_hook );
 	}
 
 	/**
