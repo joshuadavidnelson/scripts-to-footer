@@ -217,52 +217,35 @@ class STF_Admin_Settings {
 		// Setup the new input array.
 		$new_input = array();
 
-		if ( isset( $input['stf_exclude_home'] ) ) {
-			$new_input['stf_exclude_home'] = absint( $input['stf_exclude_home'] );
-		}
-
-		if ( isset( $input['stf_exclude_search'] ) ) {
-			$new_input['stf_exclude_search'] = absint( $input['stf_exclude_search'] );
-		}
-
-		if ( isset( $input['stf_exclude_404'] ) ) {
-			$new_input['stf_exclude_404'] = absint( $input['stf_exclude_404'] );
-		}
-
-		if ( isset( $input['stf_exclude_archive'] ) ) {
-			$new_input['stf_exclude_archive'] = absint( $input['stf_exclude_archive'] );
-		}
-
-		if ( isset( $input['stf_exclude_author_archive'] ) ) {
-			$new_input['stf_exclude_author_archive'] = absint( $input['stf_exclude_author_archive'] );
-		}
-
-		// Post Type options.
-		$post_types = $this->post_type_options();
-		if ( is_array( $post_types ) ) {
-			foreach ( $post_types as $option ) {
-				if ( isset( $input[ $option ] ) ) {
-					$new_input[ $option ] = absint( $input[ $option ] );
-				}
+		foreach ( $this->option_keys() as $key ) {
+			if ( isset( $input[ $key ] ) ) {
+				$new_input[ $key ] = absint( $input[ $key ] );
 			}
-		}
-
-		// Taxonomy options.
-		$taxes = $this->taxonomy_options();
-		if ( is_array( $taxes ) ) {
-			foreach ( $taxes as $option ) {
-				if ( isset( $input[ $option ] ) ) {
-					$new_input[ $option ] = absint( $input[ $option ] );
-				}
-			}
-		}
-
-		// jQuery in the header option.
-		if ( isset( $input['stf_jquery_header'] ) ) {
-			$new_input['stf_jquery_header'] = absint( $input['stf_jquery_header'] );
 		}
 
 		return $new_input;
+	}
+
+	/**
+	 * Return every setting field name the plugin saves.
+	 *
+	 * @since 0.7.5
+	 * @return string[]
+	 */
+	private function option_keys() {
+
+		return array_merge(
+			array(
+				'stf_exclude_home',
+				'stf_exclude_search',
+				'stf_exclude_404',
+				'stf_exclude_archive',
+				'stf_exclude_author_archive',
+			),
+			$this->post_type_options(),
+			$this->taxonomy_options(),
+			array( 'stf_jquery_header' )
+		);
 	}
 
 	/**
