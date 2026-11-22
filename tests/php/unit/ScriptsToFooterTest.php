@@ -179,9 +179,6 @@ class ScriptsToFooterTest extends TestCase {
 
 		$this->assertInstanceOf( STF_Functions::class, $shared );
 		foreach ( $actions as $hook ) {
-			if ( $hook['component'] instanceof STF_I18n ) {
-				continue;
-			}
 			$this->assertSame( $shared, $this->get_property( $hook['component'], 'functions' ), get_class( $hook['component'] ) );
 		}
 
