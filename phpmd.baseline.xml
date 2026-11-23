@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<phpmd-baseline>
+  <violation rule="PHPMD\Rule\CyclomaticComplexity" file="includes/class-stf-admin-settings.php" method="sanitize"/>
+  <violation rule="PHPMD\Rule\Design\NpathComplexity" file="includes/class-stf-admin-settings.php" method="sanitize"/>
+  <violation rule="PHPMD\Rule\UnusedFormalParameter" file="includes/class-stf-admin.php"/>
+  <violation rule="PHPMD\Rule\CleanCode\ElseExpression" file="includes/class-stf-admin.php"/>
+  <violation rule="PHPMD\Rule\CleanCode\ElseExpression" file="includes/class-stf-functions.php"/>
+  <violation rule="PHPMD\Rule\Design\DevelopmentCodeFragment" file="includes/class-stf-functions.php"/>
+  <violation rule="PHPMD\Rule\CleanCode\ElseExpression" file="includes/class-stf-public.php"/>
+  <violation rule="PHPMD\Rule\CyclomaticComplexity" file="includes/class-stf-public.php" method="stf_includes"/>
+  <violation rule="PHPMD\Rule\CleanCode\BooleanArgumentFlag" file="includes/functions.php"/>
+</phpmd-baseline>

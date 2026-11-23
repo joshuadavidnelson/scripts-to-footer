@@ -1,0 +1,71 @@
+name: "CI"
+
+on:
+  pull_request: null
+  push:
+    branches:
+      - stable
+
+permissions:
+  contents: read
+
+concurrency:
+  group: "${{ github.workflow }}-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: "Quality"
+    uses: ./.github/workflows/quality.yml
+
+  tests:
+    name: "Tests"
+    needs: quality
+    uses: ./.github/workflows/tests.yml
+
+  # The only job that writes to the pull request. It runs no project code:
+  # it checks out the repository for the report scripts, reads the report-*
+  # artifacts the jobs above uploaded and renders them. It runs even when
+  # Quality or Tests failed, so the comment explains the failure.
+  report:
+    name: "PR report"
+    needs: [quality, tests]
+    if: always() && github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v7
+
+      - name: "Install Node"
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+
+      - name: "Download report sections"
+        uses: actions/download-artifact@v8
+        with:
+          pattern: report-*
+          path: reports
+
+      - name: "Render the report"
+        env:
+          REPORTS_DIR: reports
+          OUTPUT: reports/pr-report.md
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          QUALITY_RESULT: ${{ needs.quality.result }}
+          TESTS_RESULT: ${{ needs.tests.result }}
+        run: node .github/scripts/render-pr-report.js
+
+      - name: "Post the report"
+        # A pull_request run from a fork gets a read-only token, so posting
+        # is not possible there. That is a missing comment, not a broken build.
+        continue-on-error: true
+        uses: marocchino/sticky-pull-request-comment@v3.0.5
+        with:
+          header: pr-report
+          path: reports/pr-report.md

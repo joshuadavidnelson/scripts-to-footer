@@ -29,3 +29,9 @@
 /CHANGELOG.md
 /code-of-conduct.md
 /contributing.md
+
+# Quality tooling and its output
+/phpmd.xml
+/phpmd.baseline.xml
+/quality-thresholds.json
+/reports/

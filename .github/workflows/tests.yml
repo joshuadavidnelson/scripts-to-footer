@@ -1,0 +1,15 @@
+name: "Tests"
+
+on: workflow_call
+
+permissions:
+  contents: read
+
+jobs:
+  noop:
+    name: "Placeholder"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Note"
+        run: |
+          echo "PHPUnit unit, integration and coverage arrive with #30"

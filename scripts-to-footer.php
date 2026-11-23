@@ -2,12 +2,12 @@
 /**
  * Main Plugin File
  *
- * Plugin Name: Scripts-To-Footer
+ * Plugin Name: Scripts To Footer
  * Plugin URI: https://wordpress.org/plugins/scripts-to-footerphp/
  * Description: Move your scripts to the footer to help speed up perceived page load times and improve user experience.
- * Version: 0.7.4
- * Requires at least: 5.3
- * Requires PHP: 7.4
+ * Version: 0.7.5
+ * Requires at least: 6.2
+ * Requires PHP: 8.1
  * Author: Joshua David Nelson
  * Author URI: https://joshuadnelson.com
  * License: GPL-2.0-or-later
@@ -48,7 +48,7 @@ if ( ! defined( 'STF_DEBUG' ) ) {
 
 // Constants.
 define( 'STF_PLUGIN_NAME', 'scripts-to-footer' );
-define( 'STF_VERSION', '0.7.4' );
+define( 'STF_VERSION', '0.7.5' );
 
 /**
  * The code that runs during plugin activation.
@@ -71,8 +71,8 @@ register_activation_hook( __FILE__, 'stf_activate' );
 register_deactivation_hook( __FILE__, 'stf_deactivate' );
 
 /**
- * The core plugin class that is used to define internationalization,
- * admin-specific hooks, and public-facing site hooks.
+ * The core plugin class that is used to define
+ * admin-specific hooks and public-facing site hooks.
  */
 require plugin_dir_path( __FILE__ ) . 'includes/class-scripts-to-footer.php';
 

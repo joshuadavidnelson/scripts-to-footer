@@ -98,7 +98,6 @@ class Scripts_To_Footer {
 
 		$this->upgrade_check();
 		$this->load_dependencies();
-		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 	}
@@ -140,7 +139,6 @@ class Scripts_To_Footer {
 	 * Include the following files that make up the plugin:
 	 *
 	 * - Scripts_To_Footer_Loader. Orchestrates the hooks of the plugin.
-	 * - Scripts_To_Footer_I18n. Defines internationalization functionality.
 	 * - Scripts_To_Footer_Admin. Defines all hooks for the admin area.
 	 * - Scripts_To_Footer_Public. Defines all hooks for the public side of the site.
 	 *
@@ -159,12 +157,6 @@ class Scripts_To_Footer {
 		 * core plugin.
 		 */
 		require_once $includes_dir . '/class-stf-loader.php';
-
-		/**
-		 * The class responsible for defining internationalization functionality
-		 * of the plugin.
-		 */
-		require_once $includes_dir . '/class-stf-i18n.php';
 
 		/**
 		 * The class containing functions used by multiple classes.
@@ -194,22 +186,6 @@ class Scripts_To_Footer {
 
 		$this->loader    = new STF_Loader();
 		$this->functions = new STF_Functions();
-	}
-
-	/**
-	 * Define the locale for this plugin for internationalization.
-	 *
-	 * Uses the Scripts_To_Footer_I18n class in order to set the domain and to register the hook
-	 * with WordPress.
-	 *
-	 * @since  0.7.0
-	 * @access private
-	 */
-	private function set_locale() {
-
-		$plugin_i18n = new STF_I18n();
-
-		$this->loader->add_action( 'init', $plugin_i18n, 'load_plugin_textdomain' );
 	}
 
 	/**
@@ -274,7 +250,7 @@ class Scripts_To_Footer {
 
 	/**
 	 * The name of the plugin used to uniquely identify it within the context of
-	 * WordPress and to define internationalization functionality.
+	 * WordPress.
 	 *
 	 * @since 0.7.0
 	 * @return string The name of the plugin.

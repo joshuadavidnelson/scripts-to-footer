@@ -1,0 +1,19 @@
+{
+  "coverage": {
+    "php": {
+      "lines": 90,
+      "methods": 90
+    }
+  },
+  "metrics": {
+    "max": {
+      "critical": 0,
+      "error": 2,
+      "avgCyclomaticComplexityByClass": 14,
+      "logicalLinesByMethod": 14,
+      "lackCohesionOfMethods": 2.5,
+      "avgEfferentCoupling": 2
+    },
+    "gate": ["critical", "error"]
+  }
+}

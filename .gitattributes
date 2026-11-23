@@ -21,6 +21,12 @@
 /phpunit.xml.dist export-ignore
 /tests/ export-ignore
 
+# Quality tooling and its output
+/phpmd.xml export-ignore
+/phpmd.baseline.xml export-ignore
+/quality-thresholds.json export-ignore
+/reports/ export-ignore
+
 # Repository documentation
 /README.md export-ignore
 /CHANGELOG.md export-ignore

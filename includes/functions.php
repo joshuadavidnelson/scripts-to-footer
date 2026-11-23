@@ -7,6 +7,10 @@
  * @subpackage functions
  **/
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit( 'You are not allowed to access this file directly.' );
+}
+
 /**
  * Get custom settings.
  *
