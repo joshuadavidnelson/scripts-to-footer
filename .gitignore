@@ -8,3 +8,7 @@ dist
 vendor
 *.cache
 /reports/
+
+# PHPUnit (unit + integration suites)
+.phpunit.cache/
+/coverage/
