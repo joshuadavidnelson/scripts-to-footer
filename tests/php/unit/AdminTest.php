@@ -34,10 +34,11 @@ class AdminTest extends TestCase {
 	/**
 	 * Builds the admin object.
 	 *
+	 * @param string $plugin_file The plugin basename.
 	 * @return STF_Admin
 	 */
-	private function admin() {
-		return new STF_Admin( 'scripts-to-footer', STF_VERSION );
+	private function admin( $plugin_file = 'scripts-to-footer/scripts-to-footer.php' ) {
+		return new STF_Admin( 'scripts-to-footer', STF_VERSION, $plugin_file );
 	}
 
 	/**
@@ -153,11 +154,24 @@ class AdminTest extends TestCase {
 	}
 
 	/**
-	 * Other plugins' rows are untouched, including the wordpress.org slug directory.
+	 * The links show on the wordpress.org install, whose directory is 'scripts-to-footerphp'.
 	 *
-	 * Characterizes current behavior: on wordpress.org the plugin directory is
-	 * 'scripts-to-footerphp', which never equals 'scripts-to-footer', so the links
-	 * never show there.
+	 * @covers STF_Admin::plugin_links
+	 *
+	 * @return void
+	 */
+	public function test_plugin_links_show_for_wordpress_org_directory() {
+		WP_Mock::userFunction( 'current_user_can', array( 'return' => true ) );
+
+		$file  = 'scripts-to-footerphp/scripts-to-footer.php';
+		$links = $this->admin( $file )->plugin_links( array( 'x' ), $file );
+
+		$this->assertCount( 4, $links );
+		$this->assertStringContainsString( 'Support', $links[1] );
+	}
+
+	/**
+	 * Other plugins' rows are untouched, whichever directory this plugin lives in.
 	 *
 	 * @covers STF_Admin::plugin_links
 	 *
@@ -166,10 +180,59 @@ class AdminTest extends TestCase {
 	public function test_plugin_links_other_plugin_unchanged() {
 		WP_Mock::userFunction( 'current_user_can', array( 'return' => true ) );
 
-		$admin = $this->admin();
+		$admin = $this->admin( 'scripts-to-footerphp/scripts-to-footer.php' );
 
 		$this->assertSame( array( 'x' ), $admin->plugin_links( array( 'x' ), 'akismet/akismet.php' ) );
-		$this->assertSame( array( 'x' ), $admin->plugin_links( array( 'x' ), 'scripts-to-footerphp/scripts-to-footer.php' ) );
+		$this->assertSame( array( 'x' ), $admin->plugin_links( array( 'x' ), 'scripts-to-footer/scripts-to-footer.php' ) );
+	}
+
+	/**
+	 * Built with two arguments, the plugin file is resolved lazily so the links still show.
+	 *
+	 * @covers STF_Admin::plugin_links
+	 *
+	 * @return void
+	 */
+	public function test_plugin_links_two_arg_construction_shows_links() {
+		WP_Mock::userFunction( 'current_user_can', array( 'return' => true ) );
+		$this->expect_function_strict( 'plugin_basename', array( STF_DIR . '/scripts-to-footer.php' ), 'scripts-to-footerphp/scripts-to-footer.php' );
+
+		$admin = new STF_Admin( 'scripts-to-footer', STF_VERSION );
+		$links = $admin->plugin_links( array( 'x' ), 'scripts-to-footerphp/scripts-to-footer.php' );
+
+		$this->assertCount( 4, $links );
+		$this->assertStringContainsString( 'Support', $links[1] );
+	}
+
+	/**
+	 * Built with two arguments, other plugins' rows are still untouched.
+	 *
+	 * @covers STF_Admin::plugin_links
+	 *
+	 * @return void
+	 */
+	public function test_plugin_links_two_arg_construction_other_file_unchanged() {
+		WP_Mock::userFunction( 'current_user_can', array( 'return' => true ) );
+		WP_Mock::userFunction( 'plugin_basename', array( 'return' => 'scripts-to-footer/scripts-to-footer.php' ) );
+
+		$admin = new STF_Admin( 'scripts-to-footer', STF_VERSION );
+
+		$this->assertSame( array( 'x' ), $admin->plugin_links( array( 'x' ), 'akismet/akismet.php' ) );
+		$this->assertSame( array( 'x' ), $admin->plugin_links( array( 'x' ), '' ) );
+	}
+
+	/**
+	 * An explicit plugin file is used as given, without asking WordPress to resolve one.
+	 *
+	 * @covers STF_Admin::plugin_links
+	 *
+	 * @return void
+	 */
+	public function test_plugin_links_explicit_file_skips_resolution() {
+		WP_Mock::userFunction( 'current_user_can', array( 'return' => true ) );
+		WP_Mock::userFunction( 'plugin_basename', array( 'times' => 0 ) );
+
+		$this->assertSame( array( 'x' ), $this->admin()->plugin_links( array( 'x' ), 'akismet/akismet.php' ) );
 	}
 
 	/**
@@ -319,7 +382,7 @@ class AdminTest extends TestCase {
 		$out     = $this->render( '1', $updates, $checked, $nonces );
 
 		$this->assertSame( array( array( 'scripts_to_footer', 'stf_nonce' ) ), $nonces );
-		$this->assertSame( array( array( true, '1', false ) ), $checked );
+		$this->assertSame( array( array( true, true, false ) ), $checked );
 		$this->assertSame( array(), $updates );
 		$this->assertSame(
 			'[NONCE]<p style="padding-top:10px;"><label for="stf_exclude">HTML(Turn Plugin Off|scripts-to-footerphp)</label>'
@@ -342,51 +405,78 @@ class AdminTest extends TestCase {
 		$nonces  = array();
 		$out     = $this->render( '', $updates, $checked, $nonces );
 
-		$this->assertSame( array( array( true, '', false ) ), $checked );
+		$this->assertSame( array( array( true, false, false ) ), $checked );
 		$this->assertSame( array(), $updates );
 		$this->assertStringContainsString( 'name="stf_exclude"  style=', $out );
 		$this->assertStringNotContainsString( 'checked=', $out );
 	}
 
 	/**
-	 * Legacy 'on' values are migrated while rendering.
-	 *
-	 * Characterizes current behavior: rendering the metabox writes post meta.
+	 * Legacy 'on' values render checked and rendering writes nothing.
 	 *
 	 * @covers STF_Admin::metabox_render
 	 *
 	 * @return void
 	 */
-	public function test_metabox_render_migrates_legacy_on_value() {
+	public function test_metabox_render_legacy_on_value_is_checked_without_writing() {
 		$updates = array();
 		$checked = array();
 		$nonces  = array();
 		$out     = $this->render( 'on', $updates, $checked, $nonces );
 
-		$this->assertSame( array( array( 42, 'stf_exclude', 1, 'on' ) ), $updates );
-		$this->assertSame( array( array( true, 1, false ) ), $checked );
+		$this->assertSame( array(), $updates );
+		$this->assertSame( array( array( true, true, false ) ), $checked );
 		$this->assertStringContainsString( "checked='checked'", $out );
 	}
 
 	/**
-	 * A non-'on' truthy value is not migrated.
-	 *
-	 * Characterizes current behavior: a truthy non-'1' meta value excludes the post in
-	 * stf_includes but renders the box unchecked (core's checked( true, 'yes' ) is '').
+	 * Any truthy value renders checked, matching STF_Public::stf_includes().
 	 *
 	 * @covers STF_Admin::metabox_render
 	 *
 	 * @return void
 	 */
-	public function test_metabox_render_other_values_not_migrated() {
+	public function test_metabox_render_other_truthy_values_are_checked() {
 		$updates = array();
 		$checked = array();
 		$nonces  = array();
 		$out     = $this->render( 'yes', $updates, $checked, $nonces );
 
 		$this->assertSame( array(), $updates );
-		$this->assertSame( array( array( true, 'yes', false ) ), $checked );
+		$this->assertSame( array( array( true, true, false ) ), $checked );
+		$this->assertStringContainsString( "checked='checked'", $out );
+	}
+
+	/**
+	 * Stored '0' and int 0 render unchecked, and checked() gets exactly (true, false, false).
+	 *
+	 * @covers STF_Admin::metabox_render
+	 * @dataProvider falsy_stored_values
+	 *
+	 * @param mixed $stored Stored meta value.
+	 * @return void
+	 */
+	public function test_metabox_render_falsy_stored_values_are_unchecked( $stored ) {
+		$updates = array();
+		$checked = array();
+		$nonces  = array();
+		$out     = $this->render( $stored, $updates, $checked, $nonces );
+
+		$this->assertSame( array( array( true, false, false ) ), $checked );
+		$this->assertSame( array(), $updates );
 		$this->assertStringNotContainsString( 'checked=', $out );
+	}
+
+	/**
+	 * Data provider of falsy stored values that are not empty strings.
+	 *
+	 * @return array
+	 */
+	public function falsy_stored_values() {
+		return array(
+			'string zero' => array( '0' ),
+			'int zero'    => array( 0 ),
+		);
 	}
 
 	/**
@@ -585,5 +675,40 @@ class AdminTest extends TestCase {
 		$this->admin()->metabox_save( 7 );
 
 		$this->assertSame( array( array( 7, 'stf_exclude' ) ), $calls );
+	}
+
+	/**
+	 * An injected STF_Functions decides which post types get the metabox.
+	 *
+	 * @covers STF_Admin::__construct
+	 * @covers STF_Admin::metabox_register
+	 *
+	 * @return void
+	 */
+	public function test_injected_functions_instance_is_used() {
+		$functions = Mockery::mock( STF_Functions::class );
+		$functions->shouldReceive( 'post_type_supported' )->once()->with( 'secret' )->andReturn( true );
+
+		$admin = new STF_Admin( 'scripts-to-footer', STF_VERSION, '', $functions );
+		WP_Mock::userFunction( 'get_post_type', array( 'return' => 'secret' ) );
+		$calls = array();
+		$this->record( 'add_meta_box', $calls );
+
+		$admin->metabox_register();
+
+		$this->assertSame( $functions, $this->get_property( $admin, 'functions' ) );
+		$this->assertCount( 1, $calls );
+		$this->assertSame( 'secret', $calls[0][3] );
+	}
+
+	/**
+	 * Without an injected instance the constructor builds its own.
+	 *
+	 * @covers STF_Admin::__construct
+	 *
+	 * @return void
+	 */
+	public function test_functions_default_when_not_injected() {
+		$this->assertInstanceOf( STF_Functions::class, $this->get_property( $this->admin(), 'functions' ) );
 	}
 }
