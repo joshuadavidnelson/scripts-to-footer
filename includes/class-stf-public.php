@@ -81,7 +81,7 @@ class STF_Public {
 	public function set_header_scripts() {
 
 		// automatically include jquery in the head if the option is selected.
-		$exclude = stf_get_option( 'stf_jquery_header', false );
+		$exclude      = stf_get_option( 'stf_jquery_header', false );
 		$head_scripts = $exclude ? array( 'jquery' ) : array();
 
 		/**
