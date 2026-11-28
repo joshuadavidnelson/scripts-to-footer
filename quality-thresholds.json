@@ -8,8 +8,8 @@
   "metrics": {
     "max": {
       "critical": 0,
-      "error": 2,
-      "avgCyclomaticComplexityByClass": 14,
+      "error": 0,
+      "avgCyclomaticComplexityByClass": 11.5,
       "logicalLinesByMethod": 14,
       "lackCohesionOfMethods": 2.5,
       "avgEfferentCoupling": 2
